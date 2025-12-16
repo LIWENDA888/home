@@ -4,6 +4,35 @@
  * TYPEFOUNDRY STUDIO - CORE LOGIC
  */
 
+// ==============================================================
+// 1. HERO VIDEO CONFIGURATION (在此处修改视频和链接)
+// ==============================================================
+const HERO_CONFIG = [
+    {
+        // 视频 1
+        label: "Qidian Sans",           // 右下角按钮显示的文字
+        description: "自在起点黑：探索可变字体的新边界", // 视频左下角的描述文字
+        videoUrl: "1.mp4", // 视频地址 (MP4)
+        link: "https://www.zizao.top/fonts/qidiansans" // 点击视频跳转的地址
+    },
+    {
+        // 视频 2
+        label: "Type Tools",
+        description: "设计工具集：提升创作效率的利器",
+        videoUrl: "https://cdn.coverr.co/videos/coverr-typing-on-computer-keyboard-5110/1080p.mp4",
+        link: "https://www.zizao.top/tools/txt"
+    },
+    {
+        // 视频 3
+        label: "Inspiration",
+        description: "灵感百宝库：捕捉每一个创意瞬间",
+        videoUrl: "https://cdn.coverr.co/videos/coverr-making-a-font-5503/1080p.mp4",
+        link: "https://hao.zizao.top"
+    }
+];
+// ==============================================================
+
+
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     initScrollLogic(); 
@@ -12,11 +41,14 @@ document.addEventListener('DOMContentLoaded', () => {
     setupAboutScrollSpy(); 
     setupGlobalImageViewer();
     injectBackToTop(); 
-    initHeroStack(); 
+    
+    // Updated: Load the new video slider
+    initHeroSlider(); 
+    
     initDocsNavigation();
 });
 
-// ================= 1. Theme Logic =================
+// ================= 2. Theme Logic =================
 function initTheme() {
     const isDark = localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
     applyTheme(isDark);
@@ -40,12 +72,14 @@ function updateIcons(isDark) {
         
         const logos = document.querySelectorAll('.nav-logo');
         logos.forEach(logo => {
+            // Invert logo color for dark mode if needed, or keep white for hero section overlay
+            // Note: On hero section, nav might be transparent, so handle accordingly
             logo.style.filter = isDark ? 'brightness(0) invert(1)' : 'none';
         });
     }, 50);
 }
 
-// ================= 2. Scroll & Nav Logic =================
+// ================= 3. Scroll & Nav Logic =================
 function injectBackToTop() {
     if (document.getElementById('back-to-top')) return;
     const btn = document.createElement('button');
@@ -78,6 +112,15 @@ function initScrollLogic() {
                 nav.classList.remove('nav-hidden');
                 nav.classList.add('nav-visible');
             }
+            
+            // Add background when scrolled
+            if (currentScrollY > 50) {
+                nav.classList.remove('bg-white/0', 'dark:bg-black/0', 'border-white/10', 'dark:border-white/5');
+                nav.classList.add('bg-white/90', 'dark:bg-neutral-950/90', 'border-gray-100', 'dark:border-neutral-900', 'backdrop-blur-md');
+            } else {
+                nav.classList.add('bg-white/0', 'dark:bg-black/0', 'border-white/10', 'dark:border-white/5');
+                nav.classList.remove('bg-white/90', 'dark:bg-neutral-950/90', 'border-gray-100', 'dark:border-neutral-900', 'backdrop-blur-md');
+            }
         }
 
         if (backToTop) {
@@ -93,7 +136,6 @@ function highlightCurrentPage() {
         const path = window.location.href; 
         let page = '';
         
-        // Logic: Check keywords in the URL
         if (path.includes('index.html') && !path.includes('fonts') && !path.includes('licensing') && !path.includes('about')) {
             page = 'home';
         } else if (path.includes('/fonts/') || path.includes('fonts.html') || path.includes('product.html')) {
@@ -103,7 +145,7 @@ function highlightCurrentPage() {
         } else if (path.includes('about')) {
             page = 'about';
         } else if (path.includes('docs.html')) {
-            page = 'about'; // Keep About highlited or create new logic
+            page = 'about'; 
         }
 
         // Highlight Desktop Links
@@ -179,20 +221,17 @@ function toggleMenu() {
     }
 }
 
-// ================= 3. Docs Page Logic =================
+// ================= 4. Docs Page Logic =================
 function initDocsNavigation() {
-    // Only run if we are on the docs page
     if (!document.getElementById('docs-content')) return;
 
     const buttons = document.querySelectorAll('.docs-nav-btn');
     const sections = document.querySelectorAll('.docs-section');
     
-    // Check URL Params for initial section
     const params = new URLSearchParams(window.location.search);
     const initialSection = params.get('section') || 'copyright';
 
     const activateSection = (id) => {
-        // Update Buttons
         buttons.forEach(btn => {
             if (btn.dataset.target === id) {
                 btn.classList.add('active-doc-btn');
@@ -203,11 +242,9 @@ function initDocsNavigation() {
             }
         });
 
-        // Update Sections (Fade effect)
         sections.forEach(sec => {
             if (sec.id === id) {
                 sec.classList.remove('hidden');
-                // Small timeout to allow display:block to apply before opacity
                 setTimeout(() => sec.classList.remove('opacity-0', 'translate-y-4'), 10);
             } else {
                 sec.classList.add('hidden', 'opacity-0', 'translate-y-4');
@@ -218,7 +255,6 @@ function initDocsNavigation() {
     buttons.forEach(btn => {
         btn.addEventListener('click', () => {
             const target = btn.dataset.target;
-            // Update URL without reload
             const newUrl = new URL(window.location);
             newUrl.searchParams.set('section', target);
             window.history.pushState({}, '', newUrl);
@@ -230,7 +266,7 @@ function initDocsNavigation() {
     activateSection(initialSection);
 }
 
-// ================= 4. Bento Card Generator =================
+// ================= 5. Bento Card Generator =================
 function createBentoCard(item) {
     const href = item.link || '#';
     return `
@@ -254,7 +290,7 @@ function createBentoCard(item) {
     `;
 }
 
-// ================= 5. Image Viewer =================
+// ================= 6. Image Viewer =================
 function setupGlobalImageViewer() {
     const container = document.getElementById('image-viewer-container');
     const img = document.getElementById('p-image');
@@ -343,7 +379,7 @@ function setupGlobalImageViewer() {
 function openDownloadModal() { document.getElementById('download-modal')?.classList.remove('hidden'); }
 function closeDownloadModal() { document.getElementById('download-modal')?.classList.add('hidden'); }
 
-// ================= 6. Page Utils =================
+// ================= 7. Page Utils =================
 function setupAccordion() {
     document.querySelectorAll('.accordion-btn').forEach(button => {
         button.addEventListener('click', () => {
@@ -351,14 +387,12 @@ function setupAccordion() {
             const icon = button.querySelector('.accordion-icon');
             const isOpen = content.classList.contains('accordion-open');
             
-            // Close all
             document.querySelectorAll('.accordion-content').forEach(c => { 
                 c.classList.remove('accordion-open'); 
                 c.classList.add('accordion-closed'); 
             });
             document.querySelectorAll('.accordion-icon').forEach(i => i.classList.remove('rotate-45'));
             
-            // Open clicked if closed
             if (!isOpen) { 
                 content.classList.remove('accordion-closed'); 
                 content.classList.add('accordion-open'); 
@@ -392,69 +426,115 @@ function setupAboutScrollSpy() {
     });
 }
 
-// ================= 7. Hero Stack Animation =================
-function initHeroStack() {
-    const cards = document.querySelectorAll('.hero-card');
-    if(cards.length === 0) return;
+// ================= 8. NEW: Hero Slider Logic =================
+function initHeroSlider() {
+    const slidesContainer = document.getElementById('hero-slides');
+    const controlsContainer = document.getElementById('hero-controls');
+    const descContainer = document.getElementById('hero-desc');
+    
+    // Safety check if elements exist
+    if (!slidesContainer || !controlsContainer) return;
 
     let activeIndex = 0;
-    const total = cards.length;
-    let autoPlayInterval;
+    const totalSlides = HERO_CONFIG.length;
+    let autoPlayTimer;
 
-    const updateCards = () => {
-        cards.forEach((card, i) => {
-            let diff = (i - activeIndex + total) % total;
+    // 1. Render Video Slides (Hidden by default except first)
+    slidesContainer.innerHTML = HERO_CONFIG.map((slide, index) => `
+        <a href="${slide.link}" target="_blank" class="hero-slide absolute inset-0 block size-full transition-opacity duration-1000 ease-in-out bg-black cursor-pointer ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}" data-index="${index}">
+            <video class="size-full object-cover" autoplay muted loop playsinline poster="">
+                <source src="${slide.videoUrl}" type="video/mp4">
+            </video>
+        </a>
+    `).join('');
+
+    // 2. Render Controls (Buttons)
+    controlsContainer.innerHTML = HERO_CONFIG.map((slide, index) => `
+        <button class="hero-control-btn group flex items-center justify-between gap-4 py-3 pl-4 pr-2 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-lg border border-white/10 text-left transition-all duration-300 w-full md:w-64" data-index="${index}">
+            <span class="text-xs font-bold uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">0${index + 1} &nbsp; ${slide.label}</span>
+            <span class="relative h-1 w-8 bg-white/20 rounded-full overflow-hidden">
+                <span class="hero-progress-bar absolute inset-y-0 left-0 bg-white w-0"></span>
+            </span>
+        </button>
+    `).join('');
+
+    // 3. Switch Logic
+    const switchSlide = (index) => {
+        const slides = document.querySelectorAll('.hero-slide');
+        const buttons = document.querySelectorAll('.hero-control-btn');
+        const prevIndex = activeIndex;
+        activeIndex = index;
+
+        // Update Videos
+        slides.forEach(s => {
+            s.classList.remove('opacity-100', 'z-10');
+            s.classList.add('opacity-0', 'z-0');
+        });
+        slides[index].classList.remove('opacity-0', 'z-0');
+        slides[index].classList.add('opacity-100', 'z-10');
+
+        // Reset videos (optional, to restart loop on switch)
+        // const video = slides[index].querySelector('video');
+        // if(video) video.currentTime = 0;
+
+        // Update Description with fade effect
+        if(descContainer) {
+            descContainer.classList.remove('opacity-100', 'translate-y-0');
+            descContainer.classList.add('opacity-0', 'translate-y-4');
             
-            card.style.pointerEvents = 'auto'; 
-            card.classList.remove('active'); 
+            setTimeout(() => {
+                descContainer.innerText = HERO_CONFIG[index].description;
+                descContainer.classList.remove('opacity-0', 'translate-y-4');
+                descContainer.classList.add('opacity-100', 'translate-y-0');
+            }, 300);
+        }
 
-            if (diff === 0) {
-                card.style.zIndex = '30';
-                card.style.transform = 'translateY(0) scale(1)';
-                card.style.opacity = '1';
-                card.style.filter = 'brightness(1)';
-                card.classList.add('active');
-            } else if (diff === 1) {
-                card.style.zIndex = '20';
-                card.style.transform = 'translateY(-32px) scale(0.92)';
-                card.style.opacity = '0.7'; 
-                card.style.filter = 'brightness(0.9)';
-            } else if (diff === 2) {
-                card.style.zIndex = '10';
-                card.style.transform = 'translateY(-64px) scale(0.84)';
-                card.style.opacity = '0.4';
-                card.style.filter = 'brightness(0.8)';
+        // Update Buttons Styling
+        buttons.forEach((btn, idx) => {
+            const bar = btn.querySelector('.hero-progress-bar');
+            
+            if (idx === index) {
+                btn.classList.add('bg-white/20', 'border-white/30');
+                btn.classList.remove('bg-white/5', 'border-white/10');
+                // Animate progress bar
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.transition = 'width 5s linear'; // 5s match interval
+                    bar.style.width = '100%';
+                }, 50);
             } else {
-                card.style.zIndex = '0';
-                card.style.transform = 'translateY(-64px) scale(0.8)';
-                card.style.opacity = '0';
-                card.style.pointerEvents = 'none';
+                btn.classList.remove('bg-white/20', 'border-white/30');
+                btn.classList.add('bg-white/5', 'border-white/10');
+                bar.style.transition = 'none';
+                bar.style.width = '0%';
             }
         });
     };
 
-    const nextCard = () => {
-        activeIndex = (activeIndex + 1) % total;
-        updateCards();
-    };
-
-    const startAutoPlay = () => {
-        clearInterval(autoPlayInterval);
-        autoPlayInterval = setInterval(nextCard, 5000); 
-    };
-
-    cards.forEach((card, index) => {
-        card.addEventListener('click', (e) => {
-            if (index === activeIndex) {
-                const link = card.getAttribute('data-link');
-                if (link) window.open(link, '_blank');
-            } else {
-                nextCard();
-                startAutoPlay(); 
-            }
+    // 4. Events
+    const buttons = document.querySelectorAll('.hero-control-btn');
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const idx = parseInt(btn.dataset.index);
+            switchSlide(idx);
+            resetTimer();
         });
     });
 
-    updateCards();
-    startAutoPlay();
+    // 5. Timer
+    const startTimer = () => {
+        autoPlayTimer = setInterval(() => {
+            const next = (activeIndex + 1) % totalSlides;
+            switchSlide(next);
+        }, 5000); // 5 Seconds per slide
+    };
+
+    const resetTimer = () => {
+        clearInterval(autoPlayTimer);
+        startTimer();
+    };
+
+    // Initial Start
+    switchSlide(0);
+    startTimer();
 }

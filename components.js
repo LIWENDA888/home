@@ -175,5 +175,5 @@ function injectFavicon() {
         link.rel = 'icon';
         document.head.appendChild(link);
     }
-    link.href = 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251101/8hkj/ico.ico';
+    link.href = 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/AR9P/ico.ico';
 }

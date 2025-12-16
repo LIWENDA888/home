@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自在造字ZizaoType Studio</title>
-    <meta name="description" content="自在造字，专注字体字库产品制作与分享">
+    <title>自在造字-以可变 · 致自在</title>
+    <meta name="description" content="以可变 · 致自在Free via Variable">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
     <script>
@@ -21,113 +20,49 @@
     </script>
 <link rel="stylesheet" href="/index.css">
 </head>
+<!-- Removed pt-32 from main to allow video to be full screen behind nav -->
 <body class="bg-white text-gray-900 dark:bg-neutral-950 dark:text-gray-100 transition-colors duration-500 flex flex-col min-h-screen">
     
-    <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-md dark:border-neutral-900 dark:bg-neutral-950/90"></nav>
+    <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-white/0 backdrop-blur-sm dark:border-white/5 dark:bg-black/0 hover:bg-white/90 dark:hover:bg-neutral-950/90 transition-all duration-500"></nav>
 
     <!-- Main Content Wrapper -->
     <main class="animate-fade-in w-full flex-1">
-        <!-- Header with further REDUCED padding -->
-        <header class="mx-auto max-w-[1800px] px-6 lg:px-12 pt-24 pb-10 lg:pt-32 lg:pb-16">
-            <div class="flex flex-col lg:flex-row gap-12 lg:items-end">
-                <div class="flex-1">
-                    <div class="mb-6 flex items-center gap-3">
-                        <div class="h-px w-12 bg-gray-900 dark:bg-white"></div>
-                        <span class="text-sm font-bold uppercase tracking-widest text-gray-500">心之所向，超越想象的界限。</span>
-                    </div>
-                    <h1 class="text-7xl font-black tracking-tighter text-gray-900 dark:text-white sm:text-[9rem] xl:text-[11rem] leading-[0.85] mb-10">
-                        ZizaoType<br/>Studio.
-                    </h1>
-                    <div class="flex flex-col sm:flex-row gap-8 sm:items-end justify-between border-t border-gray-200 dark:border-neutral-800 pt-8">
-                        <p class="max-w-md text-lg font-medium leading-relaxed text-gray-600 dark:text-neutral-400">
-                           无所限，无所畏。只凭心意开创。<br/>
-                            ZizaoType Studio.
-                        </p>
-                        <!-- Scroll Button: Animated Arrow -->
-                        <button onclick="document.getElementById('featured-work').scrollIntoView({behavior: 'smooth'})" class="group flex items-center gap-4 text-sm font-bold uppercase tracking-widest text-gray-400 hover:text-black dark:hover:text-white transition-colors">
-                            <div class="flex size-10 items-center justify-center rounded-full bg-gray-100 dark:bg-neutral-800 group-hover:bg-black group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-black transition-colors">
-                                <svg class="w-4 h-4 animate-scroll-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-                            </div>
-                            <span>Scroll Down</span>
-                        </button>
-                    </div>
-                </div>
+        
+        <!-- NEW: Full Screen Hero Video Slider -->
+        <!-- 这里的 h-screen 代表全屏高度 -->
+        <section id="hero-slider-container" class="relative w-full h-screen overflow-hidden bg-black">
+            <!-- Videos will be injected here by script.js -->
+            <div id="hero-slides" class="absolute inset-0 size-full"></div>
+
+            <!-- Overlay Content (Title & Controls) -->
+            <div class="absolute inset-0 z-20 pointer-events-none flex flex-col justify-between px-6 pb-12 pt-32 lg:px-12">
                 
-                <!-- Hero Stack News Widget -->
-                <div class="lg:w-[480px] xl:w-[560px] shrink-0 relative h-[600px] flex items-end select-none">
-                     <!-- Gradient Decoration -->
-                    <div class="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-gradient-to-br from-blue-400/20 to-purple-400/20 blur-3xl dark:from-blue-600/10 dark:to-purple-600/10 pointer-events-none hidden lg:block"></div>
+                <!-- Center/Top Branding -->
+                <div class="text-center md:text-left mt-20 md:mt-0">
+                </div>
 
-                    <!-- Stack Container -->
-                    <div id="hero-stack" class="relative w-full h-full perspective-[1200px] group/stack">
-                        
-                        <!-- Card 1 -->
-                        <div class="hero-card absolute inset-x-0 bottom-0 top-24 rounded-[2rem] bg-gray-100 dark:bg-neutral-900 shadow-2xl overflow-hidden cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] will-change-transform group/card" data-link="fonts/qidiansans.html">
-                             <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp" alt="Cover" class="size-full object-cover transition-all duration-700 group-hover/card:scale-105 group-hover/card:brightness-110">
-                             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                             <div class="absolute bottom-8 left-8 text-white text-shadow-subtle">
-                                <div class="flex items-center gap-2 mb-3">
-                                    <span class="inline-block size-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></span>
-                                    <p class="font-mono text-xs uppercase tracking-widest opacity-80">新品预告</p>
-                                </div>
-                                <p class="text-3xl font-bold leading-none mb-1">自在起点黑VF</p>
-                                <p class="text-lg font-medium opacity-80">即将上线</p>
-                                <div class="mt-6 opacity-0 transform translate-y-4 transition-all duration-500 group-[.active]:opacity-100 group-[.active]:translate-y-0 text-xs font-bold uppercase tracking-widest border-b-2 border-transparent w-fit pb-1 hover:border-white">View Project ↗</div>
-                             </div>
-                        </div>
+                <!-- Bottom Area -->
+                <div class="flex flex-col md:flex-row items-end justify-between gap-8">
+                    <!-- Left: Description -->
+                    <div class="max-w-md text-white/80 pointer-events-auto">
+                        <p id="hero-desc" class="text-lg font-medium leading-relaxed drop-shadow-md transition-all duration-500 transform translate-y-0 opacity-100">
+                            Loading description...
+                        </p>
+                    </div>
 
-                        <!-- Card 2 -->
-                        <div class="hero-card absolute inset-x-0 bottom-0 top-24 rounded-[2rem] bg-gray-100 dark:bg-neutral-900 shadow-2xl overflow-hidden cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] will-change-transform group/card" data-link="https://www.zizao.top/tools/txt">
-                             <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/EiE8/680X600/1-10.jpg/webp" alt="Cover" class="size-full object-cover transition-all duration-700 group-hover/card:scale-105 group-hover/card:brightness-110">
-                             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                             <div class="absolute bottom-8 left-8 text-white text-shadow-subtle">
-                                <div class="flex items-center gap-2 mb-3">
-                                    <span class="inline-block size-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></span>
-                                    <p class="font-mono text-xs uppercase tracking-widest opacity-80">设计工具</p>
-                                </div>
-                                <p class="text-3xl font-bold leading-none mb-1">文本编辑器 Pro</p>
-                                <p class="text-lg font-medium opacity-80">效率更新</p>
-                                <div class="mt-6 opacity-0 transform translate-y-4 transition-all duration-500 group-[.active]:opacity-100 group-[.active]:translate-y-0 text-xs font-bold uppercase tracking-widest border-b-2 border-transparent w-fit pb-1 hover:border-white">Try Now ↗</div>
-                             </div>
-                        </div>
-
-                        <!-- Card 3 -->
-                        <div class="hero-card absolute inset-x-0 bottom-0 top-24 rounded-[2rem] bg-gray-100 dark:bg-neutral-900 shadow-2xl overflow-hidden cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] will-change-transform group/card" data-link="https://www.zizao.top/tools/chaoyin">
-                             <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/clE7/1400X600/1-11.jpg/webp" alt="Cover" class="size-full object-cover transition-all duration-700 group-hover/card:scale-105 group-hover/card:brightness-110">
-                             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                             <div class="absolute bottom-8 left-8 text-white text-shadow-subtle">
-                                <div class="flex items-center gap-2 mb-3">
-                                    <span class="inline-block size-2 rounded-full bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]"></span>
-                                    <p class="font-mono text-xs uppercase tracking-widest opacity-80">设计资源</p>
-                                </div>
-                                <p class="text-3xl font-bold leading-none mb-1">超引·形近字查询</p>
-                                <p class="text-lg font-medium opacity-80">独家整理</p>
-                                <div class="mt-6 opacity-0 transform translate-y-4 transition-all duration-500 group-[.active]:opacity-100 group-[.active]:translate-y-0 text-xs font-bold uppercase tracking-widest border-b-2 border-transparent w-fit pb-1 hover:border-white">Explore ↗</div>
-                             </div>
-                        </div>
-
-                        <!-- Card 4 -->
-                        <div class="hero-card absolute inset-x-0 bottom-0 top-24 rounded-[2rem] bg-gray-100 dark:bg-neutral-900 shadow-2xl overflow-hidden cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] will-change-transform group/card" data-link="https://www.zizao.top/hao">
-                             <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/hfoR/680X600/1-09.jpg/webp" alt="Cover" class="size-full object-cover transition-all duration-700 group-hover/card:scale-105 group-hover/card:brightness-110">
-                             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                             <div class="absolute bottom-8 left-8 text-white text-shadow-subtle">
-                                <div class="flex items-center gap-2 mb-3">
-                                    <span class="inline-block size-2 rounded-full bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.5)]"></span>
-                                    <p class="font-mono text-xs uppercase tracking-widest opacity-80">灵感</p>
-                                </div>
-                                <p class="text-3xl font-bold leading-none mb-1">设计导航</p>
-                                <p class="text-lg font-medium opacity-80">灵感百宝库</p>
-                                <div class="mt-6 opacity-0 transform translate-y-4 transition-all duration-500 group-[.active]:opacity-100 group-[.active]:translate-y-0 text-xs font-bold uppercase tracking-widest border-b-2 border-transparent w-fit pb-1 hover:border-white">Visit ↗</div>
-                             </div>
-                        </div>
-
+                    <!-- Right: Video Selector -->
+                    <div id="hero-controls" class="pointer-events-auto flex flex-col gap-2 min-w-[200px]">
+                        <!-- Buttons injected by JS -->
                     </div>
                 </div>
             </div>
-        </header>
+            
+            <!-- Dark Gradient Overlay for readability -->
+            <div class="absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none"></div>
+        </section>
 
-        <!-- Featured Work Section with Top Margin -->
-        <section id="featured-work" class="mx-auto max-w-[1800px] px-6 lg:px-12 mb-32 pt-20 border-t border-transparent">
+        <!-- Featured Work Section (Added padding-top since we removed it from main) -->
+        <section id="featured-work" class="mx-auto max-w-[1800px] px-6 lg:px-12 mb-32 pt-24 border-t border-transparent">
             <div class="mb-8 flex items-end justify-between border-b border-gray-100 pb-4 dark:border-neutral-800">
                 <div class="flex items-center gap-3">
                     <div class="h-2 w-2 rounded-full bg-black dark:bg-white"></div>
@@ -156,7 +91,7 @@
     <script src="script.js"></script>
     
     <script>
-        // Data for Home Page
+        // Data for Home Page (Bottom Grid)
         const HOME_FONTS = [
             {
                 title: '自在起点黑 (Qidian Sans)',
