@@ -12,21 +12,21 @@ const HERO_CONFIG = [
         // 视频 1
         label: "Qidian Sans",           // 右下角按钮显示的文字
         description: "自在起点黑：探索可变字体的新边界", // 视频左下角的描述文字
-        videoUrl: "1.mp4", // 视频地址 (MP4)
+        videoUrl: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251216/71Zg/2.mp4", // 视频地址 (MP4)
         link: "https://www.zizao.top/fonts/qidiansans" // 点击视频跳转的地址
     },
     {
         // 视频 2
         label: "Type Tools",
         description: "设计工具集：提升创作效率的利器",
-        videoUrl: "https://cdn.coverr.co/videos/coverr-typing-on-computer-keyboard-5110/1080p.mp4",
+        videoUrl: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251216/71Zg/2.mp4",
         link: "https://www.zizao.top/tools/txt"
     },
     {
         // 视频 3
         label: "Inspiration",
         description: "灵感百宝库：捕捉每一个创意瞬间",
-        videoUrl: "https://cdn.coverr.co/videos/coverr-making-a-font-5503/1080p.mp4",
+        videoUrl: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251216/71Zg/2.mp4",
         link: "https://hao.zizao.top"
     }
 ];
