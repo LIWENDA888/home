@@ -18,7 +18,7 @@ const SHARED_NAV_HTML = `
     <div class="hidden items-center gap-8 md:flex h-full">
         <a href="https://www.zizao.top/fonts" class="text-xs uppercase tracking-widest text-gray-500 hover:text-black dark:text-neutral-500 dark:hover:text-white nav-link transition-colors" data-page="products">字体产品</a>
         <a href="https://www.zizao.top/licensing" class="text-xs uppercase tracking-widest text-gray-500 hover:text-black dark:text-neutral-500 dark:hover:text-white nav-link transition-colors" data-page="licensing">授权定制</a>
-        <a href="https://zzfonts.taobao.com" target="_blank" class="text-xs uppercase tracking-widest text-gray-500 hover:text-black dark:text-neutral-500 dark:hover:text-white transition-colors">获取版权</a>
+        <a href="https://www.zizao.top/dock" class="text-xs uppercase tracking-widest text-gray-500 hover:text-black dark:text-neutral-500 dark:hover:text-white nav-link transition-colors" data-page="docs">帮助中心</a>
         <a href="https://www.zizao.top/about" class="text-xs uppercase tracking-widest text-gray-500 hover:text-black dark:text-neutral-500 dark:hover:text-white nav-link transition-colors" data-page="about">关于我们</a>
         
         <div class="h-4 w-px bg-gray-200 dark:bg-neutral-800"></div>
@@ -61,10 +61,10 @@ const SHARED_NAV_HTML = `
                 <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Licensing</span>
             </a>
 
-            <!-- Shop -->
-            <a href="https://zzfonts.taobao.com" target="_blank" class="mobile-nav-item flex items-center justify-between py-4 border-b border-gray-100 dark:border-neutral-900" style="opacity: 0">
-                <span class="text-2xl font-medium tracking-tight">商店</span>
-                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Shop</span>
+            <!-- docs -->
+            <a href="https://www.zizao.top/docs" class="mobile-nav-item mobile-nav-link flex items-center justify-between py-4 border-b border-gray-100 dark:border-neutral-900" style="opacity: 0">
+                <span class="text-2xl font-medium tracking-tight">帮助中心</span>
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Docs</span>
             </a>
 
             <!-- About -->
@@ -75,7 +75,7 @@ const SHARED_NAV_HTML = `
         </nav>
         
         <div class="mt-8 mobile-nav-item" style="opacity: 0">
-             <p class="text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-neutral-700">© 2025 ZizaoType Studio.</p>
+             <p class="text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-neutral-700">© 自在造字Zizaizaozi.</p>
         </div>
     </div>
 </div>

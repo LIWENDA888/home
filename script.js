@@ -135,15 +135,16 @@ function highlightCurrentPage() {
         if (path === '/' || path.endsWith('/index.html') || path.endsWith('/')) {
             page = 'home';
         } 
-        // 只要路径里包含 fonts 或者 product，就认为是产品页
-        // 注意：这里涵盖了 fonts.html, /fonts/, /fonts/abc.html
-        else if (path.includes('fonts') || path.includes('product')) {
+        else if (path.includes('fonts')) {
             page = 'products'; 
         } 
         else if (path.includes('licensing')) {
             page = 'licensing';
         } 
-        else if (path.includes('about') || path.includes('docs')) {
+        else if (path.includes('docs')) {
+            page = 'docs';
+        }
+        else if (path.includes('about')) {
             page = 'about';
         }
 
@@ -170,7 +171,7 @@ function highlightCurrentPage() {
                 link.classList.add('text-black', 'dark:text-white');
             }
         });
-    }, 200); //稍微延长到 200ms 以防万一
+    }, 100);
 }
 
 function toggleMenu() {
