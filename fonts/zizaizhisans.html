@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自在致黑ZizaiZhisans - 自在造字</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../styles.css">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: { sans: ['Inter', 'sans-serif'] },
+            cursor: {
+                'grab': 'grab',
+                'grabbing': 'grabbing',
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+        /* ========================================= */
+        /* [配置接口] 请在此处替换您的字体文件地址 */
+        /* ========================================= */
+        @font-face {
+            font-family: 'ProductFont';
+            /* 替换为您的实际字体路径 */
+            src: url('../fonts/QidianSans-Regular.woff2') format('woff2'); 
+            font-display: swap;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .glyph-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            border-top: 1px solid #e5e7eb;
+            border-left: 1px solid #e5e7eb;
+        }
+        .dark .glyph-grid { border-color: #262626; }
+        
+        .glyph-item {
+            font-family: 'ProductFont', sans-serif; 
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid #e5e7eb;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 1.5rem; 
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 更细腻的动画曲线 */
+            cursor: default;
+        }
+        .dark .glyph-item { border-color: #262626; }
+        
+        .glyph-item:hover {
+            background-color: #000;
+            color: #fff;
+            transform: scale(1.4); /* 稍微减小放大倍率，更克制 */
+            z-index: 10;
+            border-color: transparent;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-radius: 4px; /* 悬停时加一点点圆角 */
+        }
+        .dark .glyph-item:hover {
+            background-color: #fff;
+            color: #000;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900 dark:bg-neutral-950 dark:text-gray-100 flex flex-col min-h-screen">
+    
+    <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-md dark:border-neutral-900 dark:bg-neutral-950/90"></nav>
+
+    <main class="animate-fade-in mx-auto max-w-[1800px] px-6 pt-28 lg:pt-32 lg:px-12 pb-20 flex-1 w-full">
+        
+        <div class="flex flex-col lg:flex-row gap-12 xl:gap-24 relative">
+            
+            <aside class="w-full lg:w-[320px] xl:w-[380px] lg:shrink-0 lg:sticky lg:top-32 flex flex-col z-40 max-h-[calc(100vh-140px)] overflow-y-auto no-scrollbar">
+                
+                <div class="mb-8 lg:mb-10">
+                    <div class="flex items-center gap-2 mb-4 lg:mb-6">
+                        <span class="inline-flex items-center rounded-md bg-black px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white dark:bg-white dark:text-black">
+                            双轴可变
+                        </span>
+                        <span class="inline-flex items-center rounded-md border border-gray-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:border-neutral-800 dark:text-neutral-500">
+                            免费
+                        </span>
+
+                    </div>
+                    <h1 class="text-5xl xl:text-6xl font-black tracking-tighter mb-2 leading-[0.9]">自在致黑</h1>
+                    <p class="text-base font-medium text-gray-400 dark:text-neutral-500 tracking-wide">ZizaiZhisans</p>
+                </div>
+
+                <div class="prose prose-sm dark:prose-invert text-gray-500 dark:text-neutral-400 mb-8 lg:mb-10 leading-7 text-justify">
+                    <p>融合线条与骨感美，极具视觉张力的字形结构。双轴可变（Weight & Width）为多设备协同带来了无限可能，打破了传统黑体的刻板印象。</p>
+                </div>
+
+                <div class="mb-10 lg:mb-12">
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="openDownloadModal()" class="group flex items-center justify-center gap-2 rounded-lg bg-black px-4 py-3 text-white transition-all hover:bg-gray-800 hover:shadow-lg dark:bg-white dark:text-black dark:hover:bg-gray-200 active:scale-[0.98]">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            <span class="font-bold text-sm">下载字体</span>
+                        </button>
+                        
+                        <a href="https://zzfonts.taobao.com" target="_blank" class="group flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-black transition-all hover:border-black hover:bg-gray-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-white dark:hover:border-white dark:hover:bg-neutral-800 active:scale-[0.98]">
+                            <svg class="w-4 h-4 text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span class="font-bold text-sm">获取授权</span>
+                        </a>
+                    </div>
+                    
+                    <div class="mt-3 flex justify-between px-1 text-[10px] text-gray-400 dark:text-neutral-600 font-mono uppercase tracking-wider">
+                        <span>v1.0 Beta</span>
+                        <span>SIL License</span>
+                    </div>
+                </div>
+
+                <div class="mt-auto border-t border-gray-100 pt-6 dark:border-neutral-800 flex flex-col gap-3 pb-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-gray-400 dark:text-neutral-600 uppercase tracking-wider font-bold">Foundry</span>
+                        <span class="font-bold text-gray-900 dark:text-white">ZizaoType</span>
+                    </div>
+                    <div class="h-px bg-gray-50 dark:bg-neutral-900 w-full"></div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-gray-400 dark:text-neutral-600 uppercase tracking-wider font-bold">Designer</span>
+                        <span class="font-bold text-gray-900 dark:text-white">Mutou</span>
+                    </div>
+                    <div class="h-px bg-gray-50 dark:bg-neutral-900 w-full"></div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-gray-400 dark:text-neutral-600 uppercase tracking-wider font-bold">Glyphs</span>
+                        <span class="font-bold text-gray-900 dark:text-white font-mono">7,284</span>
+                    </div>
+                    <div class="h-px bg-gray-50 dark:bg-neutral-900 w-full"></div>
+                    <div class="flex justify-between items-start text-xs">
+                        <span class="text-gray-400 dark:text-neutral-600 uppercase tracking-wider font-bold pt-0.5">Axes</span>
+                        <span class="font-bold text-gray-900 dark:text-white text-right max-w-[120px]">Weight, Width</span>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="flex-1 space-y-20 min-w-0">
+                
+                <section id="image-viewer-container" class="relative aspect-[16/10] w-full overflow-hidden rounded-xl border border-gray-200 dark:border-neutral-800 bg-gray-100 dark:bg-[#0f0f0f] transition-colors select-none cursor-grab active:cursor-grabbing group shadow-sm">
+                    <img id="p-image" 
+                         src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/zTEv/6803X1701/123-02.jpg/webp" 
+                         data-dark-src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/i4a1/6803X1701/123-01.jpg/webp" 
+                         alt="Hero" 
+                         class="size-full object-cover transition-transform duration-75 ease-linear will-change-transform origin-center" 
+                         draggable="false">
+                    
+                    <div class="absolute bottom-6 left-6 z-20 flex items-center gap-3">
+                        <div class="flex items-center gap-3 rounded-full bg-white/90 dark:bg-neutral-950/90 backdrop-blur shadow-xl px-4 py-2 border border-gray-100 dark:border-neutral-800">
+                             <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Zoom</span>
+                             <input id="zoom-slider" type="range" min="1" max="3" step="0.01" value="1" class="h-1 w-20 cursor-pointer appearance-none rounded-full bg-gray-200 dark:bg-neutral-800 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black dark:[&::-webkit-slider-thumb]:bg-white">
+                        </div>
+                        <button id="img-toggle-btn" class="size-9 flex items-center justify-center rounded-full bg-white/90 dark:bg-neutral-950/90 backdrop-blur shadow-xl border border-gray-100 dark:border-neutral-800 hover:scale-105 transition-transform" title="切换背景色">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        </button>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="mb-6 flex items-center gap-4">
+                        <div class="h-px bg-gray-200 dark:bg-neutral-800 flex-1"></div>
+                        <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400">Features / 设计特性</h2>
+                        <div class="h-px bg-gray-200 dark:bg-neutral-800 flex-1"></div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-gray-200 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-800 rounded-xl overflow-hidden">
+                        <div class="bg-white dark:bg-neutral-900 p-8 flex flex-col gap-3 group hover:bg-gray-50 dark:hover:bg-neutral-800/50 transition-colors">
+                            <div class="size-8 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center text-gray-600 dark:text-gray-300">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+                            </div>
+                            <h4 class="font-bold text-base">响应式字宽</h4>
+                            <p class="text-sm text-gray-500 dark:text-neutral-400 leading-relaxed">Width Axis. 从 75% 压缩到 100% 标准宽度，完美适配移动端狭窄屏幕与桌面端宽屏展示。</p>
+                        </div>
+                        
+                        <div class="bg-white dark:bg-neutral-900 p-8 flex flex-col gap-3 group hover:bg-gray-50 dark:hover:bg-neutral-800/50 transition-colors">
+                            <div class="size-8 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center text-gray-600 dark:text-gray-300">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+                            </div>
+                            <h4 class="font-bold text-base">油墨陷阱优化</h4>
+                            <p class="text-sm text-gray-500 dark:text-neutral-400 leading-relaxed">Ink Traps. 在内角处进行视觉补偿，确保小字号印刷时不糊字，大字号展示时呈现独特的几何美感。</p>
+                        </div>
+
+                        <div class="bg-white dark:bg-neutral-900 p-8 flex flex-col gap-3 group hover:bg-gray-50 dark:hover:bg-neutral-800/50 transition-colors">
+                            <div class="size-8 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center text-gray-600 dark:text-gray-300">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+                            </div>
+                            <h4 class="font-bold text-base">中西文匹配</h4>
+                            <p class="text-sm text-gray-500 dark:text-neutral-400 leading-relaxed">Latin Match. 重新设计了西文部首的基线与字重，确保中英文混排时的灰度统一与视觉和谐。</p>
+                        </div>
+
+                        <div class="bg-white dark:bg-neutral-900 p-8 flex flex-col gap-3 group hover:bg-gray-50 dark:hover:bg-neutral-800/50 transition-colors">
+                            <div class="size-8 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center text-gray-600 dark:text-gray-300">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <h4 class="font-bold text-base">屏幕显像优化</h4>
+                            <p class="text-sm text-gray-500 dark:text-neutral-400 leading-relaxed">Screen Ready. 针对高分屏 (Retina) 进行了光栅化处理，即使在 12px 小字号下依然保持清晰可读。</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="mb-6 flex items-center gap-4">
+                        <div class="h-px bg-gray-200 dark:bg-neutral-800 flex-1"></div>
+                        <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400">Glyphs / 字符集</h2>
+                        <div class="h-px bg-gray-200 dark:bg-neutral-800 flex-1"></div>
+                    </div>
+                    <div class="glyph-grid bg-white dark:bg-neutral-900 text-gray-400 dark:text-neutral-600 font-light select-none rounded-lg overflow-hidden border-b border-r border-gray-200 dark:border-neutral-800">
+                        </div>
+                </section>
+
+                <section>
+                    <div class="mb-6 flex items-center gap-4">
+                        <div class="h-px bg-gray-200 dark:bg-neutral-800 flex-1"></div>
+                        <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400">Gallery / 细节展示</h2>
+                        <div class="h-px bg-gray-200 dark:bg-neutral-800 flex-1"></div>
+                    </div>
+                    <div class="flex flex-col space-y-0 rounded-xl overflow-hidden border border-gray-100 dark:border-neutral-800 bg-gray-100 dark:bg-neutral-900">
+                        <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/i4a1/6803X1701/123-01.jpg/webp" class="w-full block" loading="lazy" />
+                        <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/zTEv/6803X1701/123-02.jpg/webp" class="w-full block" loading="lazy" />
+                        <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/i4a1/6803X1701/123-01.jpg/webp" class="w-full block" loading="lazy" />
+                        <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/zTEv/6803X1701/123-02.jpg/webp" class="w-full block" loading="lazy" />
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <div id="download-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center px-4">
+        <div class="absolute inset-0 bg-white/90 dark:bg-black/90 backdrop-blur-sm transition-opacity" onclick="closeDownloadModal()"></div>
+        
+        <div class="relative w-full max-w-2xl scale-100 overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 animate-fade-in flex flex-col md:flex-row">
+            
+            <div class="w-full md:w-1/3 bg-gray-50 dark:bg-neutral-950 p-8 border-b md:border-b-0 md:border-r border-gray-100 dark:border-neutral-800">
+                <h3 class="text-xl font-black mb-2">下载字体</h3>
+                <p class="text-xs text-gray-500 mb-8 leading-relaxed">请确认您需要的格式。商业使用无需额外授权。</p>
+                <div class="space-y-4">
+                     <div class="text-xs">
+                        <span class="block font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-1">版本</span>
+                        <span class="text-gray-500">1.002 (Beta测试版)</span>
+                     </div>
+                     <div class="text-xs">
+                        <span class="block font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-1">授权类型</span>
+                        <span class="text-gray-500">免费商用 / SIL开源</span>
+                     </div>
+                     <div class="text-xs">
+                        <span class="block font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-1">更新日期</span>
+                        <span class="text-gray-500">2025.12.16</span>
+                     </div>
+                </div>
+            </div>
+
+            <div class="w-full md:w-2/3 p-8">
+                <div class="grid grid-cols-1 gap-4 mb-8">
+                    <label class="cursor-pointer group relative flex items-center justify-between rounded-xl border border-gray-200 p-4 hover:border-black dark:border-neutral-800 dark:hover:border-white transition-all bg-white dark:bg-neutral-900">
+                        <div class="flex items-center gap-4">
+                            <input type="checkbox" checked disabled class="accent-black w-5 h-5">
+                            <div>
+                                <p class="font-bold text-sm">桌面版 (.OTF)</p>
+                                <p class="text-xs text-gray-500">适用于 平面设计 (Ai, Ps, Id) / 办公</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-mono text-gray-400">2.4MB</span>
+                    </label>
+                    <label class="cursor-pointer group relative flex items-center justify-between rounded-xl border border-gray-200 p-4 hover:border-black dark:border-neutral-800 dark:hover:border-white transition-all bg-white dark:bg-neutral-900">
+                        <div class="flex items-center gap-4">
+                            <input type="checkbox" checked disabled class="accent-black w-5 h-5">
+                            <div>
+                                <p class="font-bold text-sm">网页版 (.WOFF2)</p>
+                                <p class="text-xs text-gray-500">适用于 网站开发 / App 内嵌</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-mono text-gray-400">1.1MB</span>
+                    </label>
+                </div>
+
+                <div class="mb-8 flex gap-3 items-start">
+                    <input type="checkbox" id="eula-check" class="mt-1 w-4 h-4 accent-black cursor-pointer" onchange="toggleDownloadBtn()">
+                    <label for="eula-check" class="text-xs text-gray-500 cursor-pointer select-none leading-relaxed">
+                        我已阅读并同意 <a href="#" class="underline hover:text-black dark:hover:text-white">最终用户许可协议 (EULA)</a>。我承诺不会将字体文件直接进行二次售卖。
+                    </label>
+                </div>
+
+                <div class="flex justify-end gap-3">
+                    <button onclick="closeDownloadModal()" class="px-5 py-2 text-sm font-bold text-gray-500 hover:text-black dark:hover:text-white transition-colors">取消</button>
+                    <button id="dl-confirm-btn" disabled onclick="window.open('#', '_blank')" class="rounded-full bg-black px-6 py-2 text-sm font-bold text-white opacity-30 cursor-not-allowed transition-all hover:bg-gray-800 dark:bg-white dark:text-black disabled:hover:bg-black disabled:dark:hover:bg-white">
+                        立即下载
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="footer-placeholder" class="bg-white pt-20 pb-12 dark:bg-neutral-950 border-t border-gray-100 dark:border-neutral-900 mt-auto"></footer>
+    
+    <script src="../components.js"></script>
+    <script src="../script.js"></script>
+
+    <script>
+        // --- Dark Mode Sync for Hero Image ---
+        // 页面加载时立即检查暗色模式，防止Hero图闪烁
+        document.addEventListener('DOMContentLoaded', () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            const img = document.getElementById('p-image');
+            if (isDark && img && img.dataset.darkSrc) {
+                img.src = img.dataset.darkSrc;
+            }
+        });
+
+        // --- Glyph Grid Auto-Fill ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.querySelector('.glyph-grid');
+            const chars = "自在造字永无止境ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+,./<>?;:'\"[]{}|\\~`天地玄黄宇宙洪荒日月盈昃辰宿列张寒来暑往秋收冬藏闰余成岁律吕调阳云腾致雨露结为霜金生丽水玉出昆冈";
+            
+            let html = '';
+            for (let i = 0; i < 160; i++) {
+                const char = chars[i % chars.length];
+                html += `<div class="glyph-item" title="${char}">${char}</div>`;
+            }
+            grid.innerHTML = html;
+        });
+
+        // --- Modal Logic ---
+        function toggleDownloadBtn() {
+            const check = document.getElementById('eula-check');
+            const btn = document.getElementById('dl-confirm-btn');
+            if (check.checked) {
+                btn.disabled = false;
+                btn.classList.remove('opacity-30', 'cursor-not-allowed');
+            } else {
+                btn.disabled = true;
+                btn.classList.add('opacity-30', 'cursor-not-allowed');
+            }
+        }
+    </script>
+</body>
+</html>
