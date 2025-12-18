@@ -3,14 +3,13 @@
  */
 
 // ==============================================================
-// 1. HERO VIDEO CONFIGURATION (已优化：增加 poster 封面图)
+// 1. HERO VIDEO CONFIGURATION (视频配置)
 // ==============================================================
 const HERO_CONFIG = [
     {
         // 视频 1
         label: "Qidian Sans",
         description: "自在起点黑：探索可变字体的新边界",
-        // 使用产品图作为封面，避免黑屏
         poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/YAWh/1400X600/1-07.jpg/webp", 
         videoUrl: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251216/71Zg/2.mp4", 
         link: "https://www.zizao.top/fonts/qidiansans"
@@ -32,8 +31,6 @@ const HERO_CONFIG = [
         link: "https://hao.zizao.top"
     }
 ];
-// ==============================================================
-
 
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
@@ -43,10 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupAboutScrollSpy(); 
     setupGlobalImageViewer();
     injectBackToTop(); 
-    
-    // Updated: Load the optimized video slider
-    initHeroSlider(); 
-    
+    initHeroSlider(); // 视频轮播初始化
     initDocsNavigation();
 });
 
@@ -74,7 +68,6 @@ function updateIcons(isDark) {
         
         const logos = document.querySelectorAll('.nav-logo');
         logos.forEach(logo => {
-            // Invert logo color for dark mode if needed
             logo.style.filter = isDark ? 'brightness(0) invert(1)' : 'none';
         });
     }, 50);
@@ -103,7 +96,6 @@ function initScrollLogic() {
         const currentScrollY = window.scrollY;
         const backToTop = document.getElementById('back-to-top');
         
-        // Smart Nav
         if (nav) {
             if (currentScrollY > lastScrollY && currentScrollY > 100) {
                 nav.classList.add('nav-hidden');
@@ -113,7 +105,6 @@ function initScrollLogic() {
                 nav.classList.add('nav-visible');
             }
             
-            // Add background when scrolled
             if (currentScrollY > 50) {
                 nav.classList.remove('bg-white/0', 'dark:bg-black/0', 'border-white/10', 'dark:border-white/5');
                 nav.classList.add('bg-white/90', 'dark:bg-neutral-950/90', 'border-gray-100', 'dark:border-neutral-900', 'backdrop-blur-md');
@@ -148,7 +139,6 @@ function highlightCurrentPage() {
             page = 'about'; 
         }
 
-        // Highlight Desktop Links
         document.querySelectorAll('.nav-link').forEach(link => {
             link.classList.remove('text-black', 'dark:text-white', 'opacity-100', 'font-bold');
             link.classList.add('text-gray-500', 'dark:text-neutral-500');
@@ -164,7 +154,6 @@ function highlightCurrentPage() {
                 link.classList.add('text-black', 'dark:text-white');
             }
         });
-
     }, 100);
 }
 
@@ -269,7 +258,6 @@ function initDocsNavigation() {
 // ================= 5. Bento Card Generator =================
 function createBentoCard(item) {
     const href = item.link || '#';
-    // Updated: Always use target="_blank" and ensure links work
     return `
         <a href="${href}" target="_blank" class="group relative isolate overflow-hidden rounded-2xl bg-gray-200 dark:bg-neutral-800 ${item.colSpan || 'md:col-span-1'} ${item.rowSpan || 'md:row-span-1'} min-h-[300px] lg:min-h-[360px] block transition-all duration-500 ease-out hover:shadow-2xl hover:-translate-y-1">
             <div class="absolute inset-0 size-full overflow-hidden rounded-2xl">
@@ -427,7 +415,7 @@ function setupAboutScrollSpy() {
     });
 }
 
-// ================= 8. NEW: Hero Slider Logic (已优化性能) =================
+// ================= 8. HERO SLIDER (Mobile Optimized) =================
 function initHeroSlider() {
     const slidesContainer = document.getElementById('hero-slides');
     const controlsContainer = document.getElementById('hero-controls');
@@ -439,23 +427,23 @@ function initHeroSlider() {
     const totalSlides = HERO_CONFIG.length;
     let autoPlayTimer;
 
-    // 1. Render Video Slides
-    // 优化：使用 poster 防止黑屏；仅第一个视频 preload="auto" 和 autoplay；其他视频 lazyload
+    // 1. Render Video Slides (Fixed: playsinline, pointer-events-none)
     slidesContainer.innerHTML = HERO_CONFIG.map((slide, index) => `
-        <a href="${slide.link}" target="_blank" class="hero-slide absolute inset-0 block size-full transition-opacity duration-1000 ease-in-out bg-black cursor-pointer ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}" data-index="${index}">
+        <a href="${slide.link}" target="_blank" class="hero-slide absolute inset-0 block size-full transition-opacity duration-1000 ease-in-out bg-black ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}" data-index="${index}">
             <video 
-                class="size-full object-cover" 
-                muted loop playsinline 
+                class="size-full object-cover pointer-events-none" 
+                muted loop playsinline webkit-playsinline x5-playsinline
                 poster="${slide.poster}"
                 preload="${index === 0 ? 'auto' : 'none'}" 
                 ${index === 0 ? 'autoplay' : ''}
             >
                 <source src="${slide.videoUrl}" type="video/mp4">
             </video>
+            <div class="absolute inset-0 bg-black/20 pointer-events-none"></div>
         </a>
     `).join('');
 
-    // 2. Render Controls (Buttons)
+    // 2. Render Controls
     controlsContainer.innerHTML = HERO_CONFIG.map((slide, index) => `
         <button class="hero-control-btn group flex items-center justify-between gap-4 py-3 pl-4 pr-2 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-lg border border-white/10 text-left transition-all duration-300 w-full md:w-64" data-index="${index}">
             <span class="text-xs font-bold uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">0${index + 1} &nbsp; ${slide.label}</span>
@@ -465,18 +453,16 @@ function initHeroSlider() {
         </button>
     `).join('');
 
-    // 3. Switch Logic (手动播放控制)
+    // 3. Switch Logic
     const switchSlide = (index) => {
         const slides = document.querySelectorAll('.hero-slide');
         const buttons = document.querySelectorAll('.hero-control-btn');
         
-        // 暂停上一个视频，节省资源
         const prevVideo = slides[activeIndex].querySelector('video');
         if(prevVideo) prevVideo.pause();
 
         activeIndex = index;
 
-        // 切换 Slide 显示
         slides.forEach(s => {
             s.classList.remove('opacity-100', 'z-10');
             s.classList.add('opacity-0', 'z-0');
@@ -484,20 +470,16 @@ function initHeroSlider() {
         slides[index].classList.remove('opacity-0', 'z-0');
         slides[index].classList.add('opacity-100', 'z-10');
 
-        // 播放当前视频 (处理 Lazy Load)
         const nextVideo = slides[index].querySelector('video');
         if(nextVideo) {
-            nextVideo.currentTime = 0; // 重置进度
+            nextVideo.currentTime = 0;
+            nextVideo.muted = true; 
             const playPromise = nextVideo.play();
             if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    // 浏览器策略可能阻止自动播放，静默失败即可
-                    console.log("Auto-play prevented (user interaction needed):", error);
-                });
+                playPromise.catch(error => { console.log("Auto-play prevented:", error); });
             }
         }
 
-        // 更新文案
         if(descContainer) {
             descContainer.classList.remove('opacity-100', 'translate-y-0');
             descContainer.classList.add('opacity-0', 'translate-y-4');
@@ -509,17 +491,14 @@ function initHeroSlider() {
             }, 300);
         }
 
-        // 更新按钮进度条样式
         buttons.forEach((btn, idx) => {
             const bar = btn.querySelector('.hero-progress-bar');
-            
             if (idx === index) {
                 btn.classList.add('bg-white/20', 'border-white/30');
                 btn.classList.remove('bg-white/5', 'border-white/10');
-                // 动画重置
                 bar.style.width = '0%';
                 setTimeout(() => {
-                    bar.style.transition = 'width 5s linear'; // 5s 与定时器匹配
+                    bar.style.transition = 'width 5s linear';
                     bar.style.width = '100%';
                 }, 50);
             } else {
@@ -532,7 +511,6 @@ function initHeroSlider() {
     };
 
     // 4. Events
-    const buttons = document.querySelectorAll('.hero-control-btn');
     buttons.forEach(btn => {
         btn.addEventListener('click', () => {
             const idx = parseInt(btn.dataset.index);
@@ -546,7 +524,7 @@ function initHeroSlider() {
         autoPlayTimer = setInterval(() => {
             const next = (activeIndex + 1) % totalSlides;
             switchSlide(next);
-        }, 5000); // 5 Seconds per slide
+        }, 5000); 
     };
 
     const resetTimer = () => {
@@ -554,8 +532,6 @@ function initHeroSlider() {
         startTimer();
     };
 
-    // Initial Start
-    // 这里调用 switchSlide(0) 来初始化第一个按钮的状态和文字
     switchSlide(0);
     startTimer();
 }
