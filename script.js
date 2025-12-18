@@ -5,7 +5,6 @@
 // ==============================================================
 // 1. HERO CONFIGURATION (图片版配置)
 // ==============================================================
-// 注意：这里我们直接复用之前的 poster 字段作为主图显示
 const HERO_CONFIG = [
     {
         label: "Qidian Sans",
@@ -390,7 +389,6 @@ function setupAccordion() {
 function setupAboutScrollSpy() {
     if (!window.location.pathname.includes('about')) return;
     
-    // Updated IDs
     const sections = ['vision', 'business', 'philosophy', 'clients', 'contact'];
     const navItems = document.querySelectorAll('.about-nav-btn');
     
@@ -398,7 +396,6 @@ function setupAboutScrollSpy() {
         let current = '';
         const scrollPosition = window.scrollY;
         
-        // Force highlight last section if at bottom of page
         if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
             current = sections[sections.length - 1];
         } else {
@@ -422,11 +419,10 @@ function setupAboutScrollSpy() {
     };
 
     window.addEventListener('scroll', onScroll);
-    onScroll(); // Init
+    onScroll(); 
 }
 
-// ================= 8. HERO SLIDER (IMAGE VERSION) =================
-// 彻底解决移动端视频自动播放和弹窗问题：改用带 Ken Burns 动画效果的图片
+// ================= 8. HERO SLIDER (IMAGE VERSION - GRADIENT FIX) =================
 function initHeroSlider() {
     const slidesContainer = document.getElementById('hero-slides');
     const controlsContainer = document.getElementById('hero-controls');
@@ -438,8 +434,8 @@ function initHeroSlider() {
     const totalSlides = HERO_CONFIG.length;
     let autoPlayTimer;
 
-    // 1. Render Image Slides (With CSS Animation Classes)
-    // 使用 img 标签替代 video，并增加 transition-transform 实现缓慢缩放效果
+    // 1. Render Image Slides (Ken Burns + Bottom Gradient)
+    // 关键修改：移除 bg-black/20，改为底部的 bg-gradient-to-t，高度改为 h-3/4，确保只遮挡下方
     slidesContainer.innerHTML = HERO_CONFIG.map((slide, index) => `
         <a href="${slide.link}" target="_blank" class="hero-slide absolute inset-0 block size-full transition-opacity duration-1000 ease-in-out bg-black overflow-hidden ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}" data-index="${index}">
             <img 
@@ -448,7 +444,7 @@ function initHeroSlider() {
                 class="size-full object-cover transition-transform duration-[10000ms] ease-linear scale-100" 
                 style="will-change: transform;"
             >
-            <div class="absolute inset-0 bg-black/20 pointer-events-none"></div>
+            <div class="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none"></div>
         </a>
     `).join('');
 
@@ -470,7 +466,6 @@ function initHeroSlider() {
         const currentButtons = document.querySelectorAll('.hero-control-btn');
         
         // --- 核心动画逻辑 ---
-        // 1. 重置所有图片为 scale-100 (原始大小)
         slides.forEach(s => {
             const img = s.querySelector('img');
             img.classList.remove('scale-110'); 
@@ -480,13 +475,13 @@ function initHeroSlider() {
             s.classList.add('opacity-0', 'z-0');
         });
 
-        // 2. 激活当前图片，并开始缓慢放大到 scale-110 (Ken Burns Effect)
+        // 激活当前图片
         activeIndex = index;
         const activeSlide = slides[index];
         activeSlide.classList.remove('opacity-0', 'z-0');
         activeSlide.classList.add('opacity-100', 'z-10');
         
-        // 稍微延迟一点加 scale 类，确保 transition 生效
+        // 激活动画
         setTimeout(() => {
             const activeImg = activeSlide.querySelector('img');
             activeImg.classList.remove('scale-100');
@@ -512,7 +507,6 @@ function initHeroSlider() {
                 btn.classList.add('bg-white/20', 'border-white/30');
                 btn.classList.remove('bg-white/5', 'border-white/10');
                 bar.style.width = '0%';
-                // Force Reflow
                 void bar.offsetWidth; 
                 setTimeout(() => {
                     bar.style.transition = 'width 5s linear';
@@ -562,6 +556,6 @@ function initHeroSlider() {
         }
     });
 
-    switchSlide(0); // Run initial slide
+    switchSlide(0); 
     startTimer();
 }
