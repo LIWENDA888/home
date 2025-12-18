@@ -7,7 +7,6 @@
 // ==============================================================
 const HERO_CONFIG = [
     {
-        // 视频 1
         label: "Qidian Sans",
         description: "自在起点黑：探索可变字体的新边界",
         poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/YAWh/1400X600/1-07.jpg/webp", 
@@ -15,7 +14,6 @@ const HERO_CONFIG = [
         link: "https://www.zizao.top/fonts/qidiansans"
     },
     {
-        // 视频 2
         label: "Type Tools",
         description: "设计工具集：提升创作效率的利器",
         poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/xD17/1400X600/1-12.jpg/webp",
@@ -23,7 +21,6 @@ const HERO_CONFIG = [
         link: "https://www.zizao.top/tools/txt"
     },
     {
-        // 视频 3
         label: "Inspiration",
         description: "灵感百宝库：捕捉每一个创意瞬间",
         poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/hfoR/680X600/1-09.jpg/webp",
@@ -40,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupAboutScrollSpy(); 
     setupGlobalImageViewer();
     injectBackToTop(); 
-    initHeroSlider(); // 视频轮播初始化
+    initHeroSlider(); 
     initDocsNavigation();
 });
 
@@ -123,51 +120,35 @@ function initScrollLogic() {
 }
 
 function highlightCurrentPage() {
-    // 增加一点延迟，确保 Nav HTML 已经被注入
     setTimeout(() => {
         const path = window.location.pathname; 
         let page = '';
         
-        // 调试：在控制台打印当前路径，方便排查
-        console.log("Current path:", path);
-
-        // 更加精准的判断逻辑
         if (path === '/' || path.endsWith('/index.html') || path.endsWith('/')) {
             page = 'home';
-        } 
-        else if (path.includes('fonts')) {
+        } else if (path.includes('fonts')) {
             page = 'products'; 
-        } 
-        else if (path.includes('licensing')) {
+        } else if (path.includes('licensing')) {
             page = 'licensing';
-        } 
-        else if (path.includes('docs')) {
+        } else if (path.includes('docs')) {
             page = 'docs';
-        }
-        else if (path.includes('about')) {
+        } else if (path.includes('about')) {
             page = 'about';
         }
 
-        console.log("Active page should be:", page);
-
-        // 更新桌面端导航
         document.querySelectorAll('.nav-link').forEach(link => {
-            // 重置状态
             link.classList.remove('text-black', 'dark:text-white', 'opacity-100', 'font-bold');
             link.classList.add('text-gray-500', 'dark:text-neutral-500');
 
-            // 激活状态
             if (link.dataset.page === page) {
                 link.classList.remove('text-gray-500', 'dark:text-neutral-500');
                 link.classList.add('text-black', 'dark:text-white', 'opacity-100', 'font-bold');
             }
         });
         
-        // 更新移动端导航
         document.querySelectorAll('.mobile-nav-link').forEach(link => {
-             // 简单的逻辑，移动端通常只需要变色
              if (link.dataset.page === page) {
-                link.classList.remove('text-gray-500'); // 假设原本有这个类
+                link.classList.remove('text-gray-500'); 
                 link.classList.add('text-black', 'dark:text-white');
             }
         });
@@ -410,26 +391,39 @@ function setupAccordion() {
 
 function setupAboutScrollSpy() {
     if (!window.location.pathname.includes('about')) return;
-    const sections = ['vision', 'business', 'docs', 'contact'];
+    
+    const sections = ['vision', 'business', 'philosophy', 'clients', 'contact'];
     const navItems = document.querySelectorAll('.about-nav-btn');
     
-    window.addEventListener('scroll', () => {
+    const onScroll = () => {
         let current = '';
-        sections.forEach(id => { 
-            const el = document.getElementById(id); 
-            if (el && window.scrollY >= (el.offsetTop - 300)) current = id; 
-        });
+        const scrollPosition = window.scrollY;
+        
+        // Fix: Force select 'contact' if at bottom of page
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
+            current = sections[sections.length - 1];
+        } else {
+            sections.forEach(id => { 
+                const el = document.getElementById(id); 
+                if (el && scrollPosition >= (el.offsetTop - 400)) {
+                    current = id; 
+                }
+            });
+        }
         
         navItems.forEach(btn => {
-            btn.classList.remove('text-black', 'dark:text-white');
+            btn.classList.remove('text-black', 'dark:text-white', 'opacity-100');
             btn.classList.add('text-gray-400', 'font-medium');
             
             if (btn.getAttribute('href') === '#' + current) {
-                btn.classList.add('text-black', 'dark:text-white');
+                btn.classList.add('text-black', 'dark:text-white', 'opacity-100');
                 btn.classList.remove('text-gray-400');
             }
         });
-    });
+    };
+
+    window.addEventListener('scroll', onScroll);
+    onScroll(); 
 }
 
 // ================= 8. HERO SLIDER (Mobile Optimized) =================
@@ -444,12 +438,17 @@ function initHeroSlider() {
     const totalSlides = HERO_CONFIG.length;
     let autoPlayTimer;
 
-    // 1. Render Video Slides (Fixed: playsinline, pointer-events-none)
+    // 1. Render Video Slides (Added Mobile Attributes)
     slidesContainer.innerHTML = HERO_CONFIG.map((slide, index) => `
         <a href="${slide.link}" target="_blank" class="hero-slide absolute inset-0 block size-full transition-opacity duration-1000 ease-in-out bg-black ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}" data-index="${index}">
             <video 
                 class="size-full object-cover pointer-events-none" 
-                muted loop playsinline webkit-playsinline x5-playsinline
+                muted 
+                loop 
+                playsinline="true" 
+                webkit-playsinline="true" 
+                x5-video-player-type="h5-page"
+                t7-video-player-type="inline"
                 poster="${slide.poster}"
                 preload="${index === 0 ? 'auto' : 'none'}" 
                 ${index === 0 ? 'autoplay' : ''}
@@ -470,17 +469,18 @@ function initHeroSlider() {
         </button>
     `).join('');
 
-    // 【关键修复】：这里需要显式获取一次 buttons 元素，否则下面的 switchSlide 和事件绑定找不到 buttons 变量
     const buttons = document.querySelectorAll('.hero-control-btn');
 
     // 3. Switch Logic
     const switchSlide = (index) => {
         const slides = document.querySelectorAll('.hero-slide');
-        // 虽然外部有定义 buttons，但函数内部重新获取也没问题，保证引用最新
         const currentButtons = document.querySelectorAll('.hero-control-btn');
         
         const prevVideo = slides[activeIndex].querySelector('video');
-        if(prevVideo) prevVideo.pause();
+        if(prevVideo) {
+            prevVideo.pause();
+            prevVideo.currentTime = 0; // Reset video to start
+        }
 
         activeIndex = index;
 
@@ -497,7 +497,7 @@ function initHeroSlider() {
             nextVideo.muted = true; 
             const playPromise = nextVideo.play();
             if (playPromise !== undefined) {
-                playPromise.catch(error => { console.log("Auto-play prevented:", error); });
+                playPromise.catch(error => { console.log("Auto-play prevented (User interaction needed):", error); });
             }
         }
 
@@ -532,7 +532,6 @@ function initHeroSlider() {
     };
 
     // 4. Events
-    // 【修复】：这里引用了上方新定义的 buttons 变量
     buttons.forEach(btn => {
         btn.addEventListener('click', () => {
             const idx = parseInt(btn.dataset.index);
