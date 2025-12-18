@@ -77,11 +77,27 @@
 
     <footer id="footer-placeholder" class="bg-white pt-20 pb-12 dark:bg-neutral-950 border-t border-gray-100 dark:border-neutral-900 mt-auto"></footer>
 
-    <script src="components.js"></script>
-    <script src="script.js"></script>
-    
     <script>
-        // Data (保持不变)
+        // 1. Hero 轮播图配置
+        const HERO_CONFIG = [
+            {
+                label: "Qidian Sans",
+                poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/YAWh/1400X600/1-07.jpg/webp", 
+                link: "fonts/zizaizhisans.html"
+            },
+            {
+                label: "Type Tools",
+                poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/xD17/1400X600/1-12.jpg/webp",
+                link: "https://www.zizao.top/tools/txt"
+            },
+            {
+                label: "Inspiration",
+                poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/hfoR/680X600/1-09.jpg/webp",
+                link: "https://hao.zizao.top"
+            }
+        ];
+
+        // 2. 首页推荐字体 (Bento Grid)
         const HOME_FONTS = [
             {
                 title: '自在起点黑 (Qidian Sans)',
@@ -130,6 +146,7 @@
             }
         ];
 
+        // 3. 首页推荐工具
         const HOME_TOOLS = [
             { title: '设计导航', subtitle: '设计师的灵感百宝库', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/hfoR/680X600/1-09.jpg/webp', link: 'https://hao.zizao.top', colSpan: 'md:col-span-1' },
             { title: '文本编辑器Pro', subtitle: 'web端TXT编辑器', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/EiE8/680X600/1-10.jpg/webp', link: 'https://tools.zizao.top/txt', colSpan: 'md:col-span-1' },
@@ -139,6 +156,7 @@
             { title: 'Coming Soon', subtitle: '敬请期待', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp', link: 'https://tools.zizao.top/txt', colSpan: 'md:col-span-1' }
         ];
 
+        // 页面特定的初始化逻辑
         document.addEventListener('DOMContentLoaded', () => {
             const featuredContainer = document.getElementById('featured-grid');
             const toolsContainer = document.getElementById('tools-grid');
@@ -146,5 +164,8 @@
             if (toolsContainer) toolsContainer.innerHTML = HOME_TOOLS.map(item => createBentoCard(item)).join('');
         });
     </script>
+    
+    <script src="components.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
