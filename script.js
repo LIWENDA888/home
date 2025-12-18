@@ -123,38 +123,54 @@ function initScrollLogic() {
 }
 
 function highlightCurrentPage() {
+    // 增加一点延迟，确保 Nav HTML 已经被注入
     setTimeout(() => {
-        const path = window.location.href; 
+        const path = window.location.pathname; 
         let page = '';
         
-        if (path.includes('index.html') && !path.includes('fonts') && !path.includes('licensing') && !path.includes('about')) {
+        // 调试：在控制台打印当前路径，方便排查
+        console.log("Current path:", path);
+
+        // 更加精准的判断逻辑
+        if (path === '/' || path.endsWith('/index.html') || path.endsWith('/')) {
             page = 'home';
-        } else if (path.includes('/fonts/') || path.includes('fonts.html') || path.includes('product.html')) {
+        } 
+        // 只要路径里包含 fonts 或者 product，就认为是产品页
+        // 注意：这里涵盖了 fonts.html, /fonts/, /fonts/abc.html
+        else if (path.includes('fonts') || path.includes('product')) {
             page = 'products'; 
-        } else if (path.includes('licensing')) {
+        } 
+        else if (path.includes('licensing')) {
             page = 'licensing';
-        } else if (path.includes('about')) {
+        } 
+        else if (path.includes('about') || path.includes('docs')) {
             page = 'about';
-        } else if (path.includes('docs.html')) {
-            page = 'about'; 
         }
 
+        console.log("Active page should be:", page);
+
+        // 更新桌面端导航
         document.querySelectorAll('.nav-link').forEach(link => {
+            // 重置状态
             link.classList.remove('text-black', 'dark:text-white', 'opacity-100', 'font-bold');
             link.classList.add('text-gray-500', 'dark:text-neutral-500');
 
+            // 激活状态
             if (link.dataset.page === page) {
                 link.classList.remove('text-gray-500', 'dark:text-neutral-500');
                 link.classList.add('text-black', 'dark:text-white', 'opacity-100', 'font-bold');
             }
         });
         
+        // 更新移动端导航
         document.querySelectorAll('.mobile-nav-link').forEach(link => {
+             // 简单的逻辑，移动端通常只需要变色
              if (link.dataset.page === page) {
+                link.classList.remove('text-gray-500'); // 假设原本有这个类
                 link.classList.add('text-black', 'dark:text-white');
             }
         });
-    }, 100);
+    }, 200); //稍微延长到 200ms 以防万一
 }
 
 function toggleMenu() {
