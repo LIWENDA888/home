@@ -3,7 +3,7 @@
  */
 
 // ==============================================================
-// 1. HERO CONFIGURATION (图片版配置)
+// 1. HERO CONFIGURATION
 // ==============================================================
 const HERO_CONFIG = [
     {
@@ -422,7 +422,8 @@ function setupAboutScrollSpy() {
     onScroll(); 
 }
 
-// ================= 8. HERO SLIDER (IMAGE VERSION - GRADIENT FIX) =================
+// ================= 8. HERO SLIDER (NO MASK - PURE IMAGE) =================
+// 彻底移除了遮罩层 DIV，保留纯净的图片显示
 function initHeroSlider() {
     const slidesContainer = document.getElementById('hero-slides');
     const controlsContainer = document.getElementById('hero-controls');
@@ -434,21 +435,18 @@ function initHeroSlider() {
     const totalSlides = HERO_CONFIG.length;
     let autoPlayTimer;
 
-    // 1. Render Image Slides (Ken Burns + Bottom Gradient)
-    // 关键修改：移除 bg-black/20，改为底部的 bg-gradient-to-t，高度改为 h-3/4，确保只遮挡下方
+    // 1. Render Slides (只有 IMG，没有任何遮罩 DIV)
     slidesContainer.innerHTML = HERO_CONFIG.map((slide, index) => `
-        <a href="${slide.link}" target="_blank" class="hero-slide absolute inset-0 block size-full transition-opacity duration-1000 ease-in-out bg-black overflow-hidden ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}" data-index="${index}">
+        <a href="${slide.link}" target="_blank" class="hero-slide absolute inset-0 block size-full transition-opacity duration-1000 ease-in-out bg-black ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}" data-index="${index}">
             <img 
                 src="${slide.poster}" 
                 alt="${slide.label}"
-                class="size-full object-cover transition-transform duration-[10000ms] ease-linear scale-100" 
-                style="will-change: transform;"
+                class="size-full object-cover" 
             >
-            <div class="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none"></div>
-        </a>
+            </a>
     `).join('');
 
-    // 2. Render Controls (Unchanged)
+    // 2. Render Controls (保持不变)
     controlsContainer.innerHTML = HERO_CONFIG.map((slide, index) => `
         <button class="hero-control-btn group flex items-center justify-between gap-4 py-3 pl-4 pr-2 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-lg border border-white/10 text-left transition-all duration-300 w-full md:w-64" data-index="${index}">
             <span class="text-xs font-bold uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">0${index + 1} &nbsp; ${slide.label}</span>
@@ -460,35 +458,22 @@ function initHeroSlider() {
 
     const buttons = document.querySelectorAll('.hero-control-btn');
 
-    // 3. Switch Logic
+    // 3. Switch Logic (纯淡入淡出)
     const switchSlide = (index) => {
         const slides = document.querySelectorAll('.hero-slide');
         const currentButtons = document.querySelectorAll('.hero-control-btn');
         
-        // --- 核心动画逻辑 ---
+        activeIndex = index;
+
+        // 切换 Slide
         slides.forEach(s => {
-            const img = s.querySelector('img');
-            img.classList.remove('scale-110'); 
-            img.classList.add('scale-100');
-            
             s.classList.remove('opacity-100', 'z-10');
             s.classList.add('opacity-0', 'z-0');
         });
+        slides[index].classList.remove('opacity-0', 'z-0');
+        slides[index].classList.add('opacity-100', 'z-10');
 
-        // 激活当前图片
-        activeIndex = index;
-        const activeSlide = slides[index];
-        activeSlide.classList.remove('opacity-0', 'z-0');
-        activeSlide.classList.add('opacity-100', 'z-10');
-        
-        // 激活动画
-        setTimeout(() => {
-            const activeImg = activeSlide.querySelector('img');
-            activeImg.classList.remove('scale-100');
-            activeImg.classList.add('scale-110');
-        }, 50);
-
-        // --- 文字更新逻辑 ---
+        // 更新文字
         if(descContainer) {
             descContainer.classList.remove('opacity-100', 'translate-y-0');
             descContainer.classList.add('opacity-0', 'translate-y-4');
@@ -500,7 +485,7 @@ function initHeroSlider() {
             }, 300);
         }
 
-        // --- 进度条逻辑 ---
+        // 更新进度条
         currentButtons.forEach((btn, idx) => {
             const bar = btn.querySelector('.hero-progress-bar');
             if (idx === index) {
@@ -543,7 +528,7 @@ function initHeroSlider() {
         startTimer();
     };
 
-    // Init state (ProgressBar for 1st slide)
+    // 初始状态
     buttons.forEach((btn, idx) => {
         const bar = btn.querySelector('.hero-progress-bar');
         if (idx === 0) {
