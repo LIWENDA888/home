@@ -3,28 +3,26 @@
  */
 
 // ==============================================================
-// 1. HERO VIDEO CONFIGURATION (视频配置)
+// 1. HERO CONFIGURATION (图片版配置)
 // ==============================================================
+// 注意：这里我们直接复用之前的 poster 字段作为主图显示
 const HERO_CONFIG = [
     {
         label: "Qidian Sans",
         description: "自在起点黑：探索可变字体的新边界",
         poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/YAWh/1400X600/1-07.jpg/webp", 
-        videoUrl: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251216/71Zg/2.mp4", 
         link: "https://www.zizao.top/fonts/qidiansans"
     },
     {
         label: "Type Tools",
         description: "设计工具集：提升创作效率的利器",
         poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/xD17/1400X600/1-12.jpg/webp",
-        videoUrl: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251216/71Zg/2.mp4",
         link: "https://www.zizao.top/tools/txt"
     },
     {
         label: "Inspiration",
         description: "灵感百宝库：捕捉每一个创意瞬间",
         poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/hfoR/680X600/1-09.jpg/webp",
-        videoUrl: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251216/71Zg/2.mp4",
         link: "https://hao.zizao.top"
     }
 ];
@@ -392,6 +390,7 @@ function setupAccordion() {
 function setupAboutScrollSpy() {
     if (!window.location.pathname.includes('about')) return;
     
+    // Updated IDs
     const sections = ['vision', 'business', 'philosophy', 'clients', 'contact'];
     const navItems = document.querySelectorAll('.about-nav-btn');
     
@@ -423,10 +422,11 @@ function setupAboutScrollSpy() {
     };
 
     window.addEventListener('scroll', onScroll);
-    onScroll(); 
+    onScroll(); // Init
 }
 
-// ================= 8. HERO SLIDER (Ultimate Mobile Fix) =================
+// ================= 8. HERO SLIDER (IMAGE VERSION) =================
+// 彻底解决移动端视频自动播放和弹窗问题：改用带 Ken Burns 动画效果的图片
 function initHeroSlider() {
     const slidesContainer = document.getElementById('hero-slides');
     const controlsContainer = document.getElementById('hero-controls');
@@ -438,35 +438,21 @@ function initHeroSlider() {
     const totalSlides = HERO_CONFIG.length;
     let autoPlayTimer;
 
-    // 1. Render Video Slides
-    // 关键修正：
-    // - 移除了 'loop' 属性，改用 JS 监听 'ended'，防止 X5 内核播放结束后退出全屏
-    // - 添加了 x5-video-orientation="portrait"
-    // - 强制内联 pointer-events: none 防止点击穿透触发原生播放器
+    // 1. Render Image Slides (With CSS Animation Classes)
+    // 使用 img 标签替代 video，并增加 transition-transform 实现缓慢缩放效果
     slidesContainer.innerHTML = HERO_CONFIG.map((slide, index) => `
-        <a href="${slide.link}" target="_blank" class="hero-slide absolute inset-0 block size-full transition-opacity duration-1000 ease-in-out bg-black ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}" data-index="${index}">
-            <video 
-                class="size-full object-cover" 
-                style="pointer-events: none; width: 100%; height: 100%; object-fit: cover;" 
-                muted 
-                playsinline="true" 
-                webkit-playsinline="true" 
-                x5-playsinline=""
-                x5-video-player-type="h5-page"
-                x5-video-player-fullscreen="false"
-                x5-video-orientation="portrait"
-                t7-video-player-type="inline"
-                disablePictureInPicture
-                poster="${slide.poster}"
-                preload="${index === 0 ? 'auto' : 'none'}" 
+        <a href="${slide.link}" target="_blank" class="hero-slide absolute inset-0 block size-full transition-opacity duration-1000 ease-in-out bg-black overflow-hidden ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}" data-index="${index}">
+            <img 
+                src="${slide.poster}" 
+                alt="${slide.label}"
+                class="size-full object-cover transition-transform duration-[10000ms] ease-linear scale-100" 
+                style="will-change: transform;"
             >
-                <source src="${slide.videoUrl}" type="video/mp4">
-            </video>
             <div class="absolute inset-0 bg-black/20 pointer-events-none"></div>
         </a>
     `).join('');
 
-    // 2. Render Controls
+    // 2. Render Controls (Unchanged)
     controlsContainer.innerHTML = HERO_CONFIG.map((slide, index) => `
         <button class="hero-control-btn group flex items-center justify-between gap-4 py-3 pl-4 pr-2 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-lg border border-white/10 text-left transition-all duration-300 w-full md:w-64" data-index="${index}">
             <span class="text-xs font-bold uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">0${index + 1} &nbsp; ${slide.label}</span>
@@ -476,25 +462,6 @@ function initHeroSlider() {
         </button>
     `).join('');
 
-    // 初始化 Video 监听 (手动循环 + 自动播放)
-    const videos = document.querySelectorAll('video');
-    videos.forEach((vid, idx) => {
-        // 手动实现循环，避免 X5 内核播放结束自动退出H5模式
-        vid.addEventListener('ended', function() {
-            this.currentTime = 0;
-            this.play();
-        });
-
-        // 首个视频尝试自动播放
-        if (idx === 0) {
-            vid.muted = true; // 必须再次强制静音
-            const p = vid.play();
-            if(p !== undefined) {
-                p.catch(e => console.log("Auto-play prevented (OK):", e));
-            }
-        }
-    });
-
     const buttons = document.querySelectorAll('.hero-control-btn');
 
     // 3. Switch Logic
@@ -502,39 +469,31 @@ function initHeroSlider() {
         const slides = document.querySelectorAll('.hero-slide');
         const currentButtons = document.querySelectorAll('.hero-control-btn');
         
-        // Pause previous
-        const prevVideo = slides[activeIndex].querySelector('video');
-        if(prevVideo) {
-             prevVideo.pause();
-             prevVideo.currentTime = 0;
-        }
-
-        activeIndex = index;
-
-        // Toggle Visibility
+        // --- 核心动画逻辑 ---
+        // 1. 重置所有图片为 scale-100 (原始大小)
         slides.forEach(s => {
+            const img = s.querySelector('img');
+            img.classList.remove('scale-110'); 
+            img.classList.add('scale-100');
+            
             s.classList.remove('opacity-100', 'z-10');
             s.classList.add('opacity-0', 'z-0');
         });
-        slides[index].classList.remove('opacity-0', 'z-0');
-        slides[index].classList.add('opacity-100', 'z-10');
 
-        // Play Next
-        const nextVideo = slides[index].querySelector('video');
-        if(nextVideo) {
-            nextVideo.muted = true; // 切换时再次强制静音
-            nextVideo.currentTime = 0;
-            
-            const playPromise = nextVideo.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => { 
-                    // 即使播放失败（如省电模式），不报错，保持封面图显示
-                    console.log("Switch auto-play prevented:", error); 
-                });
-            }
-        }
+        // 2. 激活当前图片，并开始缓慢放大到 scale-110 (Ken Burns Effect)
+        activeIndex = index;
+        const activeSlide = slides[index];
+        activeSlide.classList.remove('opacity-0', 'z-0');
+        activeSlide.classList.add('opacity-100', 'z-10');
+        
+        // 稍微延迟一点加 scale 类，确保 transition 生效
+        setTimeout(() => {
+            const activeImg = activeSlide.querySelector('img');
+            activeImg.classList.remove('scale-100');
+            activeImg.classList.add('scale-110');
+        }, 50);
 
-        // Update Text
+        // --- 文字更新逻辑 ---
         if(descContainer) {
             descContainer.classList.remove('opacity-100', 'translate-y-0');
             descContainer.classList.add('opacity-0', 'translate-y-4');
@@ -546,7 +505,7 @@ function initHeroSlider() {
             }, 300);
         }
 
-        // Update Progress Bars
+        // --- 进度条逻辑 ---
         currentButtons.forEach((btn, idx) => {
             const bar = btn.querySelector('.hero-progress-bar');
             if (idx === index) {
@@ -603,5 +562,6 @@ function initHeroSlider() {
         }
     });
 
+    switchSlide(0); // Run initial slide
     startTimer();
 }
