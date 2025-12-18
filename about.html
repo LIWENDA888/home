@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>关于我们 - 自在造字</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
     <script>
@@ -13,6 +12,9 @@
         theme: {
           extend: {
             fontFamily: { sans: ['Inter', 'sans-serif'] },
+            colors: {
+                neutral: { 850: '#1f1f1f' }
+            }
           },
         },
       }
@@ -21,150 +23,168 @@
 <body class="bg-white text-gray-900 dark:bg-neutral-950 dark:text-gray-100 flex flex-col min-h-screen">
     <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-md dark:border-neutral-900 dark:bg-neutral-950/90"></nav>
 
-    <main class="animate-fade-in mx-auto max-w-[1800px] px-6 pt-32 lg:px-12 pb-20 flex-1">
+    <main class="animate-fade-in mx-auto max-w-[1800px] px-6 pt-32 lg:px-12 pb-20 flex-1 w-full">
         
-        <!-- Header -->
-        <header class="mb-32 lg:mb-48">
-            <h1 class="text-[12vw] leading-[0.8] font-black uppercase tracking-tighter mix-blend-difference mb-12">
+        <header class="mb-32 lg:mb-48 border-b border-gray-100 dark:border-neutral-800 pb-24">
+            <h1 class="text-[12vw] leading-[0.8] font-black uppercase tracking-tighter mix-blend-difference mb-24 select-none">
                 ZizaoType<br />
                 Studio.<br />
             </h1>
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 border-t border-black dark:border-white pt-8">
-                <div class="lg:col-span-4 text-sm font-mono uppercase tracking-widest text-gray-500">
-                    2025-2026 / 自在造字
-                </div>
+
+            <div id="vision" class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
+                
                 <div class="lg:col-span-8">
-                    <p class="text-2xl lg:text-4xl font-light leading-tight">
-                        双眼洞察品牌美学，双手构建参数化逻辑<br>
-                        为您实现字体可变、可控、可迭代的解决方案
-                    </p>
+                    <h2 class="text-3xl lg:text-5xl font-bold leading-tight mb-8 tracking-tight">
+                        打破静态的枷锁，<br>
+                        让汉字在屏幕上自由呼吸。
+                    </h2>
+                    <div class="text-lg text-gray-600 dark:text-gray-400 leading-relaxed max-w-2xl space-y-6">
+                        <p>自在造字（ZizaoType）专注中文可变字体技术。我们坚信，未来的字体不仅是信息的载体，更是品牌与用户交互的情感触点。</p>
+                        <p>通过精准的参数控制，我们为每一个笔画注入逻辑与生命，构建可变、可控、可生长的视觉声音系统。</p>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-4 flex flex-row lg:flex-col gap-12 lg:gap-8 lg:pt-2">
+                    <div>
+                        <div class="text-4xl font-black mb-1">2025</div>
+                        <div class="text-xs text-gray-400 uppercase tracking-widest font-mono">Est. Shanghai</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-black mb-1">Variable</div>
+                        <div class="text-xs text-gray-400 uppercase tracking-widest font-mono">Core Tech</div>
+                    </div>
                 </div>
             </div>
         </header>
 
-        <div class="flex flex-col lg:flex-row gap-16 lg:gap-24">
-            <!-- Sticky Navigation -->
-            <aside class="hidden lg:block w-48 shrink-0 sticky top-32 h-fit">
-                <nav class="flex flex-col gap-4 text-sm">
-                    <a href="#vision" class="about-nav-btn text-gray-400 hover:text-black dark:hover:text-white transition-colors">01. 品牌介绍</a>
-                    <a href="#business" class="about-nav-btn text-gray-400 hover:text-black dark:hover:text-white transition-colors">02. 核心业务</a>
-                    <a href="#docs" class="about-nav-btn text-gray-400 hover:text-black dark:hover:text-white transition-colors">03. 说明文档</a>
-                    <a href="#contact" class="about-nav-btn text-gray-400 hover:text-black dark:hover:text-white transition-colors">04. 联系我们</a>
+        <div class="flex flex-col lg:flex-row gap-16 lg:gap-32">
+            <aside class="hidden lg:block w-48 shrink-0 sticky top-40 h-fit z-10">
+                <nav class="flex flex-col gap-6 text-sm relative">
+                    <div class="absolute -left-6 top-0 bottom-0 w-px bg-gray-100 dark:bg-neutral-800"></div>
+                    <a href="#vision" class="about-nav-btn group flex items-center gap-3 text-gray-400 hover:text-black dark:hover:text-white transition-colors">
+                        <span class="font-mono text-[10px] opacity-50 group-hover:opacity-100">01</span>
+                        <span>品牌理念</span>
+                    </a>
+                    <a href="#business" class="about-nav-btn group flex items-center gap-3 text-gray-400 hover:text-black dark:hover:text-white transition-colors">
+                        <span class="font-mono text-[10px] opacity-50 group-hover:opacity-100">02</span>
+                        <span>核心业务</span>
+                    </a>
+                    <a href="#docs" class="about-nav-btn group flex items-center gap-3 text-gray-400 hover:text-black dark:hover:text-white transition-colors">
+                        <span class="font-mono text-[10px] opacity-50 group-hover:opacity-100">03</span>
+                        <span>资源文档</span>
+                    </a>
+                    <a href="#contact" class="about-nav-btn group flex items-center gap-3 text-gray-400 hover:text-black dark:hover:text-white transition-colors">
+                        <span class="font-mono text-[10px] opacity-50 group-hover:opacity-100">04</span>
+                        <span>联系我们</span>
+                    </a>
                 </nav>
             </aside>
 
-            <!-- Content -->
-            <div class="flex-1 space-y-32">
+            <div class="flex-1 space-y-40">
                 
-                <!-- 01 Brand Intro (Vision) -->
-                <section id="vision" class="scroll-mt-32">
-                    <div class="relative aspect-video w-full overflow-hidden rounded-none mb-12 grayscale hover:grayscale-0 transition-all duration-700">
-                        <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp" class="size-full object-cover">
-                        <div class="absolute bottom-4 left-4 text-white text-xs font-mono uppercase">"Desperate love"</div>
+                <section id="business" class="scroll-mt-40">
+                    <div class="flex items-end justify-between mb-12">
+                        <h2 class="text-sm font-bold uppercase tracking-widest text-gray-400">Our Services / 核心业务</h2>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        <h2 class="text-4xl font-bold">无拘束、自设计</h2>
-                        <div class="space-y-6 text-lg text-gray-600 dark:text-gray-400">
-                            <p>自在造字是一家专注中文可变字体开发的独立字体工作室。</p>
-                            <p>我们坚信未来字体不仅是信息的载体，“会动的字体“才是人类情感与产品的扩音器。</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 border-t border-l border-gray-200 dark:border-neutral-800">
+                        <div class="group relative p-10 lg:p-14 border-b border-r border-gray-200 dark:border-neutral-800 hover:bg-gray-50 dark:hover:bg-neutral-900 transition-colors h-[22rem] flex flex-col justify-between overflow-hidden cursor-default select-none">
+                            <div>
+                                <div class="mb-4 size-10 rounded-full bg-black text-white dark:bg-white dark:text-black flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">Aa</div>
+                                <h3 class="text-2xl font-bold mb-2">Retail Fonts<br>商业字库</h3>
+                            </div>
+                            <div class="relative z-10">
+                                <p class="text-gray-500 dark:text-neutral-400 text-sm max-w-sm">提供高质量、技术领先的零售字体产品。支持 Desktop、Web、App 等多场景授权。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="group relative p-10 lg:p-14 border-b border-r border-gray-200 dark:border-neutral-800 hover:bg-gray-50 dark:hover:bg-neutral-900 transition-colors h-[22rem] flex flex-col justify-between overflow-hidden cursor-default select-none">
+                            <div>
+                                <div class="mb-4 size-10 rounded-full border border-gray-300 dark:border-neutral-700 flex items-center justify-center font-bold text-lg group-hover:border-black dark:group-hover:border-white transition-colors">Be</div>
+                                <h3 class="text-2xl font-bold mb-2">Bespoke<br>品牌定制</h3>
+                            </div>
+                            <div class="relative z-10">
+                                <p class="text-gray-500 dark:text-neutral-400 text-sm max-w-sm">为企业量身打造品牌专用字体。从 Logotype 到整套字库，构建统一的视觉声音。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="group relative p-10 lg:p-14 border-b border-r border-gray-200 dark:border-neutral-800 hover:bg-gray-50 dark:hover:bg-neutral-900 transition-colors h-[22rem] flex flex-col justify-between overflow-hidden cursor-default select-none">
+                            <div>
+                                <div class="mb-4 size-10 rounded-full border border-gray-300 dark:border-neutral-700 flex items-center justify-center font-bold text-lg group-hover:border-black dark:group-hover:border-white transition-colors">En</div>
+                                <h3 class="text-2xl font-bold mb-2">Engineering<br>字体工程</h3>
+                            </div>
+                            <div class="relative z-10">
+                                <p class="text-gray-500 dark:text-neutral-400 text-sm max-w-sm">屏幕显示优化 (Hinting)、OpenType 特性开发、可变字体技术支持与咨询。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="group relative p-10 lg:p-14 border-b border-r border-gray-200 dark:border-neutral-800 hover:bg-gray-50 dark:hover:bg-neutral-900 transition-colors h-[22rem] flex flex-col justify-between overflow-hidden cursor-default select-none">
+                            <div>
+                                <div class="mb-4 size-10 rounded-full border border-gray-300 dark:border-neutral-700 flex items-center justify-center font-bold text-lg group-hover:border-black dark:group-hover:border-white transition-colors">Gl</div>
+                                <h3 class="text-2xl font-bold mb-2">Global Match<br>全球匹配</h3>
+                            </div>
+                            <div class="relative z-10">
+                                <p class="text-gray-500 dark:text-neutral-400 text-sm max-w-sm">多语言字符集匹配。确保您的品牌在中、日、韩及西文环境下保持一致的风格。</p>
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- 02 Main Business (Grid) -->
-                <section id="business" class="scroll-mt-32">
-                    <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-8">我们的四大核心产品</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-gray-200 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-800">
-                        <!-- Item 1 -->
-                        <a href="fonts.html" target="_blank" class="bg-white dark:bg-neutral-950 p-8 h-72 flex flex-col justify-between group transition-colors">
-                            <div>
-                                <h3 class="text-2xl font-bold mb-3">字体产品</h3>
-                                <p class="text-gray-500 dark:text-neutral-400 text-sm leading-relaxed">提供原创设计的高质量商业字库产品，满足多样的视觉需求。</p>
+                <section id="docs" class="scroll-mt-40">
+                    <h2 class="text-sm font-bold uppercase tracking-widest text-gray-400 mb-8">Documents / 说明文档</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 bg-gray-200 dark:bg-neutral-800 gap-px border border-gray-200 dark:border-neutral-800">
+                        <a href="docs.html?section=copyright" target="_blank" class="bg-white dark:bg-neutral-950 p-10 group hover:bg-gray-50 dark:hover:bg-neutral-900 transition-colors">
+                            <div class="flex justify-between items-start mb-6">
+                                <span class="text-xs uppercase tracking-widest font-mono text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors">01 Copyright</span>
+                                <svg class="w-5 h-5 text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </div>
-                            <div class="flex items-end justify-between">
-                                <div class="flex items-center justify-center size-8 rounded-full border border-gray-200 dark:border-neutral-800 text-gray-400 group-hover:text-black dark:group-hover:text-white group-hover:border-black dark:group-hover:border-white transition-all">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path></svg>
-                                </div>
-                                <span class="text-xs uppercase tracking-widest font-mono text-gray-400 group-hover:text-black dark:group-hover:text-white border-b border-transparent group-hover:border-black dark:group-hover:border-white transition-all pb-0.5">Retail</span>
-                            </div>
+                            <h3 class="text-xl font-bold mb-2">版权说明</h3>
+                            <p class="text-sm text-gray-500 dark:text-neutral-400">了解字体软件的知识产权归属，以及我们如何保护原创设计。</p>
                         </a>
-                        
-                        <!-- Item 2 -->
-                        <a href="licensing.html" target="_blank" class="bg-white dark:bg-neutral-950 p-8 h-72 flex flex-col justify-between group transition-colors">
-                            <div>
-                                <h3 class="text-2xl font-bold mb-3">轻定制字体</h3>
-                                <p class="text-gray-500 dark:text-neutral-400 text-sm leading-relaxed">为企业打造独一无二的品牌专用字体，构建统一的视觉声音。</p>
+
+                        <a href="docs.html?section=licensing" target="_blank" class="bg-white dark:bg-neutral-950 p-10 group hover:bg-gray-50 dark:hover:bg-neutral-900 transition-colors">
+                            <div class="flex justify-between items-start mb-6">
+                                <span class="text-xs uppercase tracking-widest font-mono text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors">02 Licensing</span>
+                                <svg class="w-5 h-5 text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </div>
-                            <div class="flex items-end justify-between">
-                                <div class="flex items-center justify-center size-8 rounded-full border border-gray-200 dark:border-neutral-800 text-gray-400 group-hover:text-black dark:group-hover:text-white group-hover:border-black dark:group-hover:border-white transition-all">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path></svg>
-                                </div>
-                                <span class="text-xs uppercase tracking-widest font-mono text-gray-400 group-hover:text-black dark:group-hover:text-white border-b border-transparent group-hover:border-black dark:group-hover:border-white transition-all pb-0.5">Bespoke</span>
-                            </div>
+                            <h3 class="text-xl font-bold mb-2">授权说明</h3>
+                            <p class="text-sm text-gray-500 dark:text-neutral-400">详细解读个人、商业及企业定制等不同类型的授权范围与权益。</p>
                         </a>
-                        
-                        <!-- Item 3 -->
-                        <a href="licensing.html" target="_blank" class="bg-white dark:bg-neutral-950 p-8 h-72 flex flex-col justify-between group transition-colors">
-                            <div>
-                                <h3 class="text-2xl font-bold mb-3">设计百宝库</h3>
-                                <p class="text-gray-500 dark:text-neutral-400 text-sm leading-relaxed">屏幕显示优化 (Hinting)、OpenType 特性开发及可变字体技术支持。</p>
+
+                        <a href="docs.html?section=terms" target="_blank" class="bg-white dark:bg-neutral-950 p-10 group hover:bg-gray-50 dark:hover:bg-neutral-900 transition-colors">
+                            <div class="flex justify-between items-start mb-6">
+                                <span class="text-xs uppercase tracking-widest font-mono text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors">03 Terms</span>
+                                <svg class="w-5 h-5 text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </div>
-                            <div class="flex items-end justify-between">
-                                <div class="flex items-center justify-center size-8 rounded-full border border-gray-200 dark:border-neutral-800 text-gray-400 group-hover:text-black dark:group-hover:text-white group-hover:border-black dark:group-hover:border-white transition-all">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path></svg>
-                                </div>
-                                <span class="text-xs uppercase tracking-widest font-mono text-gray-400 group-hover:text-black dark:group-hover:text-white border-b border-transparent group-hover:border-black dark:group-hover:border-white transition-all pb-0.5">Engineering</span>
-                            </div>
+                            <h3 class="text-xl font-bold mb-2">使用条款</h3>
+                            <p class="text-sm text-gray-500 dark:text-neutral-400">下载或购买字体前须知的法律协议，包含禁止转售、修改限制等条款。</p>
                         </a>
-                        
-                        <!-- Item 4 -->
-                        <a href="licensing.html" target="_blank" class="bg-white dark:bg-neutral-950 p-8 h-72 flex flex-col justify-between group transition-colors">
-                            <div>
-                                <h3 class="text-2xl font-bold mb-3">超引形近字</h3>
-                                <p class="text-gray-500 dark:text-neutral-400 text-sm leading-relaxed">提供多语言字符集匹配与咨询，确保全球范围内的品牌形象统一。</p>
+
+                        <a href="docs.html?section=faq" target="_blank" class="bg-white dark:bg-neutral-950 p-10 group hover:bg-gray-50 dark:hover:bg-neutral-900 transition-colors">
+                            <div class="flex justify-between items-start mb-6">
+                                <span class="text-xs uppercase tracking-widest font-mono text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors">04 FAQ</span>
+                                <svg class="w-5 h-5 text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </div>
-                            <div class="flex items-end justify-between">
-                                <div class="flex items-center justify-center size-8 rounded-full border border-gray-200 dark:border-neutral-800 text-gray-400 group-hover:text-black dark:group-hover:text-white group-hover:border-black dark:group-hover:border-white transition-all">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path></svg>
-                                </div>
-                                <span class="text-xs uppercase tracking-widest font-mono text-gray-400 group-hover:text-black dark:group-hover:text-white border-b border-transparent group-hover:border-black dark:group-hover:border-white transition-all pb-0.5">Global</span>
-                            </div>
+                            <h3 class="text-xl font-bold mb-2">常见问题</h3>
+                            <p class="text-sm text-gray-500 dark:text-neutral-400">关于商标注册、多设备安装、发票开具等常见疑问的快速解答。</p>
                         </a>
                     </div>
                 </section>
 
-                <!-- 03 Docs Resources (Grid) -->
-                <section id="docs" class="scroll-mt-32">
-                    <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-8">说明文档</h2>
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-px bg-gray-200 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-800">
-                        <a href="https://www.zizao.top/docs?section=copyright" target="_blank" class="bg-white dark:bg-neutral-950 p-8 aspect-square flex flex-col justify-between group hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors">
-                            <span class="text-2xl font-bold">版权说明</span>
-                            <span class="text-xs uppercase tracking-widest font-mono">Copyright</span>
-                        </a>
-                        <a href="https://www.zizao.top/docs?section=licensing" target="_blank" class="bg-white dark:bg-neutral-950 p-8 aspect-square flex flex-col justify-between group hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors">
-                            <span class="text-2xl font-bold">授权说明</span>
-                            <span class="text-xs uppercase tracking-widest font-mono">Licensing</span>
-                        </a>
-                        <a href="https://www.zizao.top/docs?section=terms" target="_blank" class="bg-white dark:bg-neutral-950 p-8 aspect-square flex flex-col justify-between group hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors">
-                            <span class="text-2xl font-bold">使用条款</span>
-                            <span class="text-xs uppercase tracking-widest font-mono">Terms</span>
-                        </a>
-                        <a href="https://www.zizao.top/docs?section=faq" target="_blank" class="bg-white dark:bg-neutral-950 p-8 aspect-square flex flex-col justify-between group hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors">
-                            <span class="text-2xl font-bold">其他问题</span>
-                            <span class="text-xs uppercase tracking-widest font-mono">FAQ</span>
-                        </a>
-                    </div>
-                </section>
-
-                <!-- 04 Contact -->
-                <section id="contact" class="scroll-mt-32">
-                    <div class="bg-black text-white dark:bg-white dark:text-black p-12 lg:p-24 rounded-[2rem] text-center">
-                        <h2 class="text-5xl md:text-7xl font-black mb-8 tracking-tighter">与我们联系</h2>
-                        <p class="text-lg opacity-80 mb-12 max-w-lg mx-auto">无论是授权咨询，或是字体定制，我们都期待与您交流</p>
-                        <a href="type@zizao.top" class="inline-flex items-center gap-2 border-b-2 border-white dark:border-black pb-1 text-xl font-bold hover:opacity-70 transition-opacity">
-                            type@zizao.top
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                        </a>
+                <section id="contact" class="scroll-mt-40">
+                    <div class="bg-black text-white dark:bg-white dark:text-black p-12 lg:p-24 rounded-[2rem] text-center relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-white/5 dark:bg-black/5 scale-0 group-hover:scale-150 transition-transform duration-1000 rounded-full blur-3xl"></div>
+                        <div class="relative z-10">
+                            <h2 class="text-4xl md:text-7xl font-black mb-8 tracking-tighter">Let's Talk.</h2>
+                            <p class="text-lg opacity-80 mb-12 max-w-lg mx-auto leading-relaxed">
+                                无论是字体授权咨询，还是品牌定制合作，<br>我们都期待与您交流。
+                            </p>
+                            <a href="mailto:type@zizao.top" class="inline-flex items-center gap-3 border-b-2 border-white dark:border-black pb-1 text-2xl font-bold hover:opacity-70 transition-opacity">
+                                type@zizao.top
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                            </a>
+                        </div>
                     </div>
                 </section>
 
