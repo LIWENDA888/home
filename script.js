@@ -453,10 +453,14 @@ function initHeroSlider() {
         </button>
     `).join('');
 
+    // 【关键修复】：这里需要显式获取一次 buttons 元素，否则下面的 switchSlide 和事件绑定找不到 buttons 变量
+    const buttons = document.querySelectorAll('.hero-control-btn');
+
     // 3. Switch Logic
     const switchSlide = (index) => {
         const slides = document.querySelectorAll('.hero-slide');
-        const buttons = document.querySelectorAll('.hero-control-btn');
+        // 虽然外部有定义 buttons，但函数内部重新获取也没问题，保证引用最新
+        const currentButtons = document.querySelectorAll('.hero-control-btn');
         
         const prevVideo = slides[activeIndex].querySelector('video');
         if(prevVideo) prevVideo.pause();
@@ -491,7 +495,7 @@ function initHeroSlider() {
             }, 300);
         }
 
-        buttons.forEach((btn, idx) => {
+        currentButtons.forEach((btn, idx) => {
             const bar = btn.querySelector('.hero-progress-bar');
             if (idx === index) {
                 btn.classList.add('bg-white/20', 'border-white/30');
@@ -511,6 +515,7 @@ function initHeroSlider() {
     };
 
     // 4. Events
+    // 【修复】：这里引用了上方新定义的 buttons 变量
     buttons.forEach(btn => {
         btn.addEventListener('click', () => {
             const idx = parseInt(btn.dataset.index);
