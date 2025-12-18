@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自在造字 - 以可变自在致远</title>
-    <meta name="description" content="以可变 · 致自在Free via Variable">
+    <title>自在造字 - Variable Infinite</title>
+    <meta name="description" content="以可变 · 致自在 Free via Variable">
     <script src="https://cdn.tailwindcss.com?v=3.4.5"></script>
     <link rel="stylesheet" href="styles.css">
     <script>
@@ -12,7 +12,10 @@
         darkMode: 'class',
         theme: {
           extend: {
-            fontFamily: { sans: ['Inter', 'sans-serif'] },
+            fontFamily: { 
+                sans: ['Inter', 'sans-serif'],
+                mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace']
+            },
             colors: { brand: { 50: '#f9fafb', 900: '#111827' } }
           },
         },
@@ -27,46 +30,93 @@
             document.body.style.opacity = '1';
         });
     </script>
-
-    <link rel="stylesheet" href="/index.css">
 </head>
 <body class="bg-white text-gray-900 dark:bg-neutral-950 dark:text-gray-100 transition-colors duration-500 flex flex-col min-h-screen">
     
-    <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-white/0 backdrop-blur-sm dark:border-white/5 dark:bg-black/0 hover:bg-white/90 dark:hover:bg-neutral-950/90 transition-all duration-500"></nav>
+    <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 border-b border-white/0 bg-white/0 backdrop-blur-sm dark:border-white/0 dark:bg-black/0 hover:bg-white/90 dark:hover:bg-neutral-950/90 transition-all duration-500"></nav>
 
     <main class="animate-fade-in w-full flex-1">
         
-        <section id="hero-slider-container" class="relative w-full h-[100dvh] overflow-hidden bg-black">
-            <div id="hero-slides" class="absolute inset-0 size-full"></div>
-
-            <div class="absolute inset-0 z-20 pointer-events-none flex flex-col justify-between px-6 pb-12 pt-32 lg:px-12">
+        <section class="relative w-full pt-32 pb-12 lg:pt-40 lg:pb-20 px-6 lg:px-12 max-w-[1920px] mx-auto min-h-[90vh] flex flex-col justify-center">
+            
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-8 lg:mb-16 gap-8 relative z-10">
+                <h1 class="text-[12vw] lg:text-[9vw] leading-[0.85] font-black tracking-tighter uppercase mix-blend-difference text-black dark:text-white select-none">
+                    Variable<br>
+                    <span class="text-gray-200 dark:text-neutral-800 transition-colors duration-500">Infinite.</span>
+                </h1>
                 
-                <div class="text-center md:text-left mt-20 md:mt-0">
-                </div>
-
-                <div class="flex flex-col md:flex-row items-end justify-between gap-8">
-                    <div class="max-w-md text-white/80 pointer-events-auto">
-                        <p id="hero-desc" class="text-lg font-medium leading-relaxed drop-shadow-md transition-all duration-500 transform translate-y-0 opacity-100">
-                            自在起点黑：探索可变字体的新边界
-                        </p>
-                    </div>
-
-                    <div id="hero-controls" class="pointer-events-auto flex flex-col gap-2 min-w-[200px]">
+                <div class="flex flex-col items-start lg:items-end gap-4 lg:pb-4">
+                    <p class="text-xs font-mono text-gray-400 dark:text-neutral-600 uppercase tracking-widest text-right hidden lg:block">
+                        Shanghai, CN <br>
+                        Est. 2025
+                    </p>
+                    <div class="overflow-hidden h-8 lg:h-10">
+                         <div id="hero-dynamic-desc" class="text-xl lg:text-3xl font-bold text-black dark:text-white transition-transform duration-500">
+                            Loading...
                         </div>
+                    </div>
                 </div>
             </div>
-            
-            <div class="absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none"></div>
-        </section>
 
-        <section id="featured-work" class="mx-auto max-w-[1800px] px-6 lg:px-12 mb-32 pt-24 border-t border-transparent">
-            <div class="mb-8 flex items-end justify-between border-b border-gray-100 pb-4 dark:border-neutral-800">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[50vh] lg:h-[65vh]">
+                
+                <div class="lg:col-span-3 flex flex-col gap-4 order-2 lg:order-1 h-full">
+                    
+                    <div class="flex-1 bg-gray-50 dark:bg-neutral-900 rounded-2xl p-8 border border-gray-100 dark:border-neutral-800 flex flex-col justify-between group relative overflow-hidden transition-colors duration-500">
+                        <div class="relative z-10">
+                            <span class="text-[10px] font-mono text-gray-400 uppercase tracking-widest block mb-3">Featured Font</span>
+                            <h2 id="hero-title-display" class="text-3xl lg:text-4xl font-black leading-none mb-2 transition-all duration-500">
+                                Qidian Sans
+                            </h2>
+                            <span id="hero-subtitle-display" class="inline-block px-2 py-1 bg-black text-white dark:bg-white dark:text-black text-[10px] font-bold uppercase tracking-wider rounded-md">
+                                v1.0 Beta
+                            </span>
+                        </div>
+
+                        <div class="relative z-10 space-y-4 font-mono text-[10px] text-gray-400 dark:text-neutral-500 pt-8 border-t border-gray-200 dark:border-neutral-800 mt-auto">
+                            <div class="flex justify-between items-center">
+                                <span>AXES</span>
+                                <span class="font-bold text-black dark:text-white">Weight, Width</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>GLYPHS</span>
+                                <span class="font-bold text-black dark:text-white">7,284</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>LICENSE</span>
+                                <span class="font-bold text-black dark:text-white">Commercial / Free</span>
+                            </div>
+                        </div>
+                        
+                        <div id="hero-index-bg" class="absolute -right-6 -bottom-10 text-[140px] leading-none font-black text-white dark:text-neutral-800 opacity-100 dark:opacity-40 select-none pointer-events-none transition-all duration-500 text-shadow-card">01</div>
+                    </div>
+
+                    <div id="hero-controls-mini" class="flex gap-2 h-16 shrink-0">
+                        </div>
+                </div>
+
+                <div class="lg:col-span-9 relative order-1 lg:order-2 rounded-2xl overflow-hidden bg-gray-100 dark:bg-neutral-800 shadow-sm transition-colors duration-500">
+                    <div id="hero-slides" class="absolute inset-0 size-full">
+                        </div>
+                    
+                    <div class="absolute bottom-6 right-6 z-20">
+                        <a id="hero-cta-btn" href="#" target="_blank" class="group flex items-center gap-3 bg-white/90 dark:bg-black/80 backdrop-blur-xl px-6 py-4 rounded-full text-sm font-bold shadow-2xl hover:scale-105 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300 border border-white/20">
+                            <span>查看详情</span>
+                            <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        <section id="featured-work" class="mx-auto max-w-[1800px] px-6 lg:px-12 mb-32 pt-12 border-t border-transparent">
+            <div class="mb-10 flex items-end justify-between border-b border-gray-100 pb-4 dark:border-neutral-800">
                 <div class="flex items-center gap-3">
                     <div class="h-2 w-2 rounded-full bg-black dark:bg-white"></div>
-                    <h2 class="text-sm font-bold uppercase tracking-widest text-gray-900 dark:text-white">为您推荐的字体产品</h2>
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-gray-900 dark:text-white">Selected Typefaces</h2>
                 </div>
-                <a href="fonts.html" class="group flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-black dark:text-neutral-400 dark:hover:text-white">
-                    全部
+                <a href="fonts.html" class="group flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-black dark:hover:text-white transition-colors">
+                    View All
                     <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                 </a>
             </div>
@@ -74,9 +124,9 @@
         </section>
 
         <section class="mx-auto max-w-[1800px] px-6 lg:px-12 mb-24">
-            <div class="mb-8 flex items-center gap-3 border-b border-gray-100 pb-4 dark:border-neutral-800">
+            <div class="mb-10 flex items-center gap-3 border-b border-gray-100 pb-4 dark:border-neutral-800">
                 <div class="h-2 w-2 rounded-full bg-gray-300 dark:bg-neutral-700"></div>
-                <h2 class="text-sm font-bold uppercase tracking-widest text-gray-500">为您推荐的设计工具</h2>
+                <h2 class="text-xs font-bold uppercase tracking-widest text-gray-500">Design Tools</h2>
             </div>
             <div id="tools-grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"></div>
         </section>
@@ -88,13 +138,13 @@
     <script src="script.js"></script>
     
     <script>
-        // Data for Home Page (Bottom Grid)
+        // Data for Home Page Grid
         const HOME_FONTS = [
             {
                 title: '自在起点黑 (Qidian Sans)',
                 subtitle: '免费商用 • 双轴可变',
                 imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/YAWh/1400X600/1-07.jpg/webp',
-                link: 'https://www.zizao.top/fonts/qidiansans', 
+                link: 'fonts/zizaizhisans.html', 
                 colSpan: 'md:col-span-2',
                 rowSpan: 'md:row-span-2',
             },
@@ -107,7 +157,7 @@
                 rowSpan: 'md:row-span-2',
             },
             {
-                title: '虚位以待',
+                title: 'Coming Soon',
                 subtitle: '敬请期待',
                 imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp',
                 link: '#',
@@ -115,21 +165,21 @@
                 rowSpan: 'md:row-span-2',
             },
             {
-                title: '虚位以待',
+                title: 'Coming Soon',
                 subtitle: '敬请期待',
                 imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp',
                 link: '#',
                 colSpan: 'md:col-span-1',
             },
             {
-                title: '虚位以待',
+                title: 'Coming Soon',
                 subtitle: '敬请期待',
                 imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp',
                 link: '#',
                 colSpan: 'md:col-span-1',
             },
             {
-                title: '虚位以待',
+                title: 'Coming Soon',
                 subtitle: '敬请期待',
                 imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/rpgw/1400X600/222.jpg/webp',
                 link: '#',
@@ -141,9 +191,7 @@
             { title: '设计导航', subtitle: '设计师的灵感百宝库', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/hfoR/680X600/1-09.jpg/webp', link: 'https://hao.zizao.top', colSpan: 'md:col-span-1' },
             { title: '文本编辑器Pro', subtitle: 'web端TXT编辑器', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/EiE8/680X600/1-10.jpg/webp', link: 'https://tools.zizao.top/txt', colSpan: 'md:col-span-1' },
             { title: '超引-形近字查询', subtitle: '独家整理的设计师“造字神器“', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/clE7/1400X600/1-11.jpg/webp', link: 'https://tools.zizao.top/chaoyin', colSpan: 'md:col-span-2' },
-            { title: '设计百宝库', subtitle: 'AI提示词 • 字体 • 设计资源', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/xD17/1400X600/1-12.jpg/webp', link: 'https://bao.zizao.top', colSpan: 'md:col-span-2' },
-            { title: '虚位以待', subtitle: '敬请期待', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp', link: '#', colSpan: 'md:col-span-1' },
-            { title: '虚位以待', subtitle: '敬请期待', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp', link: '#', colSpan: 'md:col-span-1' }
+            { title: '设计百宝库', subtitle: 'AI提示词 • 字体 • 设计资源', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/xD17/1400X600/1-12.jpg/webp', link: 'https://bao.zizao.top', colSpan: 'md:col-span-2' }
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -153,6 +201,5 @@
             if (toolsContainer) toolsContainer.innerHTML = HOME_TOOLS.map(item => createBentoCard(item)).join('');
         });
     </script>
-<script type="module" src="/index.tsx"></script>
 </body>
 </html>
