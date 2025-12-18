@@ -16,14 +16,17 @@
                 sans: ['Inter', 'sans-serif'],
                 mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace']
             },
-            colors: { brand: { 50: '#f9fafb', 900: '#111827' } }
+            colors: { brand: { 50: '#f9fafb', 900: '#111827' } },
+            transitionTimingFunction: {
+                'out-expo': 'cubic-bezier(0.19, 1, 0.22, 1)',
+            }
           },
         },
       }
     </script>
     
     <style>
-        body { opacity: 0; transition: opacity 0.3s ease-in; }
+        body { opacity: 0; transition: opacity 0.5s ease-out; }
     </style>
     <script>
         window.addEventListener('load', function() {
@@ -33,58 +36,32 @@
 </head>
 <body class="bg-white text-gray-900 dark:bg-neutral-950 dark:text-gray-100 transition-colors duration-500 flex flex-col min-h-screen">
     
-    <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 border-b border-white/0 bg-white/0 backdrop-blur-sm dark:border-white/0 dark:bg-black/0 hover:bg-white/90 dark:hover:bg-neutral-950/90 transition-all duration-500"></nav>
+    <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 h-20 border-b border-gray-100 bg-white/90 backdrop-blur-md dark:border-neutral-900 dark:bg-neutral-950/90 transition-all duration-500"></nav>
 
-    <main class="animate-fade-in w-full flex-1">
+    <main class="animate-fade-in w-full flex-1 pt-20">
         
-        <section class="relative w-full pt-24 pb-8 lg:pt-32 lg:pb-12 mx-auto max-w-[1800px] px-6 lg:px-12 flex flex-col justify-center">
+        <section class="relative w-full h-[65vh] md:h-[75vh] min-h-[500px] overflow-hidden bg-gray-100 dark:bg-neutral-900 rounded-b-3xl md:rounded-b-[2rem] group select-none shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)]">
             
-            <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-8 lg:mb-10 gap-8 relative z-10 border-b border-gray-100 dark:border-neutral-800 pb-8">
-                <h1 class="text-[10vw] lg:text-[7vw] leading-[0.85] font-black tracking-tighter uppercase mix-blend-difference text-black dark:text-white select-none">
-                     可变，才自在<br>
-                    <span class="text-gray-300 dark:text-neutral-800 transition-colors duration-500">ZIZAO.TOP.</span>
-                </h1>
-                
-                <div class="hidden lg:block pb-1 text-right">
-                    <p class="text-xs font-mono text-gray-400 dark:text-neutral-600 uppercase tracking-widest mb-1">
-                        Variable Infinite.
-                    </p>
-                    <p class="text-sm font-bold">
-                        可变，才自在
-                    </p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[40vh] lg:h-[50vh]">
-                
-                <div class="lg:col-span-4 order-2 lg:order-1 h-full">
-                    <div class="h-full bg-gray-50 dark:bg-neutral-900/50 rounded-2xl p-6 lg:p-8 flex flex-col justify-center border border-gray-100 dark:border-neutral-800 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-                            <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
-                        </div>
-                        
-                        <div id="hero-menu" class="flex flex-col gap-3 relative z-10">
-                            </div>
+            <a id="hero-image-link" href="#" target="_blank" class="block absolute inset-0 z-0 overflow-hidden rounded-b-3xl md:rounded-b-[2rem]">
+                <div id="hero-slides" class="size-full">
                     </div>
-                </div>
+                
+                <div class="absolute inset-x-0 bottom-0 h-32 md:h-40 bg-gradient-to-t from-black/40 to-transparent pointer-events-none transition-opacity duration-700"></div>
+            </a>
 
-                <a id="hero-image-link" href="#" target="_blank" class="lg:col-span-8 relative order-1 lg:order-2 rounded-2xl bg-gray-100 dark:bg-neutral-900 shadow-sm transition-all duration-500 group cursor-pointer block h-[35vh] lg:h-auto overflow-hidden ring-1 ring-black/5 dark:ring-white/10 hover:shadow-2xl hover:ring-black/10 dark:hover:ring-white/20">
-                    <div id="hero-slides" class="absolute inset-0 size-full">
-                        </div>
-                </a>
-
+            <div class="absolute bottom-6 md:bottom-10 inset-x-0 z-20 px-4 pointer-events-none">
+                <div id="hero-menu" class="mx-auto w-full max-w-[90vw] md:max-w-fit flex items-center justify-center gap-2 md:gap-3 pointer-events-auto">
+                     </div>
             </div>
+
         </section>
-        <section id="featured-work" class="mx-auto max-w-[1800px] px-6 lg:px-12 mb-32 pt-8 border-t border-transparent">
+
+        <section id="featured-work" class="mx-auto max-w-[1800px] px-6 lg:px-12 mb-32 pt-20 md:pt-24">
             <div class="mb-10 flex items-end justify-between border-b border-gray-100 pb-4 dark:border-neutral-800">
                 <div class="flex items-center gap-3">
                     <div class="h-2 w-2 rounded-full bg-black dark:bg-white"></div>
-                    <h2 class="text-xs font-bold uppercase tracking-widest text-gray-900 dark:text-white">Selected Typefaces</h2>
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-gray-900 dark:text-white">字体产品推荐</h2>
                 </div>
-                <a href="fonts.html" class="group flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-black dark:hover:text-white transition-colors">
-                    View All
-                    <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </a>
             </div>
             <div id="featured-grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"></div>
         </section>
@@ -92,7 +69,7 @@
         <section class="mx-auto max-w-[1800px] px-6 lg:px-12 mb-24">
             <div class="mb-10 flex items-center gap-3 border-b border-gray-100 pb-4 dark:border-neutral-800">
                 <div class="h-2 w-2 rounded-full bg-gray-300 dark:bg-neutral-700"></div>
-                <h2 class="text-xs font-bold uppercase tracking-widest text-gray-500">Design Tools</h2>
+                <h2 class="text-xs font-bold uppercase tracking-widest text-gray-500">设计工具推荐</h2>
             </div>
             <div id="tools-grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"></div>
         </section>
@@ -104,7 +81,7 @@
     <script src="script.js"></script>
     
     <script>
-        // Data for Home Page Grid (保持不变)
+        // Data (保持不变)
         const HOME_FONTS = [
             {
                 title: '自在起点黑 (Qidian Sans)',
@@ -157,7 +134,9 @@
             { title: '设计导航', subtitle: '设计师的灵感百宝库', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/hfoR/680X600/1-09.jpg/webp', link: 'https://hao.zizao.top', colSpan: 'md:col-span-1' },
             { title: '文本编辑器Pro', subtitle: 'web端TXT编辑器', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/EiE8/680X600/1-10.jpg/webp', link: 'https://tools.zizao.top/txt', colSpan: 'md:col-span-1' },
             { title: '超引-形近字查询', subtitle: '独家整理的设计师“造字神器“', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/clE7/1400X600/1-11.jpg/webp', link: 'https://tools.zizao.top/chaoyin', colSpan: 'md:col-span-2' },
-            { title: '设计百宝库', subtitle: 'AI提示词 • 字体 • 设计资源', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/xD17/1400X600/1-12.jpg/webp', link: 'https://bao.zizao.top', colSpan: 'md:col-span-2' }
+            { title: '设计百宝库', subtitle: 'AI提示词 • 字体 • 设计资源', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/xD17/1400X600/1-12.jpg/webp', link: 'https://bao.zizao.top', colSpan: 'md:col-span-2' },
+            { title: 'Coming Soon', subtitle: '敬请期待', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp', link: 'https://tools.zizao.top/txt', colSpan: 'md:col-span-1' },
+            { title: 'Coming Soon', subtitle: '敬请期待', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp', link: 'https://tools.zizao.top/txt', colSpan: 'md:col-span-1' }
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
