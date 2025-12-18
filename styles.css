@@ -61,11 +61,17 @@ main {
 }
 .animate-fade-in { animation: fadeIn 0.7s ease-out forwards; }
 
-/* Hero Transitions */
-#hero-title-display, 
-#hero-dynamic-desc {
-    will-change: transform, opacity;
-    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+/* Hero Menu Animation */
+.hero-menu-item h3 {
+    will-change: color, font-size;
+}
+
+/* Hero Image Hover Effect */
+#hero-image-link img {
+    transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+#hero-image-link:hover img {
+    transform: scale(1.02);
 }
 
 /* Back to Top Button */

@@ -8,19 +8,19 @@
 const HERO_CONFIG = [
     {
         label: "Qidian Sans",
-        description: "探索可变字体的新边界",
+        description: "自在起点黑：探索可变字体的新边界",
         poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/YAWh/1400X600/1-07.jpg/webp", 
         link: "fonts/zizaizhisans.html"
     },
     {
         label: "Type Tools",
-        description: "提升创作效率的利器",
+        description: "设计工具集：提升创作效率的利器",
         poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/xD17/1400X600/1-12.jpg/webp",
         link: "https://www.zizao.top/tools/txt"
     },
     {
         label: "Inspiration",
-        description: "捕捉每一个创意瞬间",
+        description: "灵感百宝库：捕捉每一个创意瞬间",
         poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/hfoR/680X600/1-09.jpg/webp",
         link: "https://hao.zizao.top"
     }
@@ -421,140 +421,134 @@ function setupAboutScrollSpy() {
     window.addEventListener('scroll', onScroll);
     onScroll(); 
 }
+/**
+ * TYPEFOUNDRY STUDIO - CORE LOGIC
+ */
+/**
+ * TYPEFOUNDRY STUDIO - CORE LOGIC
+ */
 
-// ================= 8. HERO SLIDER (REFACTORED - TECH DESIGN) =================
+// ================= 8. HERO SLIDER (OUTLINE & BIG INDEX VERSION) =================
 function initHeroSlider() {
     const slidesContainer = document.getElementById('hero-slides');
-    const controlsContainer = document.getElementById('hero-controls-mini');
+    const menuContainer = document.getElementById('hero-menu');
+    const imageLink = document.getElementById('hero-image-link');
     
-    // 文本元素
-    const titleDisplay = document.getElementById('hero-title-display');
-    const descDisplay = document.getElementById('hero-dynamic-desc');
-    const indexBg = document.getElementById('hero-index-bg');
-    const ctaBtn = document.getElementById('hero-cta-btn');
-    
-    if (!slidesContainer || !controlsContainer) return;
+    if (!slidesContainer || !menuContainer) return;
 
-    // 清理可能存在的硬编码遮罩
+    // 清理遗留 DOM
     if (slidesContainer.parentElement) {
         const siblings = slidesContainer.parentElement.children;
         for (let el of siblings) {
             if (el.id !== 'hero-slides' && el.tagName === 'DIV' && el.className.includes('absolute') && el.className.includes('z-')) {
-                 // 保持结构干净
+                 // Remove legacy if needed
             }
         }
     }
 
     let activeIndex = 0;
-    const totalSlides = HERO_CONFIG.length;
-    let autoPlayTimer;
 
-    // 1. 渲染图片 (Slides)
+    // 模拟元数据
+    const META_DATA = [
+        { axes: "Weight, Width", glyphs: "7,284", ver: "v1.0 Beta" },
+        { axes: "Tool, Utility", glyphs: "N/A", ver: "v2.4" },
+        { axes: "Inspiration", glyphs: "∞", ver: "Daily Upd" }
+    ];
+
+    // 1. 渲染图片
     slidesContainer.innerHTML = HERO_CONFIG.map((slide, index) => `
-        <div class="hero-slide absolute inset-0 size-full transition-all duration-1000 cubic-bezier(0.22, 1, 0.36, 1) ${index === 0 ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-105 z-0'}" data-index="${index}">
+        <div class="hero-slide absolute inset-0 size-full transition-all duration-700 cubic-bezier(0.25, 0.46, 0.45, 0.94) ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}" data-index="${index}">
             <img 
                 src="${slide.poster}" 
                 alt="${slide.label}"
                 class="size-full object-cover select-none"
                 draggable="false"
             >
-            <div class="absolute inset-0 bg-black/5 dark:bg-black/20"></div> 
+            <div class="absolute inset-0 bg-black/5 dark:bg-black/20 pointer-events-none"></div>
         </div>
     `).join('');
 
-    // 2. 渲染控制条 (Mini Controls)
-    controlsContainer.innerHTML = HERO_CONFIG.map((slide, index) => `
-        <button class="hero-mini-btn relative flex-1 bg-white border border-gray-200 dark:bg-neutral-800 dark:border-neutral-700 rounded-lg overflow-hidden group hover:border-black dark:hover:border-white transition-colors cursor-pointer" data-index="${index}">
-            <div class="absolute inset-x-0 bottom-0 h-1 bg-gray-200 dark:bg-neutral-700">
-                <div class="hero-progress-bar h-full bg-black dark:bg-white w-0"></div>
-            </div>
-            <span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors">0${index + 1}</span>
-        </button>
-    `).join('');
+    // 2. 渲染左侧垂直菜单 (大序号 + 描边)
+    const renderMenu = () => {
+        menuContainer.innerHTML = HERO_CONFIG.map((slide, index) => {
+            const isActive = index === activeIndex;
+            const meta = META_DATA[index] || { axes: "-", glyphs: "-" };
+            
+            // 样式逻辑：
+            // - 选中：border-black (黑框), shadow (阴影), scale (微放大)
+            // - 未选中：border-transparent (透明框), opacity-60 (半透明)
+            // - 大序号：absolute right-2 bottom-0, 字体极大, 颜色极浅
+            
+            return `
+            <div class="hero-menu-item group cursor-pointer relative overflow-hidden rounded-xl border-2 transition-all duration-300 ease-out px-6 
+                ${isActive 
+                    ? 'border-black dark:border-white shadow-lg py-6 opacity-100 scale-[1.02] bg-white dark:bg-black' 
+                    : 'border-transparent py-4 opacity-60 hover:opacity-100 hover:bg-white/50 dark:hover:bg-neutral-800/50 hover:shadow-sm'}" 
+                data-index="${index}">
+                
+                <span class="absolute -bottom-5 -right-2 text-7xl font-black italic tracking-tighter select-none transition-colors duration-300 z-0
+                    ${isActive ? 'text-gray-100 dark:text-neutral-800' : 'text-gray-200/50 dark:text-neutral-800/50'}">
+                    0${index + 1}
+                </span>
 
-    const miniButtons = document.querySelectorAll('.hero-mini-btn');
+                <div class="relative z-10">
+                    <h3 class="${isActive ? 'text-3xl font-black text-black dark:text-white' : 'text-xl font-bold text-gray-500 dark:text-neutral-500 group-hover:text-black dark:group-hover:text-white'} transition-all duration-300 leading-none mb-2">
+                        ${slide.label}
+                    </h3>
+
+                    <div class="overflow-hidden transition-all duration-500 ease-out ${isActive ? 'max-h-40 opacity-100 mt-3' : 'max-h-0 opacity-0 mt-0'}">
+                        <p class="text-sm font-medium text-gray-600 dark:text-neutral-400 mb-5 max-w-[90%] leading-relaxed">
+                            ${slide.description}
+                        </p>
+                        
+                        <div class="flex gap-8 font-mono text-xs font-medium uppercase tracking-wider">
+                            <div>
+                                <span class="block text-gray-400 dark:text-neutral-600 mb-1 text-[10px]">Axes</span>
+                                <span class="text-black dark:text-white">${meta.axes}</span>
+                            </div>
+                            <div>
+                                <span class="block text-gray-400 dark:text-neutral-600 mb-1 text-[10px]">Glyphs</span>
+                                <span class="text-black dark:text-white">${meta.glyphs}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }).join('');
+        
+        document.querySelectorAll('.hero-menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const newIndex = parseInt(item.dataset.index);
+                if (newIndex !== activeIndex) {
+                    switchSlide(newIndex);
+                }
+            });
+        });
+    };
 
     // 3. 切换逻辑
     const switchSlide = (index) => {
         activeIndex = index;
+        
         const slides = document.querySelectorAll('.hero-slide');
-        const slideData = HERO_CONFIG[index];
-
-        // A. 图片切换 (带缩放效果)
         slides.forEach((s, idx) => {
             if (idx === index) {
-                s.classList.remove('opacity-0', 'scale-105', 'z-0');
-                s.classList.add('opacity-100', 'scale-100', 'z-10');
+                s.classList.remove('opacity-0', 'z-0');
+                s.classList.add('opacity-100', 'z-10');
             } else {
-                s.classList.remove('opacity-100', 'scale-100', 'z-10');
-                s.classList.add('opacity-0', 'scale-105', 'z-0');
+                s.classList.remove('opacity-100', 'z-10');
+                s.classList.add('opacity-0', 'z-0');
             }
         });
 
-        // B. 文本更新 (带淡入淡出动画)
-        const updateText = (element, text) => {
-            if(!element) return;
-            element.style.opacity = '0';
-            element.style.transform = 'translateY(20px)';
-            setTimeout(() => {
-                element.innerText = text;
-                element.style.opacity = '1';
-                element.style.transform = 'translateY(0)';
-            }, 300); // 300ms 与 CSS transition 匹配
-        };
+        if (imageLink) {
+            imageLink.href = HERO_CONFIG[index].link;
+        }
 
-        if(titleDisplay) updateText(titleDisplay, slideData.label);
-        if(descDisplay) updateText(descDisplay, slideData.description);
-        if(indexBg) indexBg.innerText = `0${index + 1}`;
-        if(ctaBtn) ctaBtn.href = slideData.link;
-
-        // C. 进度条更新
-        miniButtons.forEach((btn, idx) => {
-            const bar = btn.querySelector('.hero-progress-bar');
-            const span = btn.querySelector('span');
-            
-            // 重置
-            bar.style.transition = 'none';
-            bar.style.width = '0%';
-            span.classList.remove('text-black', 'dark:text-white');
-            span.classList.add('text-gray-400');
-
-            if (idx === index) {
-                span.classList.remove('text-gray-400');
-                span.classList.add('text-black', 'dark:text-white');
-                
-                // 强制重绘
-                void bar.offsetWidth; 
-                
-                // 启动动画
-                bar.style.transition = 'width 5s linear';
-                bar.style.width = '100%';
-            }
-        });
-    };
-
-    // 4. 事件绑定
-    miniButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            resetTimer();
-            switchSlide(parseInt(btn.dataset.index));
-        });
-    });
-
-    // 5. 定时器逻辑
-    const startTimer = () => {
-        autoPlayTimer = setInterval(() => {
-            const next = (activeIndex + 1) % totalSlides;
-            switchSlide(next);
-        }, 5000); 
-    };
-
-    const resetTimer = () => {
-        clearInterval(autoPlayTimer);
-        startTimer();
+        renderMenu();
     };
 
     // 初始化
-    switchSlide(0);
-    startTimer();
+    renderMenu();
 }
