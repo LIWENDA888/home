@@ -11,7 +11,7 @@ const SHARED_NAV_HTML = `
 <div class="mx-auto flex h-20 max-w-[1800px] items-center justify-between px-6 lg:px-12 relative z-[110]">
     <!-- Logo -->
     <a href="https://www.zizao.top" class="flex items-center gap-2 hover:opacity-80 transition-opacity z-[110]">
-        <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/BOEv/249X79/logo.png/webp" alt="Logo" class="nav-logo h-7 w-auto object-contain">
+        <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251218/mAPB/logo.svg" alt="Logo" class="nav-logo h-7 w-auto object-contain">
     </a>
 
     <!-- Desktop Menu (Pure Flat Links) -->
@@ -114,7 +114,7 @@ const SHARED_FOOTER_HTML = `
         <div class="flex flex-col sm:flex-row gap-6">
              <div class="flex items-center gap-4 rounded-xl bg-gray-50 p-4 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800">
                 <div class="size-20 overflow-hidden rounded-lg bg-white shadow-sm dark:bg-neutral-800">
-                  <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/4dAf/251X251/iwg.webp/webp" class="size-full object-cover">
+                  <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251218/ZcSq/251X251/iwg.webp/webp" class="size-full object-cover">
                 </div>
                 <div class="flex flex-col gap-1">
                   <span class="text-sm font-bold text-gray-900 dark:text-white">公众号</span>
@@ -123,7 +123,7 @@ const SHARED_FOOTER_HTML = `
              </div>
              <div class="flex items-center gap-4 rounded-xl bg-gray-50 p-4 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800">
                 <div class="size-20 overflow-hidden rounded-lg bg-white shadow-sm dark:bg-neutral-800">
-                  <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/HGRq/251X251/iwx.webp/webp" class="size-full object-cover">
+                  <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251218/Hd0f/251X251/iwx.webp/webp" class="size-full object-cover">
                 </div>
                 <div class="flex flex-col gap-1">
                   <span class="text-sm font-bold text-gray-900 dark:text-white">添加微信</span>
