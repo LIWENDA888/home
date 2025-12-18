@@ -1,24 +1,25 @@
-
-
 /**
  * TYPEFOUNDRY STUDIO - CORE LOGIC
  */
 
 // ==============================================================
-// 1. HERO VIDEO CONFIGURATION (在此处修改视频和链接)
+// 1. HERO VIDEO CONFIGURATION (已优化：增加 poster 封面图)
 // ==============================================================
 const HERO_CONFIG = [
     {
         // 视频 1
-        label: "Qidian Sans",           // 右下角按钮显示的文字
-        description: "自在起点黑：探索可变字体的新边界", // 视频左下角的描述文字
-        videoUrl: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251216/71Zg/2.mp4", // 视频地址 (MP4)
-        link: "https://www.zizao.top/fonts/qidiansans" // 点击视频跳转的地址
+        label: "Qidian Sans",
+        description: "自在起点黑：探索可变字体的新边界",
+        // 使用产品图作为封面，避免黑屏
+        poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/YAWh/1400X600/1-07.jpg/webp", 
+        videoUrl: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251216/71Zg/2.mp4", 
+        link: "https://www.zizao.top/fonts/qidiansans"
     },
     {
         // 视频 2
         label: "Type Tools",
         description: "设计工具集：提升创作效率的利器",
+        poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/xD17/1400X600/1-12.jpg/webp",
         videoUrl: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251216/71Zg/2.mp4",
         link: "https://www.zizao.top/tools/txt"
     },
@@ -26,6 +27,7 @@ const HERO_CONFIG = [
         // 视频 3
         label: "Inspiration",
         description: "灵感百宝库：捕捉每一个创意瞬间",
+        poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/hfoR/680X600/1-09.jpg/webp",
         videoUrl: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251216/71Zg/2.mp4",
         link: "https://hao.zizao.top"
     }
@@ -42,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupGlobalImageViewer();
     injectBackToTop(); 
     
-    // Updated: Load the new video slider
+    // Updated: Load the optimized video slider
     initHeroSlider(); 
     
     initDocsNavigation();
@@ -72,8 +74,7 @@ function updateIcons(isDark) {
         
         const logos = document.querySelectorAll('.nav-logo');
         logos.forEach(logo => {
-            // Invert logo color for dark mode if needed, or keep white for hero section overlay
-            // Note: On hero section, nav might be transparent, so handle accordingly
+            // Invert logo color for dark mode if needed
             logo.style.filter = isDark ? 'brightness(0) invert(1)' : 'none';
         });
     }, 50);
@@ -104,7 +105,6 @@ function initScrollLogic() {
         
         // Smart Nav
         if (nav) {
-            // Only hide if scrolled down significantly
             if (currentScrollY > lastScrollY && currentScrollY > 100) {
                 nav.classList.add('nav-hidden');
                 nav.classList.remove('nav-visible');
@@ -269,6 +269,7 @@ function initDocsNavigation() {
 // ================= 5. Bento Card Generator =================
 function createBentoCard(item) {
     const href = item.link || '#';
+    // Updated: Always use target="_blank" and ensure links work
     return `
         <a href="${href}" target="_blank" class="group relative isolate overflow-hidden rounded-2xl bg-gray-200 dark:bg-neutral-800 ${item.colSpan || 'md:col-span-1'} ${item.rowSpan || 'md:row-span-1'} min-h-[300px] lg:min-h-[360px] block transition-all duration-500 ease-out hover:shadow-2xl hover:-translate-y-1">
             <div class="absolute inset-0 size-full overflow-hidden rounded-2xl">
@@ -426,23 +427,29 @@ function setupAboutScrollSpy() {
     });
 }
 
-// ================= 8. NEW: Hero Slider Logic =================
+// ================= 8. NEW: Hero Slider Logic (已优化性能) =================
 function initHeroSlider() {
     const slidesContainer = document.getElementById('hero-slides');
     const controlsContainer = document.getElementById('hero-controls');
     const descContainer = document.getElementById('hero-desc');
     
-    // Safety check if elements exist
     if (!slidesContainer || !controlsContainer) return;
 
     let activeIndex = 0;
     const totalSlides = HERO_CONFIG.length;
     let autoPlayTimer;
 
-    // 1. Render Video Slides (Hidden by default except first)
+    // 1. Render Video Slides
+    // 优化：使用 poster 防止黑屏；仅第一个视频 preload="auto" 和 autoplay；其他视频 lazyload
     slidesContainer.innerHTML = HERO_CONFIG.map((slide, index) => `
         <a href="${slide.link}" target="_blank" class="hero-slide absolute inset-0 block size-full transition-opacity duration-1000 ease-in-out bg-black cursor-pointer ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}" data-index="${index}">
-            <video class="size-full object-cover" autoplay muted loop playsinline poster="">
+            <video 
+                class="size-full object-cover" 
+                muted loop playsinline 
+                poster="${slide.poster}"
+                preload="${index === 0 ? 'auto' : 'none'}" 
+                ${index === 0 ? 'autoplay' : ''}
+            >
                 <source src="${slide.videoUrl}" type="video/mp4">
             </video>
         </a>
@@ -458,14 +465,18 @@ function initHeroSlider() {
         </button>
     `).join('');
 
-    // 3. Switch Logic
+    // 3. Switch Logic (手动播放控制)
     const switchSlide = (index) => {
         const slides = document.querySelectorAll('.hero-slide');
         const buttons = document.querySelectorAll('.hero-control-btn');
-        const prevIndex = activeIndex;
+        
+        // 暂停上一个视频，节省资源
+        const prevVideo = slides[activeIndex].querySelector('video');
+        if(prevVideo) prevVideo.pause();
+
         activeIndex = index;
 
-        // Update Videos
+        // 切换 Slide 显示
         slides.forEach(s => {
             s.classList.remove('opacity-100', 'z-10');
             s.classList.add('opacity-0', 'z-0');
@@ -473,11 +484,20 @@ function initHeroSlider() {
         slides[index].classList.remove('opacity-0', 'z-0');
         slides[index].classList.add('opacity-100', 'z-10');
 
-        // Reset videos (optional, to restart loop on switch)
-        // const video = slides[index].querySelector('video');
-        // if(video) video.currentTime = 0;
+        // 播放当前视频 (处理 Lazy Load)
+        const nextVideo = slides[index].querySelector('video');
+        if(nextVideo) {
+            nextVideo.currentTime = 0; // 重置进度
+            const playPromise = nextVideo.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    // 浏览器策略可能阻止自动播放，静默失败即可
+                    console.log("Auto-play prevented (user interaction needed):", error);
+                });
+            }
+        }
 
-        // Update Description with fade effect
+        // 更新文案
         if(descContainer) {
             descContainer.classList.remove('opacity-100', 'translate-y-0');
             descContainer.classList.add('opacity-0', 'translate-y-4');
@@ -489,17 +509,17 @@ function initHeroSlider() {
             }, 300);
         }
 
-        // Update Buttons Styling
+        // 更新按钮进度条样式
         buttons.forEach((btn, idx) => {
             const bar = btn.querySelector('.hero-progress-bar');
             
             if (idx === index) {
                 btn.classList.add('bg-white/20', 'border-white/30');
                 btn.classList.remove('bg-white/5', 'border-white/10');
-                // Animate progress bar
+                // 动画重置
                 bar.style.width = '0%';
                 setTimeout(() => {
-                    bar.style.transition = 'width 5s linear'; // 5s match interval
+                    bar.style.transition = 'width 5s linear'; // 5s 与定时器匹配
                     bar.style.width = '100%';
                 }, 50);
             } else {
@@ -535,6 +555,7 @@ function initHeroSlider() {
     };
 
     // Initial Start
+    // 这里调用 switchSlide(0) 来初始化第一个按钮的状态和文字
     switchSlide(0);
     startTimer();
 }

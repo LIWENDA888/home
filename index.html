@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>自在造字 - 以可变自在致远</title>
     <meta name="description" content="以可变 · 致自在Free via Variable">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?v=3.4.5"></script>
     <link rel="stylesheet" href="styles.css">
     <script>
       tailwind.config = {
@@ -18,50 +18,47 @@
         },
       }
     </script>
-<link rel="stylesheet" href="/index.css">
+    
+    <style>
+        body { opacity: 0; transition: opacity 0.3s ease-in; }
+    </style>
+    <script>
+        window.addEventListener('load', function() {
+            document.body.style.opacity = '1';
+        });
+    </script>
+
+    <link rel="stylesheet" href="/index.css">
 </head>
-<!-- Removed pt-32 from main to allow video to be full screen behind nav -->
 <body class="bg-white text-gray-900 dark:bg-neutral-950 dark:text-gray-100 transition-colors duration-500 flex flex-col min-h-screen">
     
     <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-white/0 backdrop-blur-sm dark:border-white/5 dark:bg-black/0 hover:bg-white/90 dark:hover:bg-neutral-950/90 transition-all duration-500"></nav>
 
-    <!-- Main Content Wrapper -->
     <main class="animate-fade-in w-full flex-1">
         
-        <!-- NEW: Full Screen Hero Video Slider -->
-        <!-- 这里的 h-screen 代表全屏高度 -->
-        <section id="hero-slider-container" class="relative w-full h-screen overflow-hidden bg-black">
-            <!-- Videos will be injected here by script.js -->
+        <section id="hero-slider-container" class="relative w-full h-[100dvh] overflow-hidden bg-black">
             <div id="hero-slides" class="absolute inset-0 size-full"></div>
 
-            <!-- Overlay Content (Title & Controls) -->
             <div class="absolute inset-0 z-20 pointer-events-none flex flex-col justify-between px-6 pb-12 pt-32 lg:px-12">
                 
-                <!-- Center/Top Branding -->
                 <div class="text-center md:text-left mt-20 md:mt-0">
                 </div>
 
-                <!-- Bottom Area -->
                 <div class="flex flex-col md:flex-row items-end justify-between gap-8">
-                    <!-- Left: Description -->
                     <div class="max-w-md text-white/80 pointer-events-auto">
                         <p id="hero-desc" class="text-lg font-medium leading-relaxed drop-shadow-md transition-all duration-500 transform translate-y-0 opacity-100">
-                            Loading description...
+                            自在起点黑：探索可变字体的新边界
                         </p>
                     </div>
 
-                    <!-- Right: Video Selector -->
                     <div id="hero-controls" class="pointer-events-auto flex flex-col gap-2 min-w-[200px]">
-                        <!-- Buttons injected by JS -->
-                    </div>
+                        </div>
                 </div>
             </div>
             
-            <!-- Dark Gradient Overlay for readability -->
             <div class="absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none"></div>
         </section>
 
-        <!-- Featured Work Section (Added padding-top since we removed it from main) -->
         <section id="featured-work" class="mx-auto max-w-[1800px] px-6 lg:px-12 mb-32 pt-24 border-t border-transparent">
             <div class="mb-8 flex items-end justify-between border-b border-gray-100 pb-4 dark:border-neutral-800">
                 <div class="flex items-center gap-3">
