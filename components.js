@@ -18,7 +18,7 @@ const SHARED_NAV_HTML = `
     <div class="hidden items-center gap-8 md:flex h-full">
         <a href="https://www.zizao.top/fonts" class="text-xs uppercase tracking-widest text-gray-500 hover:text-black dark:text-neutral-500 dark:hover:text-white nav-link transition-colors" data-page="products">字体产品</a>
         <a href="https://www.zizao.top/licensing" class="text-xs uppercase tracking-widest text-gray-500 hover:text-black dark:text-neutral-500 dark:hover:text-white nav-link transition-colors" data-page="licensing">授权定制</a>
-        <a href="https://www.zizao.top/dock" class="text-xs uppercase tracking-widest text-gray-500 hover:text-black dark:text-neutral-500 dark:hover:text-white nav-link transition-colors" data-page="docs">帮助中心</a>
+        <a href="https://www.zizao.top/docs" class="text-xs uppercase tracking-widest text-gray-500 hover:text-black dark:text-neutral-500 dark:hover:text-white nav-link transition-colors" data-page="docs">帮助中心</a>
         <a href="https://www.zizao.top/about" class="text-xs uppercase tracking-widest text-gray-500 hover:text-black dark:text-neutral-500 dark:hover:text-white nav-link transition-colors" data-page="about">关于我们</a>
         
         <div class="h-4 w-px bg-gray-200 dark:bg-neutral-800"></div>
