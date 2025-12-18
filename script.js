@@ -392,7 +392,6 @@ function setupAccordion() {
 function setupAboutScrollSpy() {
     if (!window.location.pathname.includes('about')) return;
     
-    // Updated IDs
     const sections = ['vision', 'business', 'philosophy', 'clients', 'contact'];
     const navItems = document.querySelectorAll('.about-nav-btn');
     
@@ -424,10 +423,10 @@ function setupAboutScrollSpy() {
     };
 
     window.addEventListener('scroll', onScroll);
-    onScroll(); // Init
+    onScroll(); 
 }
 
-// ================= 8. HERO SLIDER (Mobile Optimized) =================
+// ================= 8. HERO SLIDER (Ultimate Mobile Fix) =================
 function initHeroSlider() {
     const slidesContainer = document.getElementById('hero-slides');
     const controlsContainer = document.getElementById('hero-controls');
@@ -439,23 +438,27 @@ function initHeroSlider() {
     const totalSlides = HERO_CONFIG.length;
     let autoPlayTimer;
 
-    // 1. Render Video Slides (ULTIMATE MOBILE FIX)
-    // Key attributes added: pointer-events: none, x5-video-player-type, playsinline strategies
+    // 1. Render Video Slides
+    // 关键修正：
+    // - 移除了 'loop' 属性，改用 JS 监听 'ended'，防止 X5 内核播放结束后退出全屏
+    // - 添加了 x5-video-orientation="portrait"
+    // - 强制内联 pointer-events: none 防止点击穿透触发原生播放器
     slidesContainer.innerHTML = HERO_CONFIG.map((slide, index) => `
         <a href="${slide.link}" target="_blank" class="hero-slide absolute inset-0 block size-full transition-opacity duration-1000 ease-in-out bg-black ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}" data-index="${index}">
             <video 
                 class="size-full object-cover" 
-                style="pointer-events: none;" 
+                style="pointer-events: none; width: 100%; height: 100%; object-fit: cover;" 
                 muted 
-                loop 
                 playsinline="true" 
                 webkit-playsinline="true" 
                 x5-playsinline=""
                 x5-video-player-type="h5-page"
                 x5-video-player-fullscreen="false"
+                x5-video-orientation="portrait"
+                t7-video-player-type="inline"
+                disablePictureInPicture
                 poster="${slide.poster}"
                 preload="${index === 0 ? 'auto' : 'none'}" 
-                ${index === 0 ? 'autoplay' : ''}
             >
                 <source src="${slide.videoUrl}" type="video/mp4">
             </video>
@@ -473,6 +476,25 @@ function initHeroSlider() {
         </button>
     `).join('');
 
+    // 初始化 Video 监听 (手动循环 + 自动播放)
+    const videos = document.querySelectorAll('video');
+    videos.forEach((vid, idx) => {
+        // 手动实现循环，避免 X5 内核播放结束自动退出H5模式
+        vid.addEventListener('ended', function() {
+            this.currentTime = 0;
+            this.play();
+        });
+
+        // 首个视频尝试自动播放
+        if (idx === 0) {
+            vid.muted = true; // 必须再次强制静音
+            const p = vid.play();
+            if(p !== undefined) {
+                p.catch(e => console.log("Auto-play prevented (OK):", e));
+            }
+        }
+    });
+
     const buttons = document.querySelectorAll('.hero-control-btn');
 
     // 3. Switch Logic
@@ -480,18 +502,16 @@ function initHeroSlider() {
         const slides = document.querySelectorAll('.hero-slide');
         const currentButtons = document.querySelectorAll('.hero-control-btn');
         
+        // Pause previous
         const prevVideo = slides[activeIndex].querySelector('video');
         if(prevVideo) {
-            // Do NOT pause immediately to avoid black blink on slow mobiles.
-            // Just let css opacity hide it, then pause after transition
-            setTimeout(() => {
-                 prevVideo.pause();
-                 prevVideo.currentTime = 0;
-            }, 1000);
+             prevVideo.pause();
+             prevVideo.currentTime = 0;
         }
 
         activeIndex = index;
 
+        // Toggle Visibility
         slides.forEach(s => {
             s.classList.remove('opacity-100', 'z-10');
             s.classList.add('opacity-0', 'z-0');
@@ -499,20 +519,22 @@ function initHeroSlider() {
         slides[index].classList.remove('opacity-0', 'z-0');
         slides[index].classList.add('opacity-100', 'z-10');
 
+        // Play Next
         const nextVideo = slides[index].querySelector('video');
         if(nextVideo) {
+            nextVideo.muted = true; // 切换时再次强制静音
             nextVideo.currentTime = 0;
-            nextVideo.muted = true; // Force mute again for mobile
-            const playPromise = nextVideo.play();
             
+            const playPromise = nextVideo.play();
             if (playPromise !== undefined) {
                 playPromise.catch(error => { 
-                    console.log("Auto-play prevented (Low Power Mode or Interaction needed). Poster will show.", error); 
-                    // No alert, just let the poster image sit there.
+                    // 即使播放失败（如省电模式），不报错，保持封面图显示
+                    console.log("Switch auto-play prevented:", error); 
                 });
             }
         }
 
+        // Update Text
         if(descContainer) {
             descContainer.classList.remove('opacity-100', 'translate-y-0');
             descContainer.classList.add('opacity-0', 'translate-y-4');
@@ -524,12 +546,15 @@ function initHeroSlider() {
             }, 300);
         }
 
+        // Update Progress Bars
         currentButtons.forEach((btn, idx) => {
             const bar = btn.querySelector('.hero-progress-bar');
             if (idx === index) {
                 btn.classList.add('bg-white/20', 'border-white/30');
                 btn.classList.remove('bg-white/5', 'border-white/10');
                 bar.style.width = '0%';
+                // Force Reflow
+                void bar.offsetWidth; 
                 setTimeout(() => {
                     bar.style.transition = 'width 5s linear';
                     bar.style.width = '100%';
@@ -565,6 +590,18 @@ function initHeroSlider() {
         startTimer();
     };
 
-    switchSlide(0);
+    // Init state (ProgressBar for 1st slide)
+    buttons.forEach((btn, idx) => {
+        const bar = btn.querySelector('.hero-progress-bar');
+        if (idx === 0) {
+            btn.classList.add('bg-white/20', 'border-white/30');
+            btn.classList.remove('bg-white/5', 'border-white/10');
+            setTimeout(() => {
+                bar.style.transition = 'width 5s linear';
+                bar.style.width = '100%';
+            }, 50);
+        }
+    });
+
     startTimer();
 }
