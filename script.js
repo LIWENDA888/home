@@ -392,6 +392,7 @@ function setupAccordion() {
 function setupAboutScrollSpy() {
     if (!window.location.pathname.includes('about')) return;
     
+    // Updated IDs
     const sections = ['vision', 'business', 'philosophy', 'clients', 'contact'];
     const navItems = document.querySelectorAll('.about-nav-btn');
     
@@ -399,7 +400,7 @@ function setupAboutScrollSpy() {
         let current = '';
         const scrollPosition = window.scrollY;
         
-        // Fix: Force select 'contact' if at bottom of page
+        // Force highlight last section if at bottom of page
         if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
             current = sections[sections.length - 1];
         } else {
@@ -423,7 +424,7 @@ function setupAboutScrollSpy() {
     };
 
     window.addEventListener('scroll', onScroll);
-    onScroll(); 
+    onScroll(); // Init
 }
 
 // ================= 8. HERO SLIDER (Mobile Optimized) =================
@@ -438,17 +439,20 @@ function initHeroSlider() {
     const totalSlides = HERO_CONFIG.length;
     let autoPlayTimer;
 
-    // 1. Render Video Slides (Added Mobile Attributes)
+    // 1. Render Video Slides (ULTIMATE MOBILE FIX)
+    // Key attributes added: pointer-events: none, x5-video-player-type, playsinline strategies
     slidesContainer.innerHTML = HERO_CONFIG.map((slide, index) => `
         <a href="${slide.link}" target="_blank" class="hero-slide absolute inset-0 block size-full transition-opacity duration-1000 ease-in-out bg-black ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}" data-index="${index}">
             <video 
-                class="size-full object-cover pointer-events-none" 
+                class="size-full object-cover" 
+                style="pointer-events: none;" 
                 muted 
                 loop 
                 playsinline="true" 
                 webkit-playsinline="true" 
+                x5-playsinline=""
                 x5-video-player-type="h5-page"
-                t7-video-player-type="inline"
+                x5-video-player-fullscreen="false"
                 poster="${slide.poster}"
                 preload="${index === 0 ? 'auto' : 'none'}" 
                 ${index === 0 ? 'autoplay' : ''}
@@ -478,8 +482,12 @@ function initHeroSlider() {
         
         const prevVideo = slides[activeIndex].querySelector('video');
         if(prevVideo) {
-            prevVideo.pause();
-            prevVideo.currentTime = 0; // Reset video to start
+            // Do NOT pause immediately to avoid black blink on slow mobiles.
+            // Just let css opacity hide it, then pause after transition
+            setTimeout(() => {
+                 prevVideo.pause();
+                 prevVideo.currentTime = 0;
+            }, 1000);
         }
 
         activeIndex = index;
@@ -494,10 +502,14 @@ function initHeroSlider() {
         const nextVideo = slides[index].querySelector('video');
         if(nextVideo) {
             nextVideo.currentTime = 0;
-            nextVideo.muted = true; 
+            nextVideo.muted = true; // Force mute again for mobile
             const playPromise = nextVideo.play();
+            
             if (playPromise !== undefined) {
-                playPromise.catch(error => { console.log("Auto-play prevented (User interaction needed):", error); });
+                playPromise.catch(error => { 
+                    console.log("Auto-play prevented (Low Power Mode or Interaction needed). Poster will show.", error); 
+                    // No alert, just let the poster image sit there.
+                });
             }
         }
 
