@@ -80,25 +80,43 @@ function injectBackToTop() {
     };
     document.body.appendChild(btn);
 }
-
 function initScrollLogic() {
     let lastScrollY = window.scrollY;
     const nav = document.getElementById('nav-placeholder');
+    const filterBar = document.getElementById('filter-bar'); // 新增：获取分类栏
+
     if(nav) nav.classList.add('nav-transition');
 
     window.addEventListener('scroll', () => {
         const currentScrollY = window.scrollY;
         const backToTop = document.getElementById('back-to-top');
         
+        // 1. 导航栏 & 分类栏 联动逻辑
         if (nav) {
+            // 向下滚动 且 超过一定距离 -> 隐藏导航栏
             if (currentScrollY > lastScrollY && currentScrollY > 100) {
                 nav.classList.add('nav-hidden');
                 nav.classList.remove('nav-visible');
+                
+                // 新增逻辑：导航隐藏了，分类栏要顶上去 (变成 top-0)
+                if (filterBar) {
+                    filterBar.classList.remove('top-20');
+                    filterBar.classList.add('top-0');
+                }
+
             } else {
+                // 向上滚动 -> 显示导航栏
                 nav.classList.remove('nav-hidden');
                 nav.classList.add('nav-visible');
+
+                // 新增逻辑：导航回来了，分类栏要让位 (变回 top-20)
+                if (filterBar) {
+                    filterBar.classList.remove('top-0');
+                    filterBar.classList.add('top-20');
+                }
             }
             
+            // 导航栏背景色逻辑 (保持不变)
             if (currentScrollY > 50) {
                 nav.classList.remove('bg-white/0', 'dark:bg-black/0', 'border-white/0', 'dark:border-white/0');
                 nav.classList.add('bg-white/90', 'dark:bg-neutral-950/90', 'border-gray-100', 'dark:border-neutral-900', 'backdrop-blur-md');
@@ -108,6 +126,7 @@ function initScrollLogic() {
             }
         }
 
+        // 2. 回到顶部按钮逻辑 (保持不变)
         if (backToTop) {
             if (currentScrollY > 300) backToTop.classList.add('visible');
             else backToTop.classList.remove('visible');
