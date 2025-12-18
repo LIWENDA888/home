@@ -75,7 +75,7 @@ const SHARED_NAV_HTML = `
         </nav>
         
         <div class="mt-8 mobile-nav-item" style="opacity: 0">
-             <p class="text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-neutral-700">© 自在造字Zizaizaozi.</p>
+             <p class="text-[10px] font-bold uppercase tracking-widest text-gray-300 dark:text-neutral-700">© 自在造字ZIZAO.TOP</p>
         </div>
     </div>
 </div>
