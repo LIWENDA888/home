@@ -17,8 +17,19 @@
                 mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace']
             },
             colors: { brand: { 50: '#f9fafb', 900: '#111827' } },
-            transitionTimingFunction: {
-                'out-expo': 'cubic-bezier(0.19, 1, 0.22, 1)',
+            animation: {
+                'fade-in': 'fadeIn 0.8s ease-out forwards',
+                'cursor-blink': 'blink 1s step-end infinite',
+            },
+            keyframes: {
+                fadeIn: {
+                    '0%': { opacity: 0, transform: 'translateY(10px)' },
+                    '100%': { opacity: 1, transform: 'translateY(0)' },
+                },
+                blink: {
+                    '0%, 100%': { opacity: 1 },
+                    '50%': { opacity: 0 },
+                }
             }
           },
         },
@@ -27,6 +38,52 @@
     
     <style>
         body { opacity: 0; transition: opacity 0.5s ease-out; }
+        
+        /* 堆栈卡片进入动画：从下方滑入，带有弹性 */
+        @keyframes slideInUp {
+            0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        /* 堆栈卡片移除动画：向上滑动并淡出 */
+        @keyframes slideOutUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+
+        .log-entry-in {
+            animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .log-entry-out {
+            animation: slideOutUp 0.4s ease-in forwards;
+        }
+
+        .bg-grid-pattern {
+            background-size: 40px 40px;
+            background-image: radial-gradient(circle, #000000 1px, transparent 1px);
+            opacity: 0.03;
+        }
+        .dark .bg-grid-pattern {
+            background-image: radial-gradient(circle, #ffffff 1px, transparent 1px);
+            opacity: 0.05;
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #000 0%, #555 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .dark .text-gradient {
+            background: linear-gradient(to right, #fff 0%, #aaa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 顶部遮罩：让旧消息优雅消失 */
+        .stack-mask {
+            mask-image: linear-gradient(to bottom, transparent, black 20%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%);
+        }
     </style>
     <script>
         window.addEventListener('load', function() {
@@ -34,135 +91,232 @@
         });
     </script>
 </head>
-<body class="bg-white text-gray-900 dark:bg-neutral-950 dark:text-gray-100 transition-colors duration-500 flex flex-col min-h-screen">
+<body class="bg-white text-gray-900 dark:bg-neutral-950 dark:text-gray-100 transition-colors duration-500 flex flex-col min-h-screen selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
     
-    <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 h-20 border-b border-gray-100 bg-white/90 backdrop-blur-md dark:border-neutral-900 dark:bg-neutral-950/90 transition-all duration-500"></nav>
+    <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-md dark:border-neutral-900 dark:bg-neutral-950/90 transition-all duration-500"></nav>
 
-    <main class="animate-fade-in w-full flex-1 pt-20">
+    <main class="w-full flex-1 pt-20">
         
-        <section class="relative w-full h-[40vh] md:h-[75vh] min-h-[260px] md:min-h-[500px] overflow-hidden bg-gray-100 dark:bg-neutral-900 rounded-b-3xl md:rounded-b-[2rem] group select-none shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)]">
+        <section class="relative w-full border-b border-gray-100 dark:border-neutral-900 overflow-hidden">
+            <div class="absolute inset-0 pointer-events-none bg-grid-pattern"></div>
             
-            <a id="hero-image-link" href="#" target="_blank" class="block absolute inset-0 z-0 overflow-hidden rounded-b-3xl md:rounded-b-[2rem]">
-                <div id="hero-slides" class="size-full">
+            <div class="mx-auto max-w-[1800px] px-6 lg:px-12 h-full">
+                <div class="grid grid-cols-1 lg:grid-cols-2 min-h-[65vh] items-center gap-8 lg:gap-20">
+                    
+                    <div class="relative z-10 animate-fade-in flex flex-col justify-center order-2 lg:order-1 py-10 lg:py-0">
+                        <div class="flex items-center gap-3 mb-6 opacity-60">
+                            <span class="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500">
+                                System Status: Operational
+                            </span>
+                        </div>
+
+                        <h1 class="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-[1.1] tracking-tighter select-none mb-6">
+                            <span class="block text-gray-900 dark:text-white">我们构建</span>
+                            <span class="block h-[1.2em] overflow-visible">
+                                 <span id="type-text" class="text-gradient"></span><span class="animate-cursor-blink ml-2 inline-block w-3 lg:w-4 h-[0.8em] bg-black dark:bg-white align-baseline"></span>
+                            </span>
+                        </h1>
+
+                        <p class="text-lg text-gray-500 dark:text-neutral-400 max-w-lg leading-relaxed mb-8">
+                            通过精准的几何构建与代码逻辑，<br>
+                            为屏幕阅读时代打造可变、可控的视觉声音。
+                        </p>
+
+                        <div class="flex flex-wrap gap-4">
+                            <a href="fonts.html" target="_blank" class="px-8 py-3.5 rounded-full bg-black text-white font-bold text-sm hover:bg-gray-800 transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200 shadow-lg shadow-black/5">
+                                浏览字体目录
+                            </a>
+                            <a href="https://www.zizao.top/about" target="_blank" class="px-8 py-3.5 rounded-full border border-gray-200 text-black font-bold text-sm hover:border-black transition-colors dark:border-neutral-800 dark:text-white dark:hover:border-white">
+                                了解设计哲学
+                            </a>
+                        </div>
                     </div>
-                
-                <div class="absolute inset-x-0 bottom-0 h-32 md:h-40 bg-gradient-to-t from-black/40 to-transparent pointer-events-none transition-opacity duration-700"></div>
-            </a>
 
-            <div class="absolute bottom-6 md:bottom-10 inset-x-0 z-20 px-4 pointer-events-none">
-                <div id="hero-menu" class="hidden md:flex mx-auto w-full max-w-[90vw] md:max-w-fit items-center justify-center gap-2 md:gap-3 pointer-events-auto">
-                     </div>
+                    <div class="relative w-full h-[400px] lg:h-[500px] flex flex-col justify-end items-center lg:items-end order-1 lg:order-2 select-none pointer-events-none pb-12">
+                        
+                        <div id="log-stack" class="relative w-full max-w-[380px] h-full stack-mask flex flex-col justify-end gap-3 p-4">
+                            </div>
+
+                    </div>
+                </div>
             </div>
-
         </section>
 
-        <section id="featured-work" class="mx-auto max-w-[1800px] px-6 lg:px-12 mb-32 pt-20 md:pt-24">
-            <div class="mb-10 flex items-end justify-between border-b border-gray-100 pb-4 dark:border-neutral-800">
-                <div class="flex items-center gap-3">
-                    <div class="h-2 w-2 rounded-full bg-black dark:bg-white"></div>
-                    <h2 class="text-xs font-bold uppercase tracking-widest text-gray-900 dark:text-white">字体产品推荐</h2>
+        <section id="featured-work" class="mx-auto max-w-[1800px] px-6 lg:px-12 py-20 bg-white dark:bg-neutral-950 relative z-20">
+            <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 flex items-center gap-2">
+                        <span class="w-2 h-2 bg-black dark:bg-white rounded-full"></span>
+                        Selected Works
+                    </h2>
+                    <p class="text-3xl md:text-4xl font-bold tracking-tight">年度精选字体</p>
                 </div>
+                <a href="fonts.html" class="group flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-black dark:text-neutral-500 dark:hover:text-white transition-colors">
+                    查看全部
+                    <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </a>
             </div>
             <div id="featured-grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"></div>
         </section>
 
-        <section class="mx-auto max-w-[1800px] px-6 lg:px-12 mb-24">
-            <div class="mb-10 flex items-center gap-3 border-b border-gray-100 pb-4 dark:border-neutral-800">
-                <div class="h-2 w-2 rounded-full bg-gray-300 dark:bg-neutral-700"></div>
-                <h2 class="text-xs font-bold uppercase tracking-widest text-gray-500">设计工具推荐</h2>
+        <section class="w-full bg-gray-50 dark:bg-neutral-900/30 py-20 border-t border-gray-100 dark:border-neutral-900">
+            <div class="mx-auto max-w-[1800px] px-6 lg:px-12">
+                <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div>
+                        <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 flex items-center gap-2">
+                           <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                           Tools & Resources
+                        </h2>
+                        <p class="text-3xl md:text-4xl font-bold tracking-tight">设计师效率工具</p>
+                    </div>
+                </div>
+                <div id="tools-grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"></div>
             </div>
-            <div id="tools-grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"></div>
         </section>
+
     </main>
 
     <footer id="footer-placeholder" class="bg-white pt-20 pb-12 dark:bg-neutral-950 border-t border-gray-100 dark:border-neutral-900 mt-auto"></footer>
 
     <script>
-        // 1. Hero 轮播图配置
-        const HERO_CONFIG = [
-            {
-                label: "Qidian Sans",
-                poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/YAWh/1400X600/1-07.jpg/webp", 
-                link: "fonts/zizaizhisans.html"
-            },
-            {
-                label: "Type Tools",
-                poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/YAWh/1400X600/1-07.jpg/webp",
-                link: "https://www.zizao.top/tools/txt"
-            },
-            {
-                label: "Inspiration",
-                poster: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/YAWh/1400X600/1-07.jpg/webp",
-                link: "https://hao.zizao.top"
+        // --- 1. 打字机逻辑 ---
+        class TypeWriter {
+            constructor(el, toRotate, period) {
+                this.toRotate = toRotate;
+                this.el = el;
+                this.loopNum = 0;
+                this.period = parseInt(period, 10) || 2000;
+                this.txt = '';
+                this.tick();
+                this.isDeleting = false;
             }
-        ];
-
-        // 2. 首页推荐字体 (Bento Grid)
-        const HOME_FONTS = [
-            {
-                title: '自在起点黑 (Qidian Sans)',
-                subtitle: '免费商用 • 双轴可变',
-                imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/YAWh/1400X600/1-07.jpg/webp',
-                link: 'fonts/zizaizhisans.html', 
-                colSpan: 'md:col-span-2',
-                rowSpan: 'md:row-span-2',
-            },
-            {
-                title: '自在飞落体',
-                subtitle: '衬线体 • 典雅',
-                imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/Btd0/680X600/1-08.jpg/webp',
-                link: '#',
-                colSpan: 'md:col-span-1',
-                rowSpan: 'md:row-span-2',
-            },
-            {
-                title: 'Coming Soon',
-                subtitle: '敬请期待',
-                imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp',
-                link: '#',
-                colSpan: 'md:col-span-1',
-                rowSpan: 'md:row-span-2',
-            },
-            {
-                title: 'Coming Soon',
-                subtitle: '敬请期待',
-                imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp',
-                link: '#',
-                colSpan: 'md:col-span-1',
-            },
-            {
-                title: 'Coming Soon',
-                subtitle: '敬请期待',
-                imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp',
-                link: '#',
-                colSpan: 'md:col-span-1',
-            },
-            {
-                title: 'Coming Soon',
-                subtitle: '敬请期待',
-                imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/rpgw/1400X600/222.jpg/webp',
-                link: '#',
-                colSpan: 'md:col-span-2',
+            tick() {
+                var i = this.loopNum % this.toRotate.length;
+                var fullTxt = this.toRotate[i];
+                if (this.isDeleting) {
+                    this.txt = fullTxt.substring(0, this.txt.length - 1);
+                } else {
+                    this.txt = fullTxt.substring(0, this.txt.length + 1);
+                }
+                this.el.innerHTML = this.txt;
+                var that = this;
+                var delta = 200 - Math.random() * 100;
+                if (this.isDeleting) { delta /= 2; }
+                if (!this.isDeleting && this.txt === fullTxt) {
+                    delta = this.period;
+                    this.isDeleting = true;
+                } else if (this.isDeleting && this.txt === '') {
+                    this.isDeleting = false;
+                    this.loopNum++;
+                    delta = 500;
+                }
+                setTimeout(function() { that.tick(); }, delta);
             }
-        ];
+        }
 
-        // 3. 首页推荐工具
-        const HOME_TOOLS = [
-            { title: '设计导航', subtitle: '设计师的灵感百宝库', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/hfoR/680X600/1-09.jpg/webp', link: 'https://hao.zizao.top', colSpan: 'md:col-span-1' },
-            { title: '文本编辑器Pro', subtitle: 'web端TXT编辑器', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/EiE8/680X600/1-10.jpg/webp', link: 'https://tools.zizao.top/txt', colSpan: 'md:col-span-1' },
-            { title: '超引-形近字查询', subtitle: '独家整理的设计师“造字神器“', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/clE7/1400X600/1-11.jpg/webp', link: 'https://tools.zizao.top/chaoyin', colSpan: 'md:col-span-2' },
-            { title: '设计百宝库', subtitle: 'AI提示词 • 字体 • 设计资源', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/xD17/1400X600/1-12.jpg/webp', link: 'https://bao.zizao.top', colSpan: 'md:col-span-2' },
-            { title: 'Coming Soon', subtitle: '敬请期待', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp', link: 'https://tools.zizao.top/txt', colSpan: 'md:col-span-1' },
-            { title: 'Coming Soon', subtitle: '敬请期待', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp', link: 'https://tools.zizao.top/txt', colSpan: 'md:col-span-1' }
-        ];
+        // --- 2. 事件堆栈逻辑 (Log System - 汉化版) ---
+        class LogSystem {
+            constructor(containerId) {
+                this.container = document.getElementById(containerId);
+                // 汉化后的数据，保持技术感
+                this.logs = [
+                    { label: 'UPDATE', text: '插值引擎: 字重轴 (Weight) 渲染更新' },
+                    { label: 'LOAD', text: '资源加载: ZizaiSans.woff2 (28kb)' },
+                    { label: 'SYSTEM', text: '内核: OpenType 高级特性已启用' },
+                    { label: 'BUILD', text: '构建: 字形轮廓 (Glyphs) 导出成功' },
+                    { label: 'CHECK', text: '检测: 屏幕灰度对比测试通过 (AAA)' },
+                    { label: 'AXIS', text: '参数: 宽度轴 (Width) 实时响应中' },
+                    { label: 'HINT', text: '优化: TrueType Hinting 像素对齐' },
+                    { label: 'WEB', text: '分发: 字体子集化 (Subsetting) 完成' },
+                    { label: 'SYNC', text: '同步: 矢量节点坐标已校准' }
+                ];
+                this.maxItems = 4; // 最多显示几条
+                this.init();
+            }
 
-        // 页面特定的初始化逻辑
+            init() {
+                if(!this.container) return;
+                this.addLog();
+                setTimeout(() => this.addLog(), 1000);
+
+                const loop = () => {
+                    if(document.visibilityState === 'visible') {
+                        this.addLog();
+                    }
+                    setTimeout(loop, 2000 + Math.random() * 2000);
+                };
+                setTimeout(loop, 3000);
+            }
+
+            addLog() {
+                const data = this.logs[Math.floor(Math.random() * this.logs.length)];
+                const now = new Date();
+                const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+
+                const el = document.createElement('div');
+                el.className = 'log-entry-in flex items-center justify-between p-4 rounded-lg bg-white/80 dark:bg-neutral-900/80 backdrop-blur border border-gray-200 dark:border-neutral-800 shadow-sm w-full';
+                
+                // 汉化版结构：左侧是英文标签，右侧是中文详情
+                el.innerHTML = `
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <div class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white shrink-0"></div>
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-mono text-gray-400 uppercase tracking-wider leading-none mb-1">${data.label}</span>
+                            <span class="text-xs font-bold text-gray-900 dark:text-gray-100 truncate font-mono">${data.text}</span>
+                        </div>
+                    </div>
+                    <div class="text-[10px] font-mono text-gray-300 dark:text-neutral-600 tabular-nums">${timeString}</div>
+                `;
+
+                this.container.appendChild(el);
+
+                const children = this.container.children;
+                if (children.length > this.maxItems) {
+                    const oldItem = children[0];
+                    oldItem.classList.remove('log-entry-in');
+                    oldItem.classList.add('log-entry-out');
+                    setTimeout(() => {
+                        if (oldItem.parentNode) oldItem.parentNode.removeChild(oldItem);
+                    }, 400);
+                }
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            const phrases = ["可变字体技术。", "未来的视觉语言。", "理性的几何美学。", "无限的创意可能。"];
+            const typeEl = document.getElementById('type-text');
+            if (typeEl) new TypeWriter(typeEl, phrases, 2500);
+
+            // 启动 Log 系统
+            new LogSystem('log-stack');
+
             const featuredContainer = document.getElementById('featured-grid');
             const toolsContainer = document.getElementById('tools-grid');
-            if (featuredContainer) featuredContainer.innerHTML = HOME_FONTS.map(item => createBentoCard(item)).join('');
-            if (toolsContainer) toolsContainer.innerHTML = HOME_TOOLS.map(item => createBentoCard(item)).join('');
+            if (featuredContainer && typeof createBentoCard === 'function') {
+                featuredContainer.innerHTML = HOME_FONTS.map(item => createBentoCard(item)).join('');
+            }
+            if (toolsContainer && typeof createBentoCard === 'function') {
+                toolsContainer.innerHTML = HOME_TOOLS.map(item => createBentoCard(item)).join('');
+            }
         });
+
+        const HOME_FONTS = [
+            { title: '自在起点黑 (Qidian Sans)', subtitle: '免费商用 • 双轴可变', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/YAWh/1400X600/1-07.jpg/webp', link: 'fonts/zizaizhisans.html', colSpan: 'md:col-span-2', rowSpan: 'md:row-span-1' },
+            { title: 'Coming Soon', subtitle: '实验性排版', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp', link: '#', colSpan: 'md:col-span-1', rowSpan: 'md:row-span-1' },
+            { title: '自在致黑', subtitle: '旗舰产品 • 企业定制', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/zTEv/6803X1701/123-02.jpg/webp', link: 'fonts/zizaizhisans.html', colSpan: 'md:col-span-1', rowSpan: 'md:row-span-2' },
+            { title: 'Coming Soon', subtitle: '敬请期待', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp', link: '#', colSpan: 'md:col-span-1', rowSpan: 'md:row-span-1' },
+            { title: 'Coming Soon', subtitle: '实验性排版', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp', link: '#', colSpan: 'md:col-span-2', rowSpan: 'md:row-span-1' },
+            
+        ];
+        const HOME_TOOLS = [
+            { title: '设计导航', subtitle: '灵感百宝库', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/hfoR/680X600/1-09.jpg/webp', link: 'https://hao.zizao.top', colSpan: 'md:col-span-1' },
+            { title: 'Web TXT编辑器', subtitle: '纯粹写作体验', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/EiE8/680X600/1-10.jpg/webp', link: 'https://tools.zizao.top/txt', colSpan: 'md:col-span-1' },
+            { title: '超引-形近字', subtitle: '设计师造字神器', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/clE7/1400X600/1-11.jpg/webp', link: 'https://tools.zizao.top/chaoyin', colSpan: 'md:col-span-2' },
+            { title: '设计百宝库', subtitle: '资源合集', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/xD17/1400X600/1-12.jpg/webp', link: 'https://bao.zizao.top', colSpan: 'md:col-span-2' },
+            { title: 'Coming Soon', subtitle: '敬请期待', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp', link: '#', colSpan: 'md:col-span-1' },
+            { title: 'Coming Soon', subtitle: '敬请期待', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp', link: '#', colSpan: 'md:col-span-1' }
+        ];
     </script>
     
     <script src="components.js"></script>
