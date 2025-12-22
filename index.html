@@ -39,13 +39,11 @@
     <style>
         body { opacity: 0; transition: opacity 0.5s ease-out; }
         
-        /* 堆栈卡片进入动画：从下方滑入，带有弹性 */
         @keyframes slideInUp {
             0% { opacity: 0; transform: translateY(20px) scale(0.95); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
         
-        /* 堆栈卡片移除动画：向上滑动并淡出 */
         @keyframes slideOutUp {
             0% { opacity: 1; transform: translateY(0); }
             100% { opacity: 0; transform: translateY(-20px); }
@@ -79,7 +77,6 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* 顶部遮罩：让旧消息优雅消失 */
         .stack-mask {
             mask-image: linear-gradient(to bottom, transparent, black 20%);
             -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%);
@@ -101,9 +98,9 @@
             <div class="absolute inset-0 pointer-events-none bg-grid-pattern"></div>
             
             <div class="mx-auto max-w-[1800px] px-6 lg:px-12 h-full">
-                <div class="grid grid-cols-1 lg:grid-cols-2 min-h-[65vh] items-center gap-8 lg:gap-20">
+                <div class="grid grid-cols-1 lg:grid-cols-2 min-h-[50vh] lg:min-h-[65vh] items-center gap-8 lg:gap-20">
                     
-                    <div class="relative z-10 animate-fade-in flex flex-col justify-center order-2 lg:order-1 py-10 lg:py-0">
+                    <div class="relative z-10 animate-fade-in flex flex-col justify-center order-2 lg:order-1 py-16 lg:py-0">
                         <div class="flex items-center gap-3 mb-6 opacity-60">
                             <span class="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                             <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500">
@@ -111,14 +108,14 @@
                             </span>
                         </div>
 
-                        <h1 class="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-[1.1] tracking-tighter select-none mb-6">
+                        <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-[1.1] tracking-tighter select-none mb-6">
                             <span class="block text-gray-900 dark:text-white">我们构建</span>
                             <span class="block h-[1.2em] overflow-visible">
                                  <span id="type-text" class="text-gradient"></span><span class="animate-cursor-blink ml-2 inline-block w-3 lg:w-4 h-[0.8em] bg-black dark:bg-white align-baseline"></span>
                             </span>
                         </h1>
 
-                        <p class="text-lg text-gray-500 dark:text-neutral-400 max-w-lg leading-relaxed mb-8">
+                        <p class="text-base sm:text-lg text-gray-500 dark:text-neutral-400 max-w-lg leading-relaxed mb-8">
                             通过精准的几何构建与代码逻辑，<br>
                             为屏幕阅读时代打造可变、可控的视觉声音。
                         </p>
@@ -133,12 +130,11 @@
                         </div>
                     </div>
 
-                    <div class="relative w-full h-[400px] lg:h-[500px] flex flex-col justify-end items-center lg:items-end order-1 lg:order-2 select-none pointer-events-none pb-12">
-                        
+                    <div class="hidden lg:flex relative w-full h-[500px] flex-col justify-end items-end order-1 lg:order-2 select-none pointer-events-none pb-12">
                         <div id="log-stack" class="relative w-full max-w-[380px] h-full stack-mask flex flex-col justify-end gap-3 p-4">
                             </div>
-
                     </div>
+
                 </div>
             </div>
         </section>
@@ -215,11 +211,15 @@
             }
         }
 
-        // --- 2. 事件堆栈逻辑 (Log System - 汉化版) ---
+        // --- 2. 事件堆栈逻辑 (Log System) ---
         class LogSystem {
             constructor(containerId) {
                 this.container = document.getElementById(containerId);
-                // 汉化后的数据，保持技术感
+                // 只有容器存在（即桌面端）时才运行逻辑，节省手机性能
+                if (!this.container || window.getComputedStyle(this.container.parentElement).display === 'none') {
+                     // 简单判断父级是否隐藏，不过最稳妥的是 init 里判断 container
+                }
+                
                 this.logs = [
                     { label: 'UPDATE', text: '插值引擎: 字重轴 (Weight) 渲染更新' },
                     { label: 'LOAD', text: '资源加载: ZizaiSans.woff2 (28kb)' },
@@ -231,17 +231,20 @@
                     { label: 'WEB', text: '分发: 字体子集化 (Subsetting) 完成' },
                     { label: 'SYNC', text: '同步: 矢量节点坐标已校准' }
                 ];
-                this.maxItems = 4; // 最多显示几条
+                this.maxItems = 4;
                 this.init();
             }
 
             init() {
+                // 如果找不到容器（比如根本没渲染），或者容器是隐藏的，就不跑了
                 if(!this.container) return;
+                
                 this.addLog();
                 setTimeout(() => this.addLog(), 1000);
 
                 const loop = () => {
-                    if(document.visibilityState === 'visible') {
+                    // 再次检查可见性，确保手机端如果不小心加载了也不会一直在后台跑
+                    if(document.visibilityState === 'visible' && this.container.offsetParent !== null) {
                         this.addLog();
                     }
                     setTimeout(loop, 2000 + Math.random() * 2000);
@@ -257,7 +260,6 @@
                 const el = document.createElement('div');
                 el.className = 'log-entry-in flex items-center justify-between p-4 rounded-lg bg-white/80 dark:bg-neutral-900/80 backdrop-blur border border-gray-200 dark:border-neutral-800 shadow-sm w-full';
                 
-                // 汉化版结构：左侧是英文标签，右侧是中文详情
                 el.innerHTML = `
                     <div class="flex items-center gap-3 overflow-hidden">
                         <div class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white shrink-0"></div>
@@ -307,7 +309,6 @@
             { title: '自在致黑', subtitle: '旗舰产品 • 企业定制', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/zTEv/6803X1701/123-02.jpg/webp', link: 'fonts/zizaizhisans.html', colSpan: 'md:col-span-1', rowSpan: 'md:row-span-2' },
             { title: 'Coming Soon', subtitle: '敬请期待', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp', link: '#', colSpan: 'md:col-span-1', rowSpan: 'md:row-span-1' },
             { title: 'Coming Soon', subtitle: '实验性排版', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/pFUu/680X600/111.jpg/webp', link: '#', colSpan: 'md:col-span-2', rowSpan: 'md:row-span-1' },
-            
         ];
         const HOME_TOOLS = [
             { title: '设计导航', subtitle: '灵感百宝库', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251127/hfoR/680X600/1-09.jpg/webp', link: 'https://hao.zizao.top', colSpan: 'md:col-span-1' },
