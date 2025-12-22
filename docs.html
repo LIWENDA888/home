@@ -335,47 +335,92 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            
+            // ======================================================
+            // 核心配置：[URL参数 key] 对应 [浏览器标签页标题]
+            // 您可以在这里统一修改 “Section ID” 和 “Title”
+            // ======================================================
+            const SECTIONS_CONFIG = {
+                'copyright': { title: '版权归属 - 自在造字' },
+                'licensing': { title: '授权指南 - 自在造字' },
+                'terms':     { title: '使用条款 (EULA) - 自在造字' },
+                'faq':       { title: '常见问题 (FAQ) - 自在造字' },
+                'contact':   { title: '联系我们 - 自在造字' }
+            };
+
             // 1. 文档切换逻辑
             const sections = document.querySelectorAll('.docs-section');
             const navButtons = document.querySelectorAll('.docs-nav-btn');
             
-            const switchSection = (targetId) => {
+            const switchSection = (targetId, updateHistory = true) => {
+                // 如果 config 里没有这个 ID，默认跳到 copyright
+                if (!SECTIONS_CONFIG[targetId]) targetId = 'copyright';
+
+                // 隐藏所有 Section
                 sections.forEach(sec => {
                     sec.classList.add('hidden');
                     sec.classList.remove('animate-fade-in');
                 });
+                
+                // 移除导航高亮
                 navButtons.forEach(btn => btn.classList.remove('nav-btn-active'));
 
+                // 显示目标 Section
                 const targetSec = document.getElementById(targetId);
                 if(targetSec) {
                     targetSec.classList.remove('hidden');
                     targetSec.classList.add('animate-fade-in'); 
                 }
 
+                // 高亮侧边栏按钮
                 const activeBtn = document.querySelector(`.docs-nav-btn[data-target="${targetId}"]`);
                 if(activeBtn) activeBtn.classList.add('nav-btn-active');
 
+                // 核心：设置浏览器标题
+                if (SECTIONS_CONFIG[targetId]) {
+                    document.title = SECTIONS_CONFIG[targetId].title;
+                }
+
+                // 更新 URL (如果不是通过后退按钮触发的)
+                if (updateHistory) {
+                    const newUrl = new URL(window.location);
+                    newUrl.searchParams.set('section', targetId);
+                    window.history.pushState({ section: targetId }, '', newUrl);
+                }
+
+                // 滚动回顶部
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 
                 // 切换文档时重置反馈按钮状态
                 document.querySelectorAll('.feedback-btn').forEach(btn => btn.classList.remove('feedback-active'));
             };
 
+            // 2. 绑定侧边栏点击事件
             navButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const target = btn.dataset.target;
-                    const newUrl = new URL(window.location);
-                    newUrl.searchParams.set('section', target);
-                    window.history.pushState({}, '', newUrl);
-                    switchSection(target);
+                    switchSection(target, true);
                 });
             });
 
+            // 3. 处理初始化加载 (检查 URL 参数)
             const params = new URLSearchParams(window.location.search);
             const initSection = params.get('section') || 'copyright';
-            switchSection(initSection);
+            // 初始化时替换当前 history 状态，防止后退时死循环
+            window.history.replaceState({ section: initSection }, '', window.location);
+            switchSection(initSection, false); // false = 初始化时不重复 pushState
 
-            // 2. 反馈按钮点击逻辑 (仅样式)
+            // 4. 监听浏览器前进/后退按钮 (Popstate)
+            window.addEventListener('popstate', (event) => {
+                if (event.state && event.state.section) {
+                    switchSection(event.state.section, false);
+                } else {
+                    // 如果没有 state (比如刚打开页面)，回退到默认
+                    switchSection('copyright', false);
+                }
+            });
+
+            // 5. 反馈按钮点击逻辑 (仅样式)
             const feedbackBtns = document.querySelectorAll('.feedback-btn');
             feedbackBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
