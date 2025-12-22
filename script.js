@@ -367,61 +367,84 @@ function initProductGrid() {
     renderGrid();
 }
 
-// ================= 7. Image Viewer & Modal =================
+// ================= 7. Image Viewer & Modal (Mobile Optimized) =================
 function setupGlobalImageViewer() {
     const container = document.getElementById('image-viewer-container');
     const img = document.getElementById('p-image');
     const slider = document.getElementById('zoom-slider');
     const toggleBtn = document.getElementById('img-toggle-btn');
     
-    if (!container || !img || !slider) return;
+    if (!container || !img) return;
 
+    // 状态变量
     let zoom = 1;
     let pan = { x: 0, y: 0 };
+    
+    // 鼠标拖拽变量
     let startPan = { x: 0, y: 0 };
     let isDragging = false;
-    let viewMode = 'light';
+
+    // 触摸手势变量
+    let initialPinchDistance = null;
+    let initialZoom = 1;
+    let lastTouchPos = { x: 0, y: 0 };
+
     const lightSrc = img.src;
     const darkSrc = img.getAttribute('data-dark-src');
+    let viewMode = 'light';
 
-    slider.addEventListener('mousedown', (e) => e.stopPropagation());
-    slider.addEventListener('touchstart', (e) => e.stopPropagation());
+    // === 通用逻辑：更新变换 ===
+    function updateTransform() {
+        // 限制 zoom 范围
+        zoom = Math.min(Math.max(1, zoom), 3);
+        
+        // 限制 pan 范围 (确保不出界)
+        if (zoom <= 1) {
+            pan = { x: 0, y: 0 }; // 缩回 1.0 时自动归位
+        } else {
+            const width = container.offsetWidth;
+            const height = container.offsetHeight;
+            const maxOverflowX = (width * zoom - width) / 2;
+            const maxOverflowY = (height * zoom - height) / 2;
+            pan.x = Math.min(Math.max(pan.x, -maxOverflowX), maxOverflowX);
+            pan.y = Math.min(Math.max(pan.y, -maxOverflowY), maxOverflowY);
+        }
 
-    if (!darkSrc && toggleBtn) toggleBtn.style.display = 'none';
-
-    slider.addEventListener('input', (e) => {
-        zoom = parseFloat(e.target.value);
-        if (zoom === 1) pan = { x: 0, y: 0 };
-        updateTransform();
+        // 应用变换
+        img.style.transform = `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`;
+        
+        // 同步更新 Slider (如果存在)
+        if (slider) slider.value = zoom;
+        
+        // 更新光标状态
         container.style.cursor = zoom > 1 ? 'grab' : 'default';
-    });
+    }
 
-    const constrainPan = (x, y, currentZoom) => {
-        const width = container.offsetWidth;
-        const height = container.offsetHeight;
-        if (currentZoom <= 1) return { x: 0, y: 0 };
-        const maxOverflowX = (width * currentZoom - width) / 2;
-        const maxOverflowY = (height * currentZoom - height) / 2;
-        return {
-            x: Math.min(Math.max(x, -maxOverflowX), maxOverflowX),
-            y: Math.min(Math.max(y, -maxOverflowY), maxOverflowY)
-        };
-    };
+    // === 桌面端：滑杆与鼠标逻辑 ===
+    if (slider) {
+        slider.addEventListener('mousedown', (e) => e.stopPropagation());
+        slider.addEventListener('touchstart', (e) => e.stopPropagation());
+        
+        slider.addEventListener('input', (e) => {
+            zoom = parseFloat(e.target.value);
+            updateTransform();
+        });
+    }
 
     container.addEventListener('mousedown', (e) => {
         if (zoom > 1) {
             isDragging = true;
             startPan = { x: e.clientX - pan.x, y: e.clientY - pan.y };
             container.style.cursor = 'grabbing';
+            e.preventDefault(); // 防止默认拖拽图片行为
         }
     });
 
     window.addEventListener('mousemove', (e) => {
         if (isDragging && zoom > 1) {
             e.preventDefault();
-            const rawX = e.clientX - startPan.x;
-            const rawY = e.clientY - startPan.y;
-            pan = constrainPan(rawX, rawY, zoom);
+            pan.x = e.clientX - startPan.x;
+            pan.y = e.clientY - startPan.y;
             updateTransform();
         }
     });
@@ -433,17 +456,70 @@ function setupGlobalImageViewer() {
         }
     });
     
-    container.addEventListener('mouseleave', () => {
-        if (isDragging) {
-            isDragging = false;
-            container.style.cursor = 'default';
+    container.addEventListener('mouseleave', () => { isDragging = false; });
+
+    // === 移动端：触摸逻辑 (Touch Events) ===
+    
+    // 辅助函数：计算两指距离
+    function getDistance(touches) {
+        return Math.hypot(
+            touches[0].pageX - touches[1].pageX,
+            touches[0].pageY - touches[1].pageY
+        );
+    }
+
+    container.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+            // --- 双指开始：缩放 ---
+            e.preventDefault(); // 阻止浏览器默认缩放
+            initialPinchDistance = getDistance(e.touches);
+            initialZoom = zoom;
+        } else if (e.touches.length === 1) {
+            // --- 单指开始：准备拖拽 ---
+            // 只有当已经放大时，才记录坐标，否则允许页面滚动
+            if (zoom > 1) {
+                lastTouchPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }
+        }
+    }, { passive: false });
+
+    container.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2 && initialPinchDistance) {
+            // --- 双指移动：缩放 ---
+            e.preventDefault();
+            const currentDistance = getDistance(e.touches);
+            // 计算新的缩放比例
+            const scaleFactor = currentDistance / initialPinchDistance;
+            zoom = initialZoom * scaleFactor;
+            updateTransform();
+        } else if (e.touches.length === 1 && zoom > 1) {
+            // --- 单指移动：拖拽 (仅在放大状态下) ---
+            e.preventDefault(); // 阻止页面滚动，专注于看图
+            const currentX = e.touches[0].clientX;
+            const currentY = e.touches[0].clientY;
+            
+            // 计算位移差
+            const deltaX = currentX - lastTouchPos.x;
+            const deltaY = currentY - lastTouchPos.y;
+            
+            pan.x += deltaX;
+            pan.y += deltaY;
+            
+            lastTouchPos = { x: currentX, y: currentY };
+            updateTransform();
+        }
+        // 如果 zoom === 1 且单指滑动，不调用 preventDefault，允许用户滑动页面
+    }, { passive: false });
+
+    container.addEventListener('touchend', (e) => {
+        // 手指离开时，清理状态
+        if (e.touches.length < 2) {
+            initialPinchDistance = null;
         }
     });
 
-    function updateTransform() {
-        img.style.transform = `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`;
-    }
-
+    // === 其他：背景切换 ===
+    if (!darkSrc && toggleBtn) toggleBtn.style.display = 'none';
     if (toggleBtn) {
         toggleBtn.addEventListener('click', () => {
             viewMode = viewMode === 'light' ? 'dark' : 'light';
