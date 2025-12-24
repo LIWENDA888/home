@@ -227,97 +227,98 @@ function createBentoCard(item) {
     `;
 }
 
-// ================= 6. Product Grid Logic (EXQUISITE VERSION) =================
+// ================= 6. Product Grid Logic (Correct Interaction & Font Unity) =================
 function initProductGrid() {
     const grid = document.getElementById('products-grid');
     const emptyState = document.getElementById('empty-state');
     const searchInput = document.getElementById('search-input');
-    const countLabel = document.getElementById('result-count');
+    const heroCountLabel = document.getElementById('hero-total-count'); 
     const categoryBtns = document.querySelectorAll('.cat-btn');
     const filterPill = document.getElementById('filter-pill');
     
     let activeCategory = '全部';
     let searchQuery = '';
+    let isAnimating = false;
 
     function renderGrid() {
+        if (!grid) return;
+        
+        // 更新文案：当前上线 X 款字体
+        if (heroCountLabel) {
+            heroCountLabel.textContent = `当前上线 ${ALL_PRODUCTS.length} 款字体`;
+        }
+
+        // 生成卡片 HTML (注意：移除了 font-mono，保持黑体统一)
         grid.innerHTML = ALL_PRODUCTS.map((item, index) => {
-            const delay = index * 50; 
-            const href = item.link || '#';
-            
-            // 标签样式：Mono字体，极小字号，边框+透明背景，突显参数感
-            const tagsHtml = item.tags ? item.tags.map(tag => 
-                `<span class="inline-flex items-center rounded-[4px] border border-gray-100 bg-gray-50 px-1.5 py-0.5 text-[9px] font-mono text-gray-500 dark:border-neutral-800 dark:bg-neutral-900/50 dark:text-neutral-500 transition-colors group-hover:border-gray-200 dark:group-hover:border-neutral-700">${tag}</span>`
-            ).join('') : '';
+            const catString = item.categories.join(' '); 
 
             return `
-            <a href="${href}" 
+            <a href="${item.link || '#'}" 
                target="_blank" 
                data-title="${item.title.toLowerCase()}" 
                data-subtitle="${item.subtitle.toLowerCase()}"
-               data-category="${item.category}"
-               class="product-card group relative flex flex-col overflow-hidden rounded-xl bg-white border border-gray-100 dark:bg-neutral-950 dark:border-neutral-800/60 transition-all duration-500 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:hover:shadow-[0_8px_30px_rgb(255,255,255,0.02)] hover:border-gray-300 dark:hover:border-neutral-600 animate-fade-up-init" 
-               style="animation-delay: ${delay}ms">
+               data-categories="${catString}" 
+               class="product-card group relative flex flex-col gap-3 app-enter" 
+               style="animation-delay: ${index * 50}ms">
                 
-                <div class="relative aspect-[16/10] w-full overflow-hidden bg-gray-50 dark:bg-neutral-900">
+                <div class="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-gray-100 dark:bg-neutral-900 isolate">
                     <img src="${item.imageUrl}" 
                          alt="${item.title}" 
                          loading="lazy"
-                         decoding="async"
                          class="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-105 will-change-transform" />
                     
-                    <div class="absolute top-2.5 left-2.5">
-                        <span class="inline-flex items-center rounded-md bg-white/70 backdrop-blur-md border border-white/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-black/80 shadow-sm dark:bg-black/60 dark:text-white/90 dark:border-white/10">
-                           ${item.category}
+                    <div class="absolute inset-0 bg-black/0 transition-colors duration-500 group-hover:bg-black/2 dark:group-hover:bg-white/5"></div>
+                    <div class="absolute inset-0 border border-black/5 dark:border-white/10 rounded-2xl pointer-events-none"></div>
+
+                    <div class="absolute top-3 right-3 opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-white/90 text-black text-[10px] font-bold uppercase tracking-wider shadow-lg backdrop-blur-sm dark:bg-black/90 dark:text-white border border-black/5 dark:border-white/10">
+                           ${item.badge}
                         </span>
                     </div>
                 </div>
                 
-                <div class="flex flex-1 flex-col p-4">
-                    <div class="flex items-start justify-between gap-4 mb-3">
-                        <div class="min-w-0">
-                            <h3 class="text-[15px] font-semibold text-gray-900 dark:text-white leading-snug mb-0.5 truncate pr-2 group-hover:text-black dark:group-hover:text-white transition-colors tracking-tight">${item.title}</h3>
-                            <p class="text-[10px] font-medium text-gray-400 dark:text-neutral-500 uppercase tracking-widest font-sans truncate">${item.subtitle}</p>
-                        </div>
-                        
-                        <div class="flex size-6 shrink-0 items-center justify-center rounded-full border border-gray-100 bg-transparent text-gray-300 transition-all duration-300 group-hover:border-black group-hover:bg-black group-hover:text-white dark:border-neutral-800 dark:text-neutral-600 dark:group-hover:border-white dark:group-hover:bg-white dark:group-hover:text-black">
-                            <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"></path></svg>
-                        </div>
+                <div class="px-1 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-900 dark:text-white leading-tight">${item.title}</h3>
+                        <p class="text-[11px] font-medium text-gray-400 dark:text-neutral-500 mt-0.5 tracking-wide">${item.subtitle}</p>
                     </div>
-
-                    <div class="mt-auto flex flex-wrap gap-1.5 opacity-80 group-hover:opacity-100 transition-opacity duration-300">
-                         ${tagsHtml}
+                    
+                    <div class="size-6 rounded-full bg-transparent flex items-center justify-center text-gray-300 group-hover:text-black dark:text-neutral-700 dark:group-hover:text-white transition-colors duration-300">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                     </div>
                 </div>
             </a>
             `;
         }).join('');
-        
-        updateFilter();
     }
 
-    function updateFilter() {
-        const cards = document.querySelectorAll('.product-card');
+    async function updateFilter() {
+        if (!grid || isAnimating) return;
+        isAnimating = true;
+
+        grid.classList.add('opacity-0', 'translate-y-4', 'scale-[0.98]');
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        const cards = Array.from(document.querySelectorAll('.product-card'));
         let visibleCount = 0;
 
         cards.forEach(card => {
             const title = card.dataset.title;
             const subtitle = card.dataset.subtitle;
-            const category = card.dataset.category;
+            const itemCats = card.dataset.categories;
+            
             const matchSearch = title.includes(searchQuery) || subtitle.includes(searchQuery);
-            const matchCat = activeCategory === '全部' || category === activeCategory;
+            // 搜索时不校验分类，因为分类被清空了
+            const matchCat = !activeCategory || activeCategory === '全部' || itemCats.includes(activeCategory);
 
             if (matchSearch && matchCat) {
                 card.style.display = 'flex';
-                card.classList.remove('animate-fade-up-init');
-                void card.offsetWidth; 
-                card.classList.add('animate-fade-in');
+                card.style.animation = 'none';
                 visibleCount++;
             } else {
                 card.style.display = 'none';
             }
         });
-
-        if (countLabel) countLabel.textContent = `共 ${visibleCount} 款字体`;
 
         if (visibleCount === 0) {
             emptyState.classList.remove('hidden');
@@ -328,10 +329,30 @@ function initProductGrid() {
             emptyState.classList.remove('flex');
             grid.classList.remove('hidden');
         }
+
+        grid.classList.remove('opacity-0', 'translate-y-4', 'scale-[0.98]');
+        
+        const visibleCards = cards.filter(c => c.style.display !== 'none');
+        visibleCards.forEach((card, index) => {
+            void card.offsetWidth;
+            card.style.animation = `appEnter 0.6s cubic-bezier(0.2, 0.9, 0.2, 1) ${index * 0.05}s backwards`;
+        });
+
+        if (heroCountLabel) {
+            heroCountLabel.textContent = `当前上线 ${visibleCount} 款字体`;
+        }
+
+        setTimeout(() => { isAnimating = false; }, 300);
     }
 
     function movePillTo(element) {
         if (!filterPill) return;
+        // 如果没有传入元素（即搜索模式），隐藏 pill
+        if (!element) {
+            filterPill.style.opacity = '0';
+            return;
+        }
+        filterPill.style.opacity = '1';
         const padding = 4; 
         const width = element.offsetWidth;
         const left = element.offsetLeft;
@@ -340,18 +361,49 @@ function initProductGrid() {
         filterPill.style.transform = `translateX(${left - padding}px)`; 
     }
 
+    // 初始化 Pill 位置
     if(categoryBtns.length > 0) {
         setTimeout(() => movePillTo(categoryBtns[0]), 50);
     }
 
     if(searchInput) {
+        // 【逻辑修正】输入搜索时：
         searchInput.addEventListener('input', (e) => { 
-            searchQuery = e.target.value.toLowerCase(); 
-            updateFilter(); 
+            searchQuery = e.target.value.toLowerCase();
+            
+            if (searchQuery.length > 0) {
+                // 1. 清空当前分类状态
+                activeCategory = null; 
+                // 2. 移除所有按钮的高亮样式
+                categoryBtns.forEach(b => { 
+                    b.classList.remove('text-black', 'dark:text-white', 'font-bold'); 
+                    b.classList.add('text-gray-500', 'font-medium'); 
+                });
+                // 3. 隐藏 Pill
+                movePillTo(null);
+            } else {
+                // 如果删空了搜索词，默认回滚到“全部”
+                activeCategory = '全部';
+                const allBtn = categoryBtns[0];
+                movePillTo(allBtn);
+                allBtn.classList.remove('text-gray-500', 'font-medium');
+                allBtn.classList.add('text-black', 'dark:text-white', 'font-bold');
+            }
+
+            clearTimeout(window.searchDebounce);
+            window.searchDebounce = setTimeout(updateFilter, 150);
         });
     }
 
+    // 【逻辑修正】点击分类时：
     categoryBtns.forEach(btn => btn.addEventListener('click', (e) => {
+        // 1. 清空搜索框
+        if (searchInput) {
+            searchInput.value = '';
+            searchQuery = '';
+        }
+        
+        // 2. 正常移动 Pill 和切换样式
         movePillTo(e.target);
         categoryBtns.forEach(b => { 
             b.classList.remove('text-black', 'dark:text-white', 'font-bold'); 
@@ -359,13 +411,18 @@ function initProductGrid() {
         });
         btn.classList.remove('text-gray-500', 'font-medium'); 
         btn.classList.add('text-black', 'dark:text-white', 'font-bold');
+        
+        // 3. 设置分类并筛选
         activeCategory = btn.dataset.category; 
         updateFilter();
     }));
 
     window.addEventListener('resize', () => {
-        const activeBtn = Array.from(categoryBtns).find(b => b.dataset.category === activeCategory);
-        if(activeBtn) movePillTo(activeBtn);
+        // 只有当有激活分类时才重置 Pill 位置
+        if (activeCategory) {
+            const activeBtn = Array.from(categoryBtns).find(b => b.dataset.category === activeCategory);
+            if(activeBtn) movePillTo(activeBtn);
+        }
     });
 
     renderGrid();
