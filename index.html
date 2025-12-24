@@ -78,8 +78,8 @@
         }
 
         .stack-mask {
-            mask-image: linear-gradient(to bottom, transparent, black 20%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%);
+            mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
         }
     </style>
     <script>
@@ -98,40 +98,41 @@
             <div class="absolute inset-0 pointer-events-none bg-grid-pattern"></div>
             
             <div class="mx-auto max-w-[1800px] px-6 lg:px-12 h-full">
-                <div class="grid grid-cols-1 lg:grid-cols-2 min-h-[50vh] lg:min-h-[65vh] items-center gap-8 lg:gap-20">
+                <div class="grid grid-cols-1 lg:grid-cols-12 min-h-[55vh] lg:min-h-[70vh] items-center gap-8 lg:gap-12">
                     
-                    <div class="relative z-10 animate-fade-in flex flex-col justify-center order-2 lg:order-1 py-16 lg:py-0">
-                        <div class="flex items-center gap-3 mb-6 opacity-60">
+                    <div class="relative z-10 animate-fade-in flex flex-col justify-center lg:col-span-8 py-16 lg:py-0">
+                        <div class="flex items-center gap-3 mb-8 opacity-60">
                             <span class="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                             <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500">
                                 System Status: Operational
                             </span>
                         </div>
 
-                        <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-[1.1] tracking-tighter select-none mb-6">
-                            <span class="block text-gray-900 dark:text-white">Hello.</span>
+                        <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tighter select-none mb-8">
+                            <span class="block text-gray-900 dark:text-white mb-2">Hello.</span>
                             <span class="block h-[1.2em] overflow-visible">
                                  <span id="type-text" class="text-gradient"></span><span class="animate-cursor-blink ml-2 inline-block w-3 lg:w-4 h-[0.8em] bg-black dark:bg-white align-baseline"></span>
                             </span>
                         </h1>
 
-                        <p class="text-base sm:text-lg text-gray-500 dark:text-neutral-400 max-w-lg leading-relaxed mb-8">
+                        <p class="text-base sm:text-lg text-gray-600 dark:text-neutral-400 max-w-lg leading-relaxed mb-10 font-medium">
                             通过精准的几何构建与代码逻辑，<br>
                             为屏幕阅读时代打造可变、可控的视觉声音。
                         </p>
 
                         <div class="flex flex-wrap gap-4">
-                            <a href="fonts.html" target="_blank" class="px-8 py-3.5 rounded-full bg-black text-white font-bold text-sm hover:bg-gray-800 transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200 shadow-lg shadow-black/5">
+                            <a href="fonts.html" target="_blank" class="px-8 py-3.5 rounded-full bg-black text-white font-bold text-sm hover:bg-gray-800 transition-transform active:scale-95 dark:bg-white dark:text-black dark:hover:bg-gray-200 shadow-xl shadow-black/5">
                                 浏览字体目录
                             </a>
-                            <a href="https://www.zizao.top/about" target="_blank" class="px-8 py-3.5 rounded-full border border-gray-200 text-black font-bold text-sm hover:border-black transition-colors dark:border-neutral-800 dark:text-white dark:hover:border-white">
+                            <a href="https://www.zizao.top/about" target="_blank" class="px-8 py-3.5 rounded-full border border-gray-200 text-black font-bold text-sm hover:border-black transition-transform active:scale-95 dark:border-neutral-800 dark:text-white dark:hover:border-white">
                                 了解设计哲学
                             </a>
                         </div>
                     </div>
 
-                    <div class="hidden lg:flex relative w-full h-[500px] flex-col justify-end items-end order-1 lg:order-2 select-none pointer-events-none pb-12">
-                        <div id="log-stack" class="relative w-full max-w-[380px] h-full stack-mask flex flex-col justify-end gap-3 p-4">
+                    <div class="hidden lg:flex relative w-full h-[500px] flex-col justify-center items-end lg:col-span-4 select-none pointer-events-none">
+                        
+                        <div id="log-stack" class="relative w-full max-w-[380px] h-full stack-mask flex flex-col justify-center gap-4 p-4">
                             </div>
                     </div>
 
@@ -215,9 +216,7 @@
         class LogSystem {
             constructor(containerId) {
                 this.container = document.getElementById(containerId);
-                // 只有容器存在（即桌面端）时才运行逻辑，节省手机性能
                 if (!this.container || window.getComputedStyle(this.container.parentElement).display === 'none') {
-                     // 简单判断父级是否隐藏，不过最稳妥的是 init 里判断 container
                 }
                 
                 this.logs = [
@@ -231,19 +230,17 @@
                     { label: 'WEB', text: '分发: 字体子集化 (Subsetting) 完成' },
                     { label: 'SYNC', text: '同步: 矢量节点坐标已校准' }
                 ];
-                this.maxItems = 4;
+                this.maxItems = 4; 
                 this.init();
             }
 
             init() {
-                // 如果找不到容器（比如根本没渲染），或者容器是隐藏的，就不跑了
                 if(!this.container) return;
                 
                 this.addLog();
                 setTimeout(() => this.addLog(), 1000);
 
                 const loop = () => {
-                    // 再次检查可见性，确保手机端如果不小心加载了也不会一直在后台跑
                     if(document.visibilityState === 'visible' && this.container.offsetParent !== null) {
                         this.addLog();
                     }
@@ -258,17 +255,17 @@
                 const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
 
                 const el = document.createElement('div');
-                el.className = 'log-entry-in flex items-center justify-between p-4 rounded-lg bg-white/80 dark:bg-neutral-900/80 backdrop-blur border border-gray-200 dark:border-neutral-800 shadow-sm w-full';
+                el.className = 'log-entry-in flex items-center justify-between p-3.5 rounded-xl bg-white/60 dark:bg-neutral-900/60 backdrop-blur-sm border border-gray-100 dark:border-neutral-800/50 shadow-sm w-full hover:bg-white dark:hover:bg-neutral-800 transition-colors duration-300';
                 
                 el.innerHTML = `
                     <div class="flex items-center gap-3 overflow-hidden">
-                        <div class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white shrink-0"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></div>
                         <div class="flex flex-col">
-                            <span class="text-[10px] font-mono text-gray-400 uppercase tracking-wider leading-none mb-1">${data.label}</span>
-                            <span class="text-xs font-bold text-gray-900 dark:text-gray-100 truncate font-mono">${data.text}</span>
+                            <span class="text-[9px] font-mono text-gray-400 uppercase tracking-wider leading-none mb-1">${data.label}</span>
+                            <span class="text-xs font-medium text-gray-900 dark:text-gray-100 truncate font-sans tracking-tight">${data.text}</span>
                         </div>
                     </div>
-                    <div class="text-[10px] font-mono text-gray-300 dark:text-neutral-600 tabular-nums">${timeString}</div>
+                    <div class="text-[9px] font-mono text-gray-300 dark:text-neutral-600 tabular-nums opacity-60">${timeString}</div>
                 `;
 
                 this.container.appendChild(el);
@@ -286,7 +283,14 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const phrases = ["自在造字", "可变，才自在"];
+            // Update phrases to be longer to fill the wider space
+            const phrases = [
+                "自在造字 (ZizaoType)", 
+                "Variable Infinite", 
+                "可变，才自在", 
+                "Constructing Visual Voice",
+                "Design for Screens"
+            ];
             const typeEl = document.getElementById('type-text');
             if (typeEl) new TypeWriter(typeEl, phrases, 2500);
 

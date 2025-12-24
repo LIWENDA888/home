@@ -1,6 +1,7 @@
 /**
  * TYPEFOUNDRY STUDIO - CORE LOGIC
  * Refined: 2025-12-18 (Complete & Exquisite Version)
+ * Modified: Subtle Blur & Refined Typography Size
  */
 
 
@@ -199,22 +200,25 @@ function toggleMenu() {
     }
 }
 
-// ================= 5. Bento Card Generator (For Home Page) =================
+// ================= 5. Bento Card Generator (Subtle Blur & Smaller Text) =================
 function createBentoCard(item) {
     const href = item.link || '#';
     return `
-        <a href="${href}" target="_blank" class="group relative isolate overflow-hidden rounded-2xl bg-gray-100 dark:bg-neutral-800 border border-transparent dark:border-neutral-800 ${item.colSpan || 'md:col-span-1'} ${item.rowSpan || 'md:row-span-1'} min-h-[300px] lg:min-h-[360px] block transition-all duration-500 ease-out hover:shadow-2xl hover:-translate-y-1">
+        <a href="${href}" target="_blank" class="group relative isolate overflow-hidden rounded-2xl bg-gray-100 dark:bg-neutral-800 border border-transparent dark:border-neutral-800 ${item.colSpan || 'md:col-span-1'} ${item.rowSpan || 'md:row-span-1'} min-h-[300px] lg:min-h-[360px] block transition-all duration-500 ease-out hover:shadow-2xl">
             <div class="absolute inset-0 size-full overflow-hidden rounded-2xl">
-                <img src="${item.imageUrl}" alt="${item.title}" class="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
-                <div class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-50"></div>
+                <img src="${item.imageUrl}" alt="${item.title}" class="size-full object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:blur-[1px]" />
+                
+                <div class="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
             </div>
+            
             <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-8">
                 <div class="flex items-end justify-between">
-                    <div class="transform transition-transform duration-500 ease-out group-hover:-translate-y-1 text-shadow-subtle">
+                    <div class="transform translate-y-4 opacity-0 transition-all duration-500 ease-out group-hover:translate-y-0 group-hover:opacity-100 text-shadow-subtle">
                         <span class="mb-2 block text-xs font-bold uppercase tracking-widest text-white/90">${item.subtitle}</span>
-                        <h3 class="text-2xl font-black text-white md:text-3xl lg:text-4xl tracking-tight">${item.title}</h3>
+                        <h3 class="text-xl font-black text-white md:text-2xl lg:text-3xl tracking-tight">${item.title}</h3>
                     </div>
-                    <div class="flex size-12 -translate-x-4 translate-y-4 items-center justify-center rounded-full bg-white text-black opacity-0 transition-all duration-500 ease-out group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100 shadow-lg">
+                    
+                    <div class="flex size-12 translate-y-4 opacity-0 transition-all duration-500 ease-out delay-75 group-hover:translate-y-0 group-hover:opacity-100 items-center justify-center rounded-full bg-white text-black shadow-lg">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"></path></svg>
                     </div>
                 </div>
