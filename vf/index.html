@@ -317,7 +317,7 @@
     <nav class="top-nav">
         <div class="nav-links">
             <a href="https://www.google.com" target="_blank" class="nav-link">发现字体</a>
-            <a href="#" class="nav-link">使用指南</a>
+            <a href="https://www.google.com" target="_blank" class="nav-link">发现字体</a>
         </div>
         <div class="nav-actions">
             <button class="icon-btn" id="aboutBtn" title="关于本站">
@@ -336,13 +336,13 @@
             <div style="height:1px; background:var(--border-color); margin: 10px 0;"></div>
 
             <div>
-                <div style="font-size:10px; font-weight:700; color:var(--text-sec); margin-bottom:8px;">PREVIEW TEXT</div>
+                <div style="font-size:10px; font-weight:700; color:var(--text-sec); margin-bottom:8px;">预览文字</div>
                 <textarea class="global-text-input" id="globalTextInput" placeholder="输入文字...">自在致黑</textarea>
             </div>
 
             <div>
                 <div style="font-size:10px; font-weight:700; color:var(--text-sec); margin-bottom:8px; display:flex; justify-content:space-between;">
-                    <span>FAMILY</span>
+                    <span>选择字体</span>
                     <span id="fontCount">1 Active</span>
                 </div>
                 <div class="font-selector-trigger" id="fontTrigger">
@@ -556,7 +556,7 @@
 
         function updateUI() {
             const count = state.activeIndices.size;
-            dom.fontCount.textContent = `${count} Active`;
+            dom.fontCount.textContent = `已选 ${count} 款字体`;
             if(count === 0) dom.triggerText.textContent = "选择字体...";
             else if(count === 1) dom.triggerText.textContent = state.fonts[[...state.activeIndices][0]].name;
             else dom.triggerText.textContent = `${count} 款字体`;
@@ -577,7 +577,7 @@
                 // 动态生成标签：检查 font.badge 是否有值
                 const badgeHtml = font.badge ? `<span class="font-badge">${font.badge}</span>` : '';
                 
-                const dlBtn = font.downloadUrl ? `<a href="${font.downloadUrl}" target="_blank" class="btn-download"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>下载</a>` : '';
+                const dlBtn = font.downloadUrl ? `<a href="${font.downloadUrl}" target="_blank" class="btn-download"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>下载字体</a>` : '';
 
                 const block = document.createElement('div');
                 block.className = 'font-card';
@@ -607,7 +607,7 @@
             dom.controls.innerHTML = '';
             const layoutBox = document.createElement('div');
             layoutBox.className = 'section-box';
-            layoutBox.innerHTML = `<span class="section-title">布局 LAYOUT</span>`;
+            layoutBox.innerHTML = `<span class="section-title">布局控制</span>`;
             dom.controls.appendChild(layoutBox);
 
             const sizeAxis = { tag: 'size', name: '字号 Size', min: 12, max: 200, default: 64, step: 1, isSystem: true, suffix: 'px' };
@@ -618,7 +618,7 @@
             if (axes.length > 0) {
                 const varBox = document.createElement('div');
                 varBox.className = 'section-box';
-                varBox.innerHTML = `<span class="section-title">可变轴 AXES</span>`;
+                varBox.innerHTML = `<span class="section-title">可变控制</span>`;
                 dom.controls.appendChild(varBox);
                 axes.forEach(axis => {
                     if (state.axesValues[axis.tag] === undefined) state.axesValues[axis.tag] = axis.default;
