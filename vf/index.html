@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>字体实验室 Pro - 自在造字</title>
+    <title>可变字体世界 - 自在造字</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,8 +18,8 @@
             --bg-body: #fdfdfd; 
             
             /* 视觉调整：增加描边厚度与颜色适配 */
-            --border-width: 1.5px; /* 关键修改：全局加粗 */
-            --border-color: rgba(0, 0, 0, 0.1); /* 稍微加深一点点以匹配厚度 */
+            --border-width: 1.5px;
+            --border-color: rgba(0, 0, 0, 0.1);
             --border-hover: rgba(0, 0, 0, 0.35);
             
             --panel-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.04);
@@ -93,10 +93,10 @@
             height: calc(100vh - var(--nav-height));
         }
 
-        /* 通用面板：使用加粗的描边 */
+        /* 通用面板 */
         .outline-panel {
             background: var(--bg-body); 
-            border: var(--border-width) solid var(--border-color); /* 引用变量 */
+            border: var(--border-width) solid var(--border-color);
             border-radius: var(--radius-lg);
             display: flex; flex-direction: column;
             overflow: hidden;
@@ -114,7 +114,7 @@
         body.dark-mode .sidebar-logo-img { filter: brightness(0) invert(1); }
 
         .section-box {
-            border: var(--border-width) solid var(--border-color); /* 引用变量 */
+            border: var(--border-width) solid var(--border-color);
             border-radius: var(--radius-md);
             padding: 16px;
             margin-bottom: 24px;
@@ -131,7 +131,7 @@
         .global-text-input {
             width: 100%; min-height: 80px; padding: 12px; 
             border-radius: var(--radius-sm);
-            border: var(--border-width) solid var(--border-color); /* 引用变量 */
+            border: var(--border-width) solid var(--border-color);
             background: transparent; 
             color: var(--text-main); font-size: 14px; line-height: 1.5;
             resize: none; font-family: inherit; transition: all 0.2s;
@@ -142,7 +142,7 @@
         .font-selector-trigger {
             display: flex; align-items: center; justify-content: space-between;
             background: transparent;
-            border: var(--border-width) solid var(--border-color); /* 引用变量 */
+            border: var(--border-width) solid var(--border-color);
             padding: 10px 12px; border-radius: var(--radius-sm); cursor: pointer;
             font-size: 13px; font-weight: 500; transition: all 0.2s;
         }
@@ -177,7 +177,7 @@
 
         .font-card {
             width: 100%; 
-            border: var(--border-width) solid var(--border-color); /* 引用变量 */
+            border: var(--border-width) solid var(--border-color);
             border-radius: var(--radius-md);
             padding: 24px;
             margin-bottom: 32px;
@@ -197,10 +197,17 @@
         }
         .meta-left-group { display: flex; align-items: center; gap: 12px; }
         .font-name-tag { font-size: 15px; font-weight: 700; color: var(--text-main); }
-        .badge-free {
-            font-size: 10px; font-weight: 600; border: 1px solid var(--text-sec); color: var(--text-main);
-            padding: 2px 6px; border-radius: 4px; letter-spacing: 0.05em; opacity: 0.8;
+        
+        /* 修改后的标签样式：更通用 */
+        .font-badge {
+            font-size: 10px; font-weight: 600; 
+            border: 1px solid var(--text-sec); color: var(--text-main);
+            padding: 2px 6px; border-radius: 4px; 
+            letter-spacing: 0.05em; opacity: 0.8;
+            white-space: nowrap; /* 防止长文字换行 */
+            text-transform: uppercase; /* 建议保留大写，看起来更像标签 */
         }
+        
         .btn-download {
             display: flex; align-items: center; gap: 4px;
             font-size: 12px; font-weight: 500; color: var(--text-sec); text-decoration: none;
@@ -224,7 +231,7 @@
         .dropdown-menu {
             position: absolute; width: 300px;
             background: var(--bg-body); 
-            border: var(--border-width) solid var(--border-color); /* 引用变量 */
+            border: var(--border-width) solid var(--border-color);
             border-radius: 12px; padding: 6px;
             opacity: 0; pointer-events: none; transform: translateY(5px);
             transition: all 0.1s; z-index: 100; 
@@ -265,7 +272,7 @@
         
         .modal-card {
             width: 400px; background: var(--bg-body); 
-            border: var(--border-width) solid var(--border-color); /* 引用变量 */
+            border: var(--border-width) solid var(--border-color);
             border-radius: 24px; padding: 32px; position: relative;
             box-shadow: 0 24px 64px rgba(0,0,0,0.12);
             transform: scale(0.96); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -364,7 +371,7 @@
             
             <div class="modal-header">
                 <div class="modal-title">字体实验室 Pro</div>
-                <div class="modal-version">v2.3 · Enhanced Stroke</div>
+                <div class="modal-version">v2.4 · Custom Badges</div>
             </div>
 
             <div class="feature-list">
@@ -407,14 +414,16 @@
     <input type="file" id="localFontInput" accept=".ttf,.otf,.woff2" hidden>
 
     <script>
+        // 配置初始字体：现在可以通过 badge 属性自定义标签内容
+        // badge: 字符串，显示在标题旁的标签。如果为空字符串 "" 或 null 则不显示。
         const initialFonts = [
             {
                 name: "自在致黑",
                 src: "123.ttf",
-                isFree: true,
-                downloadUrl: "https://fonts.google.com/specimen/Roboto+Flex",
+                badge: "免费", 
+                downloadUrl: "https://www.zizao.top/fonts/zizaizhisans",
                 axes: [
-                    { tag: 'wght', name: '字重 Weight', min: 100, max: 700, default: 400, step: 1 },
+                    { tag: 'wght', name: '字重 Weight', min: 100, max: 700, default: 300, step: 1 },
                     { tag: 'wdth', name: '字宽 Width', min: 75,  max: 125,  default: 100, step: 0.1 }
                 ]
             }
@@ -530,10 +539,10 @@
             const newFont = {
                 name: file.name.replace(/\.[^/.]+$/, ""), 
                 src: url, 
-                isFree: false, 
+                badge: "本地预览", // 设置本地上传的字体默认显示的标签内容
                 axes: [
-                    { tag: 'wght', name: '字重', min: 100, max: 900, default: 400, step: 1 }, 
-                    { tag: 'wdth', name: '字宽', min: 50, max: 150, default: 100, step: 1 }
+                    { tag: 'wght', name: '字重', min: 100, max: 700, default: 300, step: 1 }, 
+                    { tag: 'wdth', name: '字宽', min: 75, max: 120, default: 100, step: 1 }
                 ]
             };
             state.fonts.push(newFont); 
@@ -564,14 +573,17 @@
                 if (!state.activeIndices.has(idx)) return;
                 
                 const family = state.loadedFamilies[idx] || 'sans-serif';
-                const freeTag = font.isFree ? `<span class="badge-free">FREE</span>` : '';
+                
+                // 动态生成标签：检查 font.badge 是否有值
+                const badgeHtml = font.badge ? `<span class="font-badge">${font.badge}</span>` : '';
+                
                 const dlBtn = font.downloadUrl ? `<a href="${font.downloadUrl}" target="_blank" class="btn-download"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>下载</a>` : '';
 
                 const block = document.createElement('div');
                 block.className = 'font-card';
                 block.innerHTML = `
                     <div class="font-meta-header">
-                        <div class="meta-left-group"><span class="font-name-tag">${font.name}</span>${freeTag}${dlBtn}</div>
+                        <div class="meta-left-group"><span class="font-name-tag">${font.name}</span>${badgeHtml}${dlBtn}</div>
                         <svg class="font-remove-btn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" onclick="toggleFont(${idx})"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </div>
                     <div class="demo-text" contenteditable="true" spellcheck="false" style="font-family: '${family}', sans-serif;">${state.globalText}</div>
