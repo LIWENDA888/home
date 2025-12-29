@@ -3,550 +3,676 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>在线体验Variable Font - 自在造字</title>
-
+    <title>字体实验室 Pro - 自在造字</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <link rel="icon" href="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/AR9P/ico.ico" type="zizaoicon">
+
     <style>
         /* ==================== 
-           CSS 变量与基础设置 
+           CSS 变量配置
            ==================== */
         :root {
-            --bg-color: #f2f2f7; /* iOS 风格的浅灰背景，更有层次 */
-            --text-color: #1d1d1f;
-            --accent-color: #0071e3; /* Pro Blue */
-            --track-bg: rgba(120, 120, 128, 0.16);
-            --ui-blur: 20px;
-            --panel-bg: rgba(255, 255, 255, 0.75);
-            --font-family-demo: "ZizaiZhihei", "Roboto Flex", sans-serif;
+            --bg-body: #fdfdfd; 
             
-            --vf-wght: 400;
-            --vf-wdth: 100;
-            --vf-size: 12vw;
+            /* 视觉调整：增加描边厚度与颜色适配 */
+            --border-width: 1.5px; /* 关键修改：全局加粗 */
+            --border-color: rgba(0, 0, 0, 0.1); /* 稍微加深一点点以匹配厚度 */
+            --border-hover: rgba(0, 0, 0, 0.35);
+            
+            --panel-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.04);
+            
+            --text-main: #1d1d1f;
+            --text-sec: rgba(60, 60, 67, 0.6);
+            --accent: #000000; 
+            --accent-bg: #f5f5f5;
+            
+            --nav-height: 56px;
+            --gap: 24px;
+            --sidebar-width: 340px;
+            
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+
+            --vf-size: 64px;
+            --vf-spacing: 0em;
         }
 
-        /* 深色模式变量 */
         body.dark-mode {
-            --bg-color: #000000;
-            --text-color: #f5f5f7;
-            --accent-color: #0a84ff;
-            --track-bg: rgba(255, 255, 255, 0.2);
-            --panel-bg: rgba(30, 30, 30, 0.75);
+            --bg-body: #050505;
+            --border-color: rgba(255, 255, 255, 0.18);
+            --border-hover: rgba(255, 255, 255, 0.45);
+            --panel-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.6);
+            --text-main: #f5f5f7;
+            --text-sec: rgba(235, 235, 245, 0.5);
+            --accent: #ffffff;
+            --accent-bg: #1c1c1e;
         }
 
-        /* 引入测试用可变字体 (备用) */
-        @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:wdth,wght@25..151,100..900&display=swap');
-
-        /* 核心字体定义 */
-        @font-face {
-            font-family: "ZizaiZhihei";
-            /* 这里修改为你指定的文件名 */
-            src: url('123.ttf') format('truetype');
-            font-weight: 100 900;
-            font-stretch: 50% 200%;
-            font-display: swap;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-font-smoothing: antialiased; }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            height: 100dvh; 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh; 
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            transition: background-color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.4s ease;
         }
 
-        /* ==================== 
-           顶部导航栏 (Header Bar)
-           ==================== */
-        .header-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 24px 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 20;
-            pointer-events: none; /* 让点击穿透空白区域 */
+        /* 顶部导航 */
+        .top-nav {
+            height: var(--nav-height);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 32px; flex-shrink: 0; z-index: 50;
+        }
+        .nav-links { display: flex; gap: 32px; }
+        .nav-link {
+            text-decoration: none; color: var(--text-sec); font-size: 13px; font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-link:hover { color: var(--text-main); }
+
+        .nav-actions { display: flex; gap: 12px; align-items: center; }
+        .icon-btn {
+            background: transparent; border: 1px solid transparent; cursor: pointer; color: var(--text-main);
+            display: flex; align-items: center; justify-content: center;
+            width: 32px; height: 32px; border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .icon-btn:hover { background: var(--accent-bg); }
+        .icon-btn svg { stroke-width: 1.5px; width: 20px; height: 20px; }
+
+        /* 主布局 */
+        .app-container {
+            flex: 1; display: flex; padding: 0 24px 24px 24px; gap: var(--gap);
+            height: calc(100vh - var(--nav-height));
         }
 
-        .header-element {
-            pointer-events: auto; /* 恢复按钮交互 */
+        /* 通用面板：使用加粗的描边 */
+        .outline-panel {
+            background: var(--bg-body); 
+            border: var(--border-width) solid var(--border-color); /* 引用变量 */
+            border-radius: var(--radius-lg);
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            box-shadow: var(--panel-shadow);
+            contain: content; 
         }
 
-        /* 字体名称显示框 (模拟下拉菜单外观) */
-        .font-badge {
-            background: var(--panel-bg);
-            backdrop-filter: blur(var(--ui-blur));
-            -webkit-backdrop-filter: blur(var(--ui-blur));
-            border: 0.5px solid rgba(128, 128, 128, 0.1);
-            padding: 10px 16px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            transition: transform 0.2s, background-color 0.3s;
-            cursor: default; /* 这里用了 default，暗示目前不可点，但看起来像 UI */
+        /* 左侧 Sidebar */
+        .sidebar {
+            width: var(--sidebar-width); padding: 24px; gap: 24px; overflow-y: auto; flex-shrink: 0;
+        }
+        .sidebar::-webkit-scrollbar { width: 0; height: 0; }
+        .sidebar-logo-img { height: 22px; width: auto; display: block; margin-bottom: 4px; opacity: 0.9; }
+        body.dark-mode .sidebar-logo-img { filter: brightness(0) invert(1); }
+
+        .section-box {
+            border: var(--border-width) solid var(--border-color); /* 引用变量 */
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 24px;
+            transition: border-color 0.2s;
+        }
+        .section-box:hover { border-color: var(--border-hover); }
+
+        .section-title {
+            font-size: 10px; font-weight: 700; text-transform: uppercase; 
+            color: var(--text-sec); letter-spacing: 0.05em;
+            margin-bottom: 12px; display: block; opacity: 0.8;
         }
 
-        body.dark-mode .font-badge {
-            border: 0.5px solid rgba(255, 255, 255, 0.1);
+        .global-text-input {
+            width: 100%; min-height: 80px; padding: 12px; 
+            border-radius: var(--radius-sm);
+            border: var(--border-width) solid var(--border-color); /* 引用变量 */
+            background: transparent; 
+            color: var(--text-main); font-size: 14px; line-height: 1.5;
+            resize: none; font-family: inherit; transition: all 0.2s;
         }
+        .global-text-input:focus { border-color: var(--accent); }
 
-        .font-badge-icon {
-            width: 16px;
-            height: 16px;
-            fill: var(--text-color);
-            opacity: 0.6;
+        /* 字体选择器 */
+        .font-selector-trigger {
+            display: flex; align-items: center; justify-content: space-between;
+            background: transparent;
+            border: var(--border-width) solid var(--border-color); /* 引用变量 */
+            padding: 10px 12px; border-radius: var(--radius-sm); cursor: pointer;
+            font-size: 13px; font-weight: 500; transition: all 0.2s;
         }
+        .font-selector-trigger:hover { border-color: var(--text-sec); background: var(--accent-bg); }
 
-        .font-badge-text {
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: -0.01em;
-        }
+        .control-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+        .control-row:last-child { margin-bottom: 0; }
+        .control-header { display: flex; justify-content: space-between; font-size: 12px; font-weight: 500; color: var(--text-sec); }
+        .control-val { color: var(--text-main); font-feature-settings: "tnum"; font-weight: 600; }
         
-        .font-badge-meta {
-            font-size: 12px;
-            opacity: 0.5;
-            font-weight: 400;
-            margin-left: 4px;
-            border-left: 1px solid currentColor;
-            padding-left: 10px;
+        .slider-group { display: flex; align-items: center; gap: 12px; }
+        input[type=range] { -webkit-appearance: none; width: 100%; height: 20px; background: transparent; cursor: pointer; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 2px; background: var(--border-color); border-radius: 1px;}
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%; 
+            background: var(--bg-body); border: 1.5px solid var(--text-main);
+            margin-top: -6px; transition: transform 0.1s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.1); background: var(--text-main); border-color:var(--text-main); }
+
+        .play-btn {
+            width: 24px; height: 24px; border-radius: 4px; border: 1px solid transparent; background: transparent;
+            color: var(--text-sec); cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .play-btn:hover { color: var(--text-main); border-color: var(--border-color); }
+        .play-btn.active { background: var(--text-main); color: var(--bg-body); }
+
+        .canvas-area {
+            flex: 1; padding: 40px; overflow-y: auto; position: relative;
+            display: block; 
         }
 
-        /* 主题切换按钮 */
-        .theme-toggle {
-            background: var(--panel-bg);
-            backdrop-filter: blur(var(--ui-blur));
-            -webkit-backdrop-filter: blur(var(--ui-blur));
-            border: 0.5px solid rgba(128, 128, 128, 0.1);
-            cursor: pointer;
-            color: var(--text-color);
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        .font-card {
+            width: 100%; 
+            border: var(--border-width) solid var(--border-color); /* 引用变量 */
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: 32px;
+            transition: border-color 0.2s;
+            animation: fadeIn 0.4s ease forwards;
+            background: rgba(255,255,255,0.01); 
+            content-visibility: auto; 
+            contain-intrinsic-size: 200px; 
         }
-        
-        body.dark-mode .theme-toggle {
-            border: 0.5px solid rgba(255, 255, 255, 0.1);
-        }
+        .font-card:hover { border-color: var(--border-hover); }
 
-        .theme-toggle:hover {
-            transform: scale(1.08);
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ==================== 
-           主展示区域 
-           ==================== */
-        .preview-container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 20px;
-            text-align: center;
-            z-index: 1;
-            /* 保证文字不会被底部控件遮挡 */
-            padding-bottom: 180px; 
+        .font-meta-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;
         }
+        .meta-left-group { display: flex; align-items: center; gap: 12px; }
+        .font-name-tag { font-size: 15px; font-weight: 700; color: var(--text-main); }
+        .badge-free {
+            font-size: 10px; font-weight: 600; border: 1px solid var(--text-sec); color: var(--text-main);
+            padding: 2px 6px; border-radius: 4px; letter-spacing: 0.05em; opacity: 0.8;
+        }
+        .btn-download {
+            display: flex; align-items: center; gap: 4px;
+            font-size: 12px; font-weight: 500; color: var(--text-sec); text-decoration: none;
+            padding: 4px 8px; border-radius: 4px; transition: all 0.2s;
+        }
+        .btn-download:hover { color: var(--text-main); background: var(--accent-bg); }
+
+        .font-remove-btn { 
+            cursor: pointer; color: var(--text-sec); opacity: 0.4; padding: 4px; transition: all 0.2s;
+        }
+        .font-remove-btn:hover { color: #ff3b30; opacity: 1; }
 
         .demo-text {
-            font-family: var(--font-family-demo);
-            font-size: var(--vf-size);
-            font-variation-settings: 'wght' var(--vf-wght), 'wdth' var(--vf-wdth);
-            line-height: 1;
-            word-break: keep-all;
-            -webkit-font-smoothing: antialiased;
-            will-change: font-variation-settings, font-size;
-            cursor: text;
+            font-size: var(--vf-size); letter-spacing: var(--vf-spacing); line-height: 1.1;
+            text-align: left; outline: none; word-wrap: break-word; 
+            color: var(--text-main); cursor: text;
+        }
+        .empty-tip { color: var(--text-sec); font-size: 14px; margin-top: 20%; text-align: center; font-weight: 400;}
+
+        /* 下拉菜单 */
+        .dropdown-menu {
+            position: absolute; width: 300px;
+            background: var(--bg-body); 
+            border: var(--border-width) solid var(--border-color); /* 引用变量 */
+            border-radius: 12px; padding: 6px;
+            opacity: 0; pointer-events: none; transform: translateY(5px);
+            transition: all 0.1s; z-index: 100; 
+            box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+        }
+        .dropdown-menu.active { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        
+        .dropdown-item {
+            padding: 10px; font-size: 13px; border-radius: 6px; cursor: pointer;
+            display: flex; align-items: center; gap: 10px; color: var(--text-main);
+            transition: background 0.1s; font-weight: 500;
+            user-select: none;
+        }
+        .dropdown-item:hover { background: var(--accent-bg); }
+        .dropdown-item * { pointer-events: none; } 
+
+        .checkbox {
+            width: 16px; height: 16px; border: 1.5px solid var(--text-sec); border-radius: 4px; 
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.1s; flex-shrink: 0;
+        }
+        .dropdown-item.selected .checkbox {
+            background: var(--text-main); border-color: var(--text-main);
+        }
+        .dropdown-item.selected .checkbox::after {
+            content: ''; width: 4px; height: 8px; border: solid var(--bg-body);
+            border-width: 0 2px 2px 0; transform: rotate(45deg) translate(0px, -1px);
         }
 
-        .demo-text:focus {
-            outline: none;
+        /* 模态框 */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.2); backdrop-filter: blur(10px); 
+            z-index: 200; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
-
-        /* ==================== 
-           底部悬浮控制区 
-           ==================== */
-        .controls-container {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: 10;
-            padding: 0 48px 48px; 
-            display: flex;
-            justify-content: center;
-            gap: 48px;
-            /* 更加细腻的渐变遮罩 */
-            background: linear-gradient(to top, var(--bg-color) 25%, rgba(0,0,0,0) 100%);
-            pointer-events: none; 
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        
+        .modal-card {
+            width: 400px; background: var(--bg-body); 
+            border: var(--border-width) solid var(--border-color); /* 引用变量 */
+            border-radius: 24px; padding: 32px; position: relative;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.12);
+            transform: scale(0.96); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        .modal-overlay.active .modal-card { transform: scale(1); }
 
-        .controls-container > * {
-            pointer-events: auto;
+        .modal-close { 
+            position:absolute; top:20px; right:20px; cursor:pointer; color:var(--text-sec); 
+            background: var(--accent-bg); border-radius: 50%; padding: 4px;
+            transition: all 0.2s;
         }
+        .modal-close:hover { background: var(--border-color); color: var(--text-main); }
 
-        .control-group {
-            flex: 1;
-            max-width: 260px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        /* 移动端适配 */
-        @media (max-width: 768px) {
-            .header-bar { padding: 16px 20px; }
-            .preview-container { padding-bottom: 250px; }
-            .controls-container {
-                flex-direction: column;
-                align-items: center;
-                gap: 20px;
-                padding: 20px 24px 34px;
-                background: linear-gradient(to top, var(--bg-color) 50%, rgba(0,0,0,0) 100%);
-            }
-            .control-group { width: 100%; max-width: none; gap: 8px; }
-            :root { --vf-size: 60px; }
-        }
-
-        .label-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            /* 更加专业的标签字体设置 */
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--text-color);
-            opacity: 0.5;
-            padding: 0 2px;
-        }
-
-        .value-display {
-            font-variant-numeric: tabular-nums;
-            font-weight: 600;
-            color: var(--accent-color);
-            opacity: 1;
-            font-size: 12px;
-        }
-
-        .slider-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            height: 32px;
-        }
-
-        /* ==================== 
-           高级滑杆组件 (Premium Slider)
-           ==================== */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            background: transparent;
-            height: 32px; 
-            cursor: pointer;
-            flex: 1;
+        .modal-header { text-align: center; margin-bottom: 24px; }
+        .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; color: var(--text-main); }
+        .modal-version { 
+            font-size: 11px; color: var(--text-sec); font-weight: 500; 
+            background: var(--accent-bg); padding: 2px 8px; border-radius: 12px; display: inline-block;
         }
         
-        input[type=range]:focus { outline: none; }
+        .feature-list { display: flex; flex-direction: column; gap: 16px; margin: 24px 0; }
+        .feature-row { display: flex; align-items: center; gap: 16px; }
+        .feature-icon-box { 
+            width: 36px; height: 36px; border-radius: 10px; background: var(--accent-bg); 
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            color: var(--text-main);
+        }
+        .feature-content h4 { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+        .feature-content p { font-size: 11px; color: var(--text-sec); line-height: 1.4; }
 
-        /* 轨道 */
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px; /* 更细致的轨道 */
-            border-radius: 2px;
-            background: linear-gradient(to right, var(--accent-color) 0%, var(--accent-color) var(--progress, 0%), var(--track-bg) var(--progress, 0%), var(--track-bg) 100%);
-        }
+        .modal-footer { text-align: center; margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border-color); }
 
-        /* 拖拽头 */
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 20px;
-            width: 20px;
-            border-radius: 50%;
-            background: #ffffff;
-            margin-top: -8px; 
-            /* 更加立体的阴影，仿佛浮在屏幕上 */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15), 0 0 0 0.5px rgba(0,0,0,0.05);
-            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+        @media (max-width: 900px) {
+            .app-container { flex-direction: column; padding: 16px; gap: 16px; height: auto; }
+            .sidebar { width: 100%; overflow: visible; padding: 20px; }
+            .canvas-area { min-height: 400px; padding: 20px; }
         }
-        
-        body.dark-mode input[type=range]::-webkit-slider-thumb {
-            background: #e0e0e0;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-        }
-
-        input[type=range]::-webkit-slider-thumb:hover,
-        input[type=range]:active::-webkit-slider-thumb {
-            transform: scale(1.15);
-        }
-
-        /* 播放按钮 */
-        .play-btn {
-            background: var(--panel-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 0.5px solid rgba(128,128,128,0.1);
-            color: var(--text-color);
-            cursor: pointer;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            flex-shrink: 0;
-        }
-
-        body.dark-mode .play-btn {
-            border: 0.5px solid rgba(255,255,255,0.1);
-            background: rgba(40,40,40,0.6);
-        }
-
-        .play-btn:hover {
-            transform: translateY(-1px);
-            background: var(--bg-color);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-
-        .play-btn.active {
-            color: #fff;
-            background: var(--accent-color);
-            border-color: transparent;
-            box-shadow: 0 2px 8px rgba(0, 113, 227, 0.4);
-        }
-        
-        .play-btn.active:hover {
-            transform: none;
-        }
-
-        svg {
-            width: 14px;
-            height: 14px;
-            fill: currentColor;
-            display: block;
-        }
-
     </style>
 </head>
 <body>
 
-    <div class="header-bar">
-        <div class="header-element font-badge">
-            <svg class="font-badge-icon" viewBox="0 0 24 24">
-                <path d="M9.93 13.5h4.14L12 7.98zM20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-4.05 16.5l-1.14-3H9.17l-1.12 3H5.96l5.11-13h1.86l5.11 13h-2.09z"/>
-            </svg>
-            <span class="font-badge-text">自在致黑</span>
-            <span class="font-badge-meta">Variable.ttf</span>
-            <svg style="margin-left:auto; width:10px; opacity:0.4;" viewBox="0 0 24 24">
-                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-            </svg>
+    <nav class="top-nav">
+        <div class="nav-links">
+            <a href="https://www.google.com" target="_blank" class="nav-link">发现字体</a>
+            <a href="#" class="nav-link">使用指南</a>
         </div>
+        <div class="nav-actions">
+            <button class="icon-btn" id="aboutBtn" title="关于本站">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            </button>
+            <button class="icon-btn" id="themeToggle" title="切换模式">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+        </div>
+    </nav>
 
-        <button class="header-element theme-toggle" id="themeToggle" title="切换模式">
-            <svg id="themeIcon" viewBox="0 0 24 24">
-                <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
-            </svg>
-        </button>
+    <div class="app-container">
+        <aside class="sidebar outline-panel">
+            <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251218/mAPB/logo.svg" 
+                 class="sidebar-logo-img" alt="自在造字">
+            <div style="height:1px; background:var(--border-color); margin: 10px 0;"></div>
+
+            <div>
+                <div style="font-size:10px; font-weight:700; color:var(--text-sec); margin-bottom:8px;">PREVIEW TEXT</div>
+                <textarea class="global-text-input" id="globalTextInput" placeholder="输入文字...">自在致黑</textarea>
+            </div>
+
+            <div>
+                <div style="font-size:10px; font-weight:700; color:var(--text-sec); margin-bottom:8px; display:flex; justify-content:space-between;">
+                    <span>FAMILY</span>
+                    <span id="fontCount">1 Active</span>
+                </div>
+                <div class="font-selector-trigger" id="fontTrigger">
+                    <span id="fontTriggerText">选择字体...</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+            </div>
+
+            <div style="height:1px; background:var(--border-color); margin: 10px 0;"></div>
+
+            <div id="controlsPanel">
+                <div style="text-align:center; color:var(--text-sec); font-size:12px; padding:20px;">暂无参数</div>
+            </div>
+        </aside>
+
+        <main class="canvas-area outline-panel" id="canvasArea">
+            <div class="empty-tip">← 请在左侧选择字体以开始</div>
+        </main>
     </div>
 
-    <div class="preview-container">
-        <div class="demo-text" id="demoText" contenteditable="true" spellcheck="false">
-            自在致黑
+    <div class="modal-overlay" id="aboutModal">
+        <div class="modal-card">
+            <div class="modal-close" id="modalClose">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </div>
+            
+            <div class="modal-header">
+                <div class="modal-title">字体实验室 Pro</div>
+                <div class="modal-version">v2.3 · Enhanced Stroke</div>
+            </div>
+
+            <div class="feature-list">
+                <div class="feature-row">
+                    <div class="feature-icon-box">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    </div>
+                    <div class="feature-content">
+                        <h4>精准可变控制</h4>
+                        <p>实时调整 wght, wdth 等标准轴及自定义轴。</p>
+                    </div>
+                </div>
+                <div class="feature-row">
+                    <div class="feature-icon-box">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    </div>
+                    <div class="feature-content">
+                        <h4>高性能渲染</h4>
+                        <p>采用 content-visibility 与异步加载，流畅如丝。</p>
+                    </div>
+                </div>
+                <div class="feature-row">
+                    <div class="feature-icon-box">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    </div>
+                    <div class="feature-content">
+                        <h4>本地隐私安全</h4>
+                        <p>所有字体文件仅在浏览器本地处理，无需上传。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <p style="font-size:10px; color:var(--text-sec);">Designed by Zizai Foundry © 2025</p>
+            </div>
         </div>
     </div>
 
-    <div class="controls-container">
-        
-        <div class="control-group">
-            <div class="label-row">
-                <span>字号</span>
-                <span class="value-display" id="val-size"></span>
-            </div>
-            <div class="slider-wrapper">
-                <input type="range" id="input-size" step="1">
-                <button class="play-btn" data-axis="size" title="Play Size">
-                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                </button>
-            </div>
-        </div>
-
-        <div class="control-group">
-            <div class="label-row">
-                <span>字宽</span>
-                <span class="value-display" id="val-wdth">100</span>
-            </div>
-            <div class="slider-wrapper">
-                <input type="range" id="input-wdth" min="75" max="125" value="100" step="0.5">
-                <button class="play-btn" data-axis="wdth" title="Play Width">
-                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                </button>
-            </div>
-        </div>
-
-        <div class="control-group">
-            <div class="label-row">
-                <span>字重</span>
-                <span class="value-display" id="val-wght">400</span>
-            </div>
-            <div class="slider-wrapper">
-                <input type="range" id="input-wght" min="100" max="700" value="400" step="1">
-                <button class="play-btn" data-axis="wght" title="Play Weight">
-                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                </button>
-            </div>
-        </div>
-
-    </div>
+    <div class="dropdown-menu" id="dropdownMenu"></div>
+    <input type="file" id="localFontInput" accept=".ttf,.otf,.woff2" hidden>
 
     <script>
-        const isMobile = window.innerWidth < 768;
-
-        const axes = {
-            size: {
-                id: 'size',
-                min: isMobile ? 30 : 40,
-                max: isMobile ? 150 : 300,
-                current: isMobile ? 60 : 120,
-                step: 0.5, 
-                direction: 1,
-                isPlaying: false,
-                suffix: 'px',
-                cssVar: '--vf-size'
-            },
-            wdth: {
-                id: 'wdth', 
-                min: 75,   // 根据需求更新
-                max: 125,  // 根据需求更新
-                current: 100, 
-                step: 0.2, // 范围变小了，步进稍微调小一点更丝滑
-                direction: 1, 
-                isPlaying: false, 
-                suffix: '', 
-                cssVar: '--vf-wdth'
-            },
-            wght: {
-                id: 'wght', 
-                min: 100,  // 根据需求更新
-                max: 700,  // 根据需求更新
-                current: 400, 
-                step: 2,   // 调整步进速度
-                direction: 1, 
-                isPlaying: false, 
-                suffix: '', 
-                cssVar: '--vf-wght'
+        const initialFonts = [
+            {
+                name: "自在致黑",
+                src: "123.ttf",
+                isFree: true,
+                downloadUrl: "https://fonts.google.com/specimen/Roboto+Flex",
+                axes: [
+                    { tag: 'wght', name: '字重 Weight', min: 100, max: 700, default: 400, step: 1 },
+                    { tag: 'wdth', name: '字宽 Width', min: 75,  max: 125,  default: 100, step: 0.1 }
+                ]
             }
+        ];
+
+        let state = {
+            fonts: [...initialFonts],
+            activeIndices: new Set([0]), 
+            axesValues: {},
+            globalText: "自在致黑",
+            loadedFamilies: {},
+            localUrls: [],
+            animations: {}
         };
 
-        const root = document.documentElement;
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = document.getElementById('themeIcon');
-        
-        const iconPlay = '<path d="M8 5v14l11-7z"/>';
-        const iconPause = '<path d="M8 19c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2v10c0 1.1.9 2 2 2zm6-12v10c0 1.1.9 2 2 2s2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2z"/>';
-        const iconSun = '<path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.79 1.41-1.41-1.79-1.79-1.41 1.41zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/>';
-        const iconMoon = '<path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>';
+        const dom = {
+            trigger: document.getElementById('fontTrigger'),
+            triggerText: document.getElementById('fontTriggerText'),
+            menu: document.getElementById('dropdownMenu'),
+            controls: document.getElementById('controlsPanel'),
+            canvas: document.getElementById('canvasArea'),
+            fontCount: document.getElementById('fontCount'),
+            fileInput: document.getElementById('localFontInput'),
+            themeToggle: document.getElementById('themeToggle'),
+            globalInput: document.getElementById('globalTextInput'),
+            aboutBtn: document.getElementById('aboutBtn'),
+            aboutModal: document.getElementById('aboutModal'),
+            modalClose: document.getElementById('modalClose')
+        };
 
-        // 初始化
-        Object.keys(axes).forEach(key => {
-            const axis = axes[key];
-            const input = document.getElementById(`input-${axis.id}`);
-            const btn = document.querySelector(`.play-btn[data-axis="${axis.id}"]`);
+        function init() {
+            renderDropdown();
+            updateUI();
+            state.activeIndices.forEach(idx => loadFontAsync(idx));
+            setupEvents();
+        }
 
-            input.min = axis.min;
-            input.max = axis.max;
-            input.value = axis.current;
-
-            updateAxisUI(axis);
-
-            input.addEventListener('input', (e) => {
-                axis.current = parseFloat(e.target.value);
-                updateAxisUI(axis, true);
+        function setupEvents() {
+            dom.trigger.addEventListener('click', (e) => {
+                const rect = dom.trigger.getBoundingClientRect();
+                dom.menu.style.left = rect.left + 'px';
+                dom.menu.style.top = (rect.bottom + 8) + 'px';
+                dom.menu.style.width = rect.width + 'px';
+                dom.menu.classList.toggle('active');
+                e.stopPropagation();
             });
-
-            btn.addEventListener('click', () => {
-                axis.isPlaying = !axis.isPlaying;
-                if (axis.isPlaying) {
-                    btn.innerHTML = `<svg viewBox="0 0 24 24">${iconPause}</svg>`;
-                    btn.classList.add('active');
-                } else {
-                    btn.innerHTML = `<svg viewBox="0 0 24 24">${iconPlay}</svg>`;
-                    btn.classList.remove('active');
+            document.addEventListener('click', (e) => {
+                if(!dom.menu.contains(e.target) && !dom.trigger.contains(e.target)) {
+                    dom.menu.classList.remove('active');
                 }
+                if(e.target === dom.aboutModal) dom.aboutModal.classList.remove('active');
             });
-        });
+            dom.aboutBtn.addEventListener('click', () => dom.aboutModal.classList.add('active'));
+            dom.modalClose.addEventListener('click', () => dom.aboutModal.classList.remove('active'));
+            dom.fileInput.addEventListener('change', handleFileUpload);
+            dom.globalInput.addEventListener('input', (e) => {
+                state.globalText = e.target.value;
+                document.querySelectorAll('.demo-text').forEach(el => el.innerText = state.globalText);
+            });
+            dom.themeToggle.addEventListener('click', () => document.body.classList.toggle('dark-mode'));
+        }
 
-        function updateAxisUI(axis, isManualInput = false) {
-            const input = document.getElementById(`input-${axis.id}`);
-            const display = document.getElementById(`val-${axis.id}`);
-            
-            // 核心功能：更新 CSS 变量
-            root.style.setProperty(axis.cssVar, axis.current + axis.suffix);
-            display.textContent = Math.round(axis.current) + axis.suffix;
-            
-            // 核心美化：更新滑杆进度填充
-            const percent = ((axis.current - axis.min) / (axis.max - axis.min)) * 100;
-            input.style.setProperty('--progress', percent + '%');
+        function renderDropdown() {
+            dom.menu.innerHTML = '';
+            state.fonts.forEach((font, idx) => {
+                const isSel = state.activeIndices.has(idx);
+                const item = document.createElement('div');
+                item.className = `dropdown-item ${isSel ? 'selected' : ''}`;
+                item.innerHTML = `<div class="checkbox"></div><span>${font.name}</span>`;
+                item.onclick = (e) => { e.stopPropagation(); toggleFont(idx); };
+                dom.menu.appendChild(item);
+            });
+            const uploadItem = document.createElement('div');
+            uploadItem.className = 'dropdown-item';
+            uploadItem.innerHTML = '<span>+ 本地字体...</span>';
+            uploadItem.onclick = (e) => { e.stopPropagation(); document.getElementById('localFontInput').click(); };
+            dom.menu.appendChild(document.createElement('div')).style.cssText = "height:1px; background:var(--border-color); margin:5px 0;";
+            dom.menu.appendChild(uploadItem);
+        }
 
-            if (!isManualInput) {
-                input.value = axis.current;
+        function toggleFont(idx) {
+            if (state.activeIndices.has(idx)) state.activeIndices.delete(idx);
+            else state.activeIndices.add(idx);
+            renderDropdown();
+            updateUI(); 
+            loadFontAsync(idx); 
+        }
+
+        async function loadFontAsync(idx) {
+            if (!state.activeIndices.has(idx)) return; 
+            if (state.loadedFamilies[idx]) return; 
+
+            const font = state.fonts[idx];
+            const familyName = `UserFont_${idx}_${Date.now()}`;
+            
+            try {
+                const fontFace = new FontFace(familyName, `url(${font.src})`, { display: 'swap' });
+                await fontFace.load();
+                document.fonts.add(fontFace);
+                state.loadedFamilies[idx] = familyName;
+                updateUI();
+            } catch(e) {
+                console.warn(`Load failed: ${font.name}`);
+                state.loadedFamilies[idx] = 'sans-serif';
             }
         }
 
-        function animate() {
-            Object.keys(axes).forEach(key => {
-                const axis = axes[key];
-                if (axis.isPlaying) {
-                    axis.current += axis.step * axis.direction;
-                    // 边界反弹
-                    if (axis.current >= axis.max) {
-                        axis.current = axis.max; axis.direction = -1;
-                    } else if (axis.current <= axis.min) {
-                        axis.current = axis.min; axis.direction = 1;
-                    }
-                    updateAxisUI(axis);
-                }
-            });
-            requestAnimationFrame(animate);
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const url = URL.createObjectURL(file);
+            state.localUrls.push(url);
+            const newFont = {
+                name: file.name.replace(/\.[^/.]+$/, ""), 
+                src: url, 
+                isFree: false, 
+                axes: [
+                    { tag: 'wght', name: '字重', min: 100, max: 900, default: 400, step: 1 }, 
+                    { tag: 'wdth', name: '字宽', min: 50, max: 150, default: 100, step: 1 }
+                ]
+            };
+            state.fonts.push(newFont); 
+            const newIdx = state.fonts.length - 1;
+            state.activeIndices.add(newIdx);
+            renderDropdown();
+            loadFontAsync(newIdx);
+            updateUI();
+            e.target.value = '';
         }
-        requestAnimationFrame(animate);
 
-        let isDarkMode = false;
-        themeToggle.addEventListener('click', () => {
-            isDarkMode = !isDarkMode;
-            document.body.classList.toggle('dark-mode');
-            themeIcon.style.transform = 'rotate(90deg) scale(0.5)';
-            themeIcon.style.opacity = '0';
-            setTimeout(() => {
-                themeIcon.innerHTML = isDarkMode ? iconSun : iconMoon;
-                themeIcon.style.transform = 'rotate(0deg) scale(1)';
-                 themeIcon.style.opacity = '1';
-            }, 150);
-        });
+        function updateUI() {
+            const count = state.activeIndices.size;
+            dom.fontCount.textContent = `${count} Active`;
+            if(count === 0) dom.triggerText.textContent = "选择字体...";
+            else if(count === 1) dom.triggerText.textContent = state.fonts[[...state.activeIndices][0]].name;
+            else dom.triggerText.textContent = `${count} 款字体`;
+
+            dom.canvas.innerHTML = '';
+            if (count === 0) {
+                dom.canvas.innerHTML = '<div class="empty-tip">请在左侧选择字体以开始</div>';
+                dom.controls.innerHTML = '<div style="text-align:center; color:var(--text-sec); font-size:12px; padding:20px;">暂无参数</div>';
+                return;
+            }
+
+            const activeAxesMap = new Map();
+            state.fonts.forEach((font, idx) => {
+                if (!state.activeIndices.has(idx)) return;
+                
+                const family = state.loadedFamilies[idx] || 'sans-serif';
+                const freeTag = font.isFree ? `<span class="badge-free">FREE</span>` : '';
+                const dlBtn = font.downloadUrl ? `<a href="${font.downloadUrl}" target="_blank" class="btn-download"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>下载</a>` : '';
+
+                const block = document.createElement('div');
+                block.className = 'font-card';
+                block.innerHTML = `
+                    <div class="font-meta-header">
+                        <div class="meta-left-group"><span class="font-name-tag">${font.name}</span>${freeTag}${dlBtn}</div>
+                        <svg class="font-remove-btn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" onclick="toggleFont(${idx})"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </div>
+                    <div class="demo-text" contenteditable="true" spellcheck="false" style="font-family: '${family}', sans-serif;">${state.globalText}</div>
+                `;
+                dom.canvas.appendChild(block);
+
+                font.axes.forEach(axis => {
+                    if (!activeAxesMap.has(axis.tag)) activeAxesMap.set(axis.tag, axis);
+                    else {
+                        const ex = activeAxesMap.get(axis.tag);
+                        ex.min = Math.min(ex.min, axis.min); ex.max = Math.max(ex.max, axis.max);
+                    }
+                });
+            });
+
+            generateControls(Array.from(activeAxesMap.values()));
+            applyStyles();
+        }
+
+        function generateControls(axes) {
+            dom.controls.innerHTML = '';
+            const layoutBox = document.createElement('div');
+            layoutBox.className = 'section-box';
+            layoutBox.innerHTML = `<span class="section-title">布局 LAYOUT</span>`;
+            dom.controls.appendChild(layoutBox);
+
+            const sizeAxis = { tag: 'size', name: '字号 Size', min: 12, max: 200, default: 64, step: 1, isSystem: true, suffix: 'px' };
+            const spaceAxis = { tag: 'spacing', name: '间距 Spacing', min: -0.2, max: 1, default: 0, step: 0.01, isSystem: true, suffix: 'em' };
+            layoutBox.appendChild(createSliderElement(sizeAxis));
+            layoutBox.appendChild(createSliderElement(spaceAxis));
+
+            if (axes.length > 0) {
+                const varBox = document.createElement('div');
+                varBox.className = 'section-box';
+                varBox.innerHTML = `<span class="section-title">可变轴 AXES</span>`;
+                dom.controls.appendChild(varBox);
+                axes.forEach(axis => {
+                    if (state.axesValues[axis.tag] === undefined) state.axesValues[axis.tag] = axis.default;
+                    varBox.appendChild(createSliderElement(axis));
+                });
+            }
+        }
+
+        function createSliderElement(axis) {
+            const val = axis.isSystem ? (state.axesValues[axis.tag] ?? axis.default) : state.axesValues[axis.tag];
+            const div = document.createElement('div'); div.className = 'control-row';
+            div.innerHTML = `
+                <div class="control-header"><span>${axis.name}</span><span class="control-val">${Math.round(val*100)/100}${axis.suffix||''}</span></div>
+                <div class="slider-group">
+                    <input type="range" min="${axis.min}" max="${axis.max}" step="${axis.step}" value="${val}">
+                    <button class="play-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+                </div>`;
+            
+            const input = div.querySelector('input'); 
+            const display = div.querySelector('.control-val'); 
+            const btn = div.querySelector('.play-btn');
+            
+            input.addEventListener('input', (e) => {
+                const v = parseFloat(e.target.value); 
+                display.textContent = (Math.round(v*100)/100)+(axis.suffix||'');
+                if (axis.isSystem) {
+                    state.axesValues[axis.tag] = v;
+                    if(axis.tag === 'size') document.documentElement.style.setProperty('--vf-size', v+'px');
+                    if(axis.tag === 'spacing') document.documentElement.style.setProperty('--vf-spacing', v+'em');
+                } else { state.axesValues[axis.tag] = v; applyStyles(); }
+            }, { passive: true });
+            
+            btn.addEventListener('click', () => toggleAnim(axis, btn, input, display));
+            return div;
+        }
+
+        function applyStyles() {
+            const settings = Object.keys(state.axesValues).filter(k=>k!=='size'&&k!=='spacing').map(k=>`'${k}' ${state.axesValues[k]}`).join(', ');
+            document.querySelectorAll('.demo-text').forEach(el => el.style.fontVariationSettings = settings);
+        }
+
+        function toggleAnim(axis, btn, input, display) {
+            if(state.animations[axis.tag]) { delete state.animations[axis.tag]; btn.classList.remove('active'); }
+            else { state.animations[axis.tag] = { axis, input, display, dir: 1, val: parseFloat(input.value) }; btn.classList.add('active'); }
+        }
+
+        function loop() {
+            const keys = Object.keys(state.animations);
+            if(keys.length > 0) {
+                keys.forEach(key => {
+                    const anim = state.animations[key];
+                    anim.val += anim.axis.step * anim.dir;
+                    if(anim.val >= anim.axis.max) { anim.val = anim.axis.max; anim.dir = -1; }
+                    if(anim.val <= anim.axis.min) { anim.val = anim.axis.min; anim.dir = 1; }
+                    anim.input.value = anim.val; anim.display.textContent = (Math.round(anim.val*100)/100)+(anim.axis.suffix||''); 
+                    if (anim.axis.isSystem) {
+                        if(key === 'size') document.documentElement.style.setProperty('--vf-size', anim.val + 'px');
+                        if(key === 'spacing') document.documentElement.style.setProperty('--vf-spacing', anim.val + 'em');
+                    } else { state.axesValues[key] = anim.val; applyStyles(); }
+                });
+            }
+            requestAnimationFrame(loop);
+        }
+        requestAnimationFrame(loop);
+
+        init();
     </script>
 </body>
 </html>
