@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自在造字 ZIZAO.TOP - Variable Infinite</title>
-    <meta name="description" content="Constructing Visual Voice.">
+    <title>自在造字 - 可变，才自在</title>
+    <meta name="description" content="可变，才自在 Variable Infinite">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
@@ -442,7 +442,6 @@
 
                 hero.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
                 hero.addEventListener('touchmove', e => {
-                    e.preventDefault(); // 防止滚动
                     handleMove(e.touches[0].clientX, e.touches[0].clientY);
                 }, { passive: false });
 
