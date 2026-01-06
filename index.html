@@ -3,33 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自在造字 - 可变，才自在</title>
-    <meta name="description" content="可变，才自在 Variable Infinite">
-    <script src="https://cdn.tailwindcss.com?v=3.4.5"></script>
+    <title>自在造字 ZIZAO.TOP - Variable Infinite</title>
+    <meta name="description" content="Constructing Visual Voice.">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
+    
     <script>
       tailwind.config = {
         darkMode: 'class',
         theme: {
           extend: {
-            fontFamily: { 
-                sans: ['Inter', 'sans-serif'],
-                mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace']
-            },
-            colors: { brand: { 50: '#f9fafb', 900: '#111827' } },
-            animation: {
-                'fade-in': 'fadeIn 0.8s ease-out forwards',
-                'cursor-blink': 'blink 1s step-end infinite',
-            },
-            keyframes: {
-                fadeIn: {
-                    '0%': { opacity: 0, transform: 'translateY(10px)' },
-                    '100%': { opacity: 1, transform: 'translateY(0)' },
-                },
-                blink: {
-                    '0%, 100%': { opacity: 1 },
-                    '50%': { opacity: 0 },
-                }
+            cursor: { 'crosshair': 'crosshair' },
+            animation: { 'spin-slow': 'spin 12s linear infinite' },
+            transitionTimingFunction: {
+                'out-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
             }
           },
         },
@@ -37,294 +25,494 @@
     </script>
     
     <style>
-        body { opacity: 0; transition: opacity 0.5s ease-out; }
+        /* ==================== 1. 基础设置 ==================== */
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9999; opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        .dark .noise-overlay { opacity: 0.07; }
+
+        :root { --hero-font: sans-serif; } 
+        .hero-text { font-family: var(--hero-font); }
+        .blend-diff { mix-blend-mode: difference; color: #fff; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        html { scroll-behavior: smooth; }
+
+        .grid-bg {
+            background-size: 60px 60px;
+            background-image: linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+        }
+        .dark .grid-bg {
+            background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+        }
+
+        .hover-card-effect { transition: background-color 0.3s ease; }
+        .hover-card-effect:hover { background-color: rgba(0,0,0, 0.03); }
+        .dark .hover-card-effect:hover { background-color: rgba(255,255,255, 0.05); }
+
+        /* Cursor Follower 样式增强 */
+        #cursor-follower { 
+            will-change: transform, width, height, background-color; 
+            pointer-events: none;
+            z-index: 50;
+        }
         
-        @keyframes slideInUp {
-            0% { opacity: 0; transform: translateY(20px) scale(0.95); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        
-        @keyframes slideOutUp {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-20px); }
+        /* 锁定状态下的 Cursor 样式 */
+        #cursor-follower.is-locked {
+            width: 12px;
+            height: 12px;
+            background-color: #ff3b30; /* 红色警示色或强调色 */
+            border-color: transparent;
         }
 
-        .log-entry-in {
-            animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        /* 锁定状态下的文字提示 */
+        .lock-indicator {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
         }
-        .log-entry-out {
-            animation: slideOutUp 0.4s ease-in forwards;
-        }
-
-        .bg-grid-pattern {
-            background-size: 40px 40px;
-            background-image: radial-gradient(circle, #000000 1px, transparent 1px);
-            opacity: 0.03;
-        }
-        .dark .bg-grid-pattern {
-            background-image: radial-gradient(circle, #ffffff 1px, transparent 1px);
-            opacity: 0.05;
+        .is-locked-mode .lock-indicator {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        .text-gradient {
-            background: linear-gradient(to right, #000 0%, #555 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        /* ==================== 2. 组件化样式 ==================== */
+        .ui-tag {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+            border: 1px solid currentColor;
+            padding: 2px 8px; border-radius: 9999px;
+            opacity: 0.6; transition: opacity 0.3s; white-space: nowrap;
         }
-        .dark .text-gradient {
-            background: linear-gradient(to right, #fff 0%, #aaa 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        .group:hover .ui-tag { opacity: 1; }
 
-        .stack-mask {
-            mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
-            -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+        .ui-arrow {
+            font-weight: 300; opacity: 0.3;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center; display: inline-block;
         }
+        .group:hover .ui-arrow { opacity: 1; transform: rotate(-45deg); }
+
+        .ui-fade-text { opacity: 0.5; transition: opacity 0.3s; }
+        .group:hover .ui-fade-text { opacity: 1; }
+
+        .ui-meta-label {
+            font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+            margin-bottom: 4px; opacity: 0.4; transition: opacity 0.3s;
+        }
+        .group:hover .ui-meta-label { opacity: 0.8; }
     </style>
-    <script>
-        window.addEventListener('load', function() {
-            document.body.style.opacity = '1';
-        });
-    </script>
 </head>
-<body class="bg-white text-gray-900 dark:bg-neutral-950 dark:text-gray-100 transition-colors duration-500 flex flex-col min-h-screen selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
-    
-    <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-md dark:border-neutral-900 dark:bg-neutral-950/90 transition-all duration-500"></nav>
+<body class="bg-[#f2f2f2] text-black dark:bg-[#0a0a0a] dark:text-gray-100 transition-colors duration-500 flex flex-col min-h-screen selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black font-sans antialiased overflow-x-hidden">
 
-    <main class="w-full flex-1 pt-20">
+    <div class="noise-overlay"></div>
+    <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-md dark:border-neutral-900 dark:bg-neutral-950/90"></nav>
+
+    <main class="w-full flex-1">
         
-        <section class="relative w-full border-b border-gray-100 dark:border-neutral-900 overflow-hidden">
-            <div class="absolute inset-0 pointer-events-none bg-grid-pattern"></div>
+        <section id="hero-stage" class="relative w-full h-[100svh] flex flex-col justify-center items-center overflow-hidden border-b border-black dark:border-white cursor-crosshair">
+            <div class="absolute inset-0 grid-bg pointer-events-none"></div>
+
+            <div class="absolute top-24 right-6 lg:right-12 font-mono text-xs font-bold tracking-widest opacity-60 pointer-events-none flex flex-col items-end gap-1 z-20 blend-diff transition-opacity duration-300">
+                <div>WGHT (Y): <span id="val-wght">400</span></div>
+                <div>WDTH (X): <span id="val-wdth">100</span></div>
+                <div class="hidden md:block">POS: <span id="val-mouse">0, 0</span></div>
+                <div class="text-[#ff3b30] lock-indicator font-black mt-2">[ LOCKED ]</div>
+            </div>
+
+            <div id="hero-title-container" class="relative z-10 text-center select-none w-full px-4 blend-diff flex flex-col items-center justify-center pt-12"></div>
+
+            <div class="absolute bottom-12 left-6 lg:left-12 max-w-md pointer-events-none z-20 blend-diff">
+                <p id="hero-desc" class="text-sm md:text-base font-medium leading-relaxed uppercase tracking-widest"></p>
+            </div>
+
+            <div class="absolute bottom-12 right-6 lg:right-12 hidden md:block pointer-events-none z-20 blend-diff animate-spin-slow">
+                 <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path id="circlePath" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="transparent" />
+                    <text class="text-[10px] font-bold uppercase tracking-[0.2em]" fill="currentColor">
+                        <textPath href="#circlePath" startOffset="0%">• Click to Lock • Scroll Down • Zizao •</textPath>
+                    </text>
+                </svg>
+            </div>
             
-            <div class="mx-auto max-w-[1800px] px-6 lg:px-12 h-full">
-                <div class="grid grid-cols-1 lg:grid-cols-12 min-h-[55vh] lg:min-h-[70vh] items-center gap-8 lg:gap-12">
-                    
-                    <div class="relative z-10 animate-fade-in flex flex-col justify-center lg:col-span-8 py-16 lg:py-0">
-                        <div class="flex items-center gap-3 mb-8 opacity-60">
-                            <span class="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500">
-                                System Status: Operational
-                            </span>
-                        </div>
-
-                        <h1 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tighter select-none mb-8">
-                            <span class="block text-gray-900 dark:text-white mb-2">Hello.</span>
-                            <span class="block h-[1.2em] overflow-visible whitespace-nowrap">
-                                 <span id="type-text" class="text-gradient"></span><span class="animate-cursor-blink ml-2 inline-block w-3 lg:w-4 h-[0.8em] bg-black dark:bg-white align-baseline"></span>
-                            </span>
-                        </h1>
-
-                        <p class="text-base sm:text-lg text-gray-600 dark:text-neutral-400 max-w-lg leading-relaxed mb-10 font-medium">
-                            通过精准的几何构建与代码逻辑，<br>
-                            为屏幕阅读时代打造可变、可控的视觉声音。
-                        </p>
-
-                        <div class="flex flex-wrap gap-4">
-                            <a href="fonts.html" target="_blank" class="px-8 py-3.5 rounded-full bg-black text-white font-bold text-sm hover:bg-gray-800 transition-transform active:scale-95 dark:bg-white dark:text-black dark:hover:bg-gray-200 shadow-xl shadow-black/5">
-                                浏览字体目录
-                            </a>
-                            <a href="https://www.zizao.top/about" target="_blank" class="px-8 py-3.5 rounded-full border border-gray-200 text-black font-bold text-sm hover:border-black transition-transform active:scale-95 dark:border-neutral-800 dark:text-white dark:hover:border-white">
-                                了解设计哲学
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="hidden lg:flex relative w-full h-[500px] flex-col justify-center items-end lg:col-span-4 select-none pointer-events-none">
-                        
-                        <div id="log-stack" class="relative w-full max-w-[380px] h-full stack-mask flex flex-col justify-center gap-4 p-4">
-                            </div>
-                    </div>
-
-                </div>
-            </div>
+            <div id="cursor-follower" class="hidden md:flex fixed w-16 h-16 rounded-full border border-white items-center justify-center blend-diff bg-white text-black transition-opacity duration-200 ease-out opacity-0 top-0 left-0"></div>
         </section>
 
-        <section id="featured-work" class="mx-auto max-w-[1800px] px-6 lg:px-12 py-20 bg-white dark:bg-neutral-950 relative z-20">
-            <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div>
-                    <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 flex items-center gap-2">
-                        <span class="w-2 h-2 bg-black dark:bg-white rounded-full"></span>
-                        Selected Works
-                    </h2>
-                    <p class="text-3xl md:text-4xl font-bold tracking-tight">精选字体推荐</p>
-                </div>
-                <a href="fonts.html" class="group flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-black dark:text-neutral-500 dark:hover:text-white transition-colors">
-                    查看全部
-                    <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                </a>
-            </div>
-            <div id="featured-grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"></div>
-        </section>
 
-        <section class="w-full bg-gray-50 dark:bg-neutral-900/30 py-20 border-t border-gray-100 dark:border-neutral-900">
+        <section class="relative w-full py-24 z-30">
             <div class="mx-auto max-w-[1800px] px-6 lg:px-12">
-                <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                    <div>
-                        <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 flex items-center gap-2">
-                           <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
-                           Tools & Resources
-                        </h2>
-                        <p class="text-3xl md:text-4xl font-bold tracking-tight">设计师效率工具</p>
-                    </div>
+                <div class="flex items-baseline justify-between mb-12 border-b border-black dark:border-white pb-4">
+                    <h2 class="text-5xl md:text-7xl font-black tracking-tighter uppercase text-black dark:text-white">Catalog</h2>
+                    <span class="font-mono text-xs font-bold tracking-widest opacity-50">[ SELECTED WORKS ]</span>
                 </div>
-                <div id="tools-grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"></div>
+
+                <div class="flex flex-col border-t border-l border-r border-black dark:border-white">
+                    <a href="fonts/zhisans.html" target="_blank" class="group hover-card-effect relative border-b border-black dark:border-white py-12 px-8 md:px-12">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                            <div class="md:w-1/2 flex flex-col items-start gap-3">
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="ui-tag">v1.0 Beta</span>
+                                    <span class="ui-tag">Variable</span>
+                                </div>
+                                <h3 class="text-4xl md:text-5xl font-bold tracking-tight leading-none">自在致黑</h3>
+                                <p class="font-mono text-sm uppercase tracking-widest ui-fade-text">Zizai Zhisans</p>
+                            </div>
+                            <div class="md:w-1/2 flex items-end justify-between md:justify-end gap-16">
+                                <div class="text-right">
+                                    <div class="ui-meta-label">Class</div>
+                                    <div class="font-mono text-sm font-medium">Variable Sans</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="ui-meta-label">Axes</div>
+                                    <div class="font-mono text-sm font-medium">Weight, Width</div>
+                                </div>
+                                <div class="text-4xl ui-arrow">→</div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="fonts.html" target="_blank" class="group hover-card-effect relative border-b border-black dark:border-white py-12 px-8 md:px-12">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                            <div class="md:w-1/2 flex flex-col items-start gap-3">
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="ui-tag">Free</span>
+                                    <span class="ui-tag">Open Source</span>
+                                </div>
+                                <h3 class="text-4xl md:text-5xl font-bold tracking-tight leading-none">自在起点黑</h3>
+                                <p class="font-mono text-sm uppercase tracking-widest ui-fade-text">Qidian Sans</p>
+                            </div>
+                            <div class="md:w-1/2 flex items-end justify-between md:justify-end gap-16">
+                                <div class="text-right">
+                                    <div class="ui-meta-label">Class</div>
+                                    <div class="font-mono text-sm font-medium">Static Sans</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="ui-meta-label">Weights</div>
+                                    <div class="font-mono text-sm font-medium">5 Styles</div>
+                                </div>
+                                <div class="text-4xl ui-arrow">→</div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="fonts/zizaikeserif.html" target="_blank" class="group hover-card-effect relative border-b border-black dark:border-white py-12 px-8 md:px-12">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                            <div class="md:w-1/2 flex flex-col items-start gap-3">
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="ui-tag">New</span>
+                                    <span class="ui-tag">Serif</span>
+                                </div>
+                                <h3 class="text-4xl md:text-5xl font-bold tracking-tight leading-none">自在刻宋</h3>
+                                <p class="font-mono text-sm uppercase tracking-widest ui-fade-text">Ke Serif</p>
+                            </div>
+                            <div class="md:w-1/2 flex items-end justify-between md:justify-end gap-16">
+                                <div class="text-right">
+                                    <div class="ui-meta-label">Class</div>
+                                    <div class="font-mono text-sm font-medium">Display Serif</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="ui-meta-label">Status</div>
+                                    <div class="font-mono text-sm font-medium">Released</div>
+                                </div>
+                                <div class="text-4xl ui-arrow">→</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="mt-20 text-center">
+                    <a href="fonts.html" class="inline-flex items-center gap-3 border-b-2 border-black dark:border-white pb-2 text-lg font-bold uppercase tracking-wider hover:tracking-[0.2em] transition-all duration-300">
+                        View Full Archive <span class="text-xl">→</span>
+                    </a>
+                </div>
             </div>
         </section>
 
+        <div class="bg-black text-white dark:bg-white dark:text-black py-6 border-y border-white/20 dark:border-black/20">
+            <div class="mx-auto max-w-[1800px] px-6 lg:px-12 flex flex-wrap justify-between items-center gap-4">
+                <span class="text-sm md:text-base font-bold uppercase tracking-[0.2em]">Open Source</span>
+                <span class="hidden md:inline-block w-2 h-2 rounded-full bg-white dark:bg-black opacity-30"></span>
+                <span class="text-sm md:text-base font-bold uppercase tracking-[0.2em]">Variable Tech</span>
+                <span class="hidden md:inline-block w-2 h-2 rounded-full bg-white dark:bg-black opacity-30"></span>
+                <span class="text-sm md:text-base font-bold uppercase tracking-[0.2em]">Experimental</span>
+                <span class="hidden md:inline-block w-2 h-2 rounded-full bg-white dark:bg-black opacity-30"></span>
+                <span class="text-sm md:text-base font-bold uppercase tracking-[0.2em]">Global Match</span>
+            </div>
+        </div>
+
+        <section class="w-full py-24">
+            <div class="mx-auto max-w-[1800px] px-6 lg:px-12 mb-12">
+                <div class="flex items-baseline justify-between border-b border-black dark:border-white pb-4">
+                    <h2 class="text-5xl md:text-7xl font-black tracking-tighter uppercase text-black dark:text-white">Tools</h2>
+                    <span class="font-mono text-xs font-bold tracking-widest opacity-50">[ LABORATORY ]</span>
+                </div>
+            </div>
+
+            <div class="mx-auto max-w-[1800px] px-6 lg:px-12">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 border-t border-l border-black dark:border-white">
+                    <a href="https://chaoyin.zizao.top" target="_blank" class="group hover-card-effect relative bg-transparent p-10 h-80 lg:min-h-[40rem] flex flex-col justify-between border-r border-b border-black dark:border-white lg:col-span-1 lg:row-span-2">
+                        <div class="flex justify-between items-start w-full relative z-10">
+                            <span class="ui-tag">Utility</span>
+                            <span class="text-3xl ui-arrow">→</span>
+                        </div>
+                        <div class="relative z-10">
+                            <h3 class="text-3xl font-black uppercase tracking-tight leading-none mb-3">超引检索</h3>
+                            <div class="text-sm font-medium ui-fade-text leading-relaxed max-w-[90%]">快速查找视觉近似字，寻找设计参考。</div>
+                        </div>
+                    </a>
+
+                    <a href="https://vf.zizao.top" target="_blank" class="group hover-card-effect relative bg-transparent p-10 h-80 flex flex-col justify-between border-r border-b border-black dark:border-white lg:col-span-1">
+                        <div class="flex justify-between items-start w-full relative z-10">
+                            <span class="ui-tag">Beta</span>
+                            <span class="text-3xl ui-arrow">→</span>
+                        </div>
+                        <div class="relative z-10">
+                            <h3 class="text-3xl font-black uppercase tracking-tight leading-none mb-3">可变实验</h3>
+                            <div class="text-xs font-medium ui-fade-text leading-relaxed">浏览器端字体排查与测试工具。</div>
+                        </div>
+                    </a>
+
+                    <a href="https://bao.zizao.top" target="_blank" class="group hover-card-effect relative bg-transparent p-10 h-80 flex flex-col justify-between border-r border-b border-black dark:border-white lg:col-span-2">
+                        <div class="flex justify-between items-start w-full relative z-10">
+                            <span class="ui-tag">Res</span>
+                            <span class="text-3xl ui-arrow">→</span>
+                        </div>
+                        <div class="relative z-10 flex items-end justify-between">
+                            <div>
+                                <h3 class="text-3xl font-black uppercase tracking-tight leading-none mb-3">素材仓库</h3>
+                                <div class="text-xs font-medium ui-fade-text leading-relaxed">免费字体、样机与矢量资源合集。</div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="https://hao.zizao.top" target="_blank" class="group hover-card-effect relative bg-transparent p-10 h-80 flex flex-col justify-between border-r border-b border-black dark:border-white lg:col-span-1">
+                        <div class="flex justify-between items-start w-full relative z-10">
+                            <span class="ui-tag">Web</span>
+                            <span class="text-3xl ui-arrow">→</span>
+                        </div>
+                        <div class="relative z-10">
+                            <h3 class="text-3xl font-black uppercase tracking-tight leading-none mb-3">设计导航</h3>
+                            <div class="text-xs font-medium ui-fade-text leading-relaxed">精选设计网站与灵感来源。</div>
+                        </div>
+                    </a>
+
+                    <a href="https://tool.zizao.top/txt" target="_blank" class="group hover-card-effect relative bg-transparent p-10 h-80 flex flex-col justify-between border-r border-b border-black dark:border-white lg:col-span-1">
+                        <div class="flex justify-between items-start w-full relative z-10">
+                            <span class="ui-tag">Tool</span>
+                            <span class="text-3xl ui-arrow">→</span>
+                        </div>
+                        <div class="relative z-10">
+                            <h3 class="text-3xl font-black uppercase tracking-tight leading-none mb-3">文本工具</h3>
+                            <div class="text-xs font-medium ui-fade-text leading-relaxed">在线纯文本编辑与格式化。</div>
+                        </div>
+                    </a>
+
+                    <a href="https://tool.zizao.top/character" target="_blank" class="group hover-card-effect relative bg-transparent p-10 h-80 flex flex-col justify-between border-r border-b border-black dark:border-white lg:col-span-1">
+                        <div class="flex justify-between items-start w-full relative z-10">
+                            <span class="ui-tag">Data</span>
+                            <span class="text-3xl ui-arrow">→</span>
+                        </div>
+                        <div class="relative z-10">
+                            <h3 class="text-3xl font-black uppercase tracking-tight leading-none mb-3">字符数据</h3>
+                            <div class="text-xs font-medium ui-fade-text leading-relaxed">拼音标注与Unicdoe数据查询。</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <footer id="footer-placeholder" class="bg-white pt-20 pb-12 dark:bg-neutral-950 border-t border-gray-100 dark:border-neutral-900 mt-auto"></footer>
+    <footer id="footer-placeholder" class="bg-white/90 backdrop-blur-md pt-20 pb-12 dark:bg-neutral-950/90 border-t border-gray-100 dark:border-neutral-900 mt-auto"></footer>
 
-    <script>
-        // --- 1. 打字机逻辑 ---
-        class TypeWriter {
-            constructor(el, toRotate, period) {
-                this.toRotate = toRotate;
-                this.el = el;
-                this.loopNum = 0;
-                this.period = parseInt(period, 10) || 2000;
-                this.txt = '';
-                this.tick();
-                this.isDeleting = false;
-            }
-            tick() {
-                var i = this.loopNum % this.toRotate.length;
-                var fullTxt = this.toRotate[i];
-                if (this.isDeleting) {
-                    this.txt = fullTxt.substring(0, this.txt.length - 1);
-                } else {
-                    this.txt = fullTxt.substring(0, this.txt.length + 1);
-                }
-                this.el.innerHTML = this.txt;
-                var that = this;
-                var delta = 200 - Math.random() * 100;
-                if (this.isDeleting) { delta /= 2; }
-                if (!this.isDeleting && this.txt === fullTxt) {
-                    delta = this.period;
-                    this.isDeleting = true;
-                } else if (this.isDeleting && this.txt === '') {
-                    this.isDeleting = false;
-                    this.loopNum++;
-                    delta = 500;
-                }
-                setTimeout(function() { that.tick(); }, delta);
-            }
-        }
-
-        // --- 2. 事件堆栈逻辑 (Log System) ---
-        class LogSystem {
-            constructor(containerId) {
-                this.container = document.getElementById(containerId);
-                if (!this.container || window.getComputedStyle(this.container.parentElement).display === 'none') {
-                }
-                
-                this.logs = [
-                    { label: 'UPDATE', text: '插值引擎: 字重轴 (Weight) 渲染更新' },
-                    { label: 'LOAD', text: '资源加载: ZizaiSans.woff2 (28kb)' },
-                    { label: 'SYSTEM', text: '内核: OpenType 高级特性已启用' },
-                    { label: 'BUILD', text: '构建: 字形轮廓 (Glyphs) 导出成功' },
-                    { label: 'CHECK', text: '检测: 屏幕灰度对比测试通过 (AAA)' },
-                    { label: 'AXIS', text: '参数: 宽度轴 (Width) 实时响应中' },
-                    { label: 'HINT', text: '优化: TrueType Hinting 像素对齐' },
-                    { label: 'WEB', text: '分发: 字体子集化 (Subsetting) 完成' },
-                    { label: 'SYNC', text: '同步: 矢量节点坐标已校准' }
-                ];
-                this.maxItems = 4; 
-                this.init();
-            }
-
-            init() {
-                if(!this.container) return;
-                
-                this.addLog();
-                setTimeout(() => this.addLog(), 1000);
-
-                const loop = () => {
-                    if(document.visibilityState === 'visible' && this.container.offsetParent !== null) {
-                        this.addLog();
-                    }
-                    setTimeout(loop, 2000 + Math.random() * 2000);
-                };
-                setTimeout(loop, 3000);
-            }
-
-            addLog() {
-                const data = this.logs[Math.floor(Math.random() * this.logs.length)];
-                const now = new Date();
-                const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-
-                const el = document.createElement('div');
-                el.className = 'log-entry-in flex items-center justify-between p-3.5 rounded-xl bg-white/60 dark:bg-neutral-900/60 backdrop-blur-sm border border-gray-100 dark:border-neutral-800/50 shadow-sm w-full hover:bg-white dark:hover:bg-neutral-800 transition-colors duration-300';
-                
-                el.innerHTML = `
-                    <div class="flex items-center gap-3 overflow-hidden">
-                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></div>
-                        <div class="flex flex-col">
-                            <span class="text-[9px] font-mono text-gray-400 uppercase tracking-wider leading-none mb-1">${data.label}</span>
-                            <span class="text-xs font-medium text-gray-900 dark:text-gray-100 truncate font-sans tracking-tight">${data.text}</span>
-                        </div>
-                    </div>
-                    <div class="text-[9px] font-mono text-gray-300 dark:text-neutral-600 tabular-nums opacity-60">${timeString}</div>
-                `;
-
-                this.container.appendChild(el);
-
-                const children = this.container.children;
-                if (children.length > this.maxItems) {
-                    const oldItem = children[0];
-                    oldItem.classList.remove('log-entry-in');
-                    oldItem.classList.add('log-entry-out');
-                    setTimeout(() => {
-                        if (oldItem.parentNode) oldItem.parentNode.removeChild(oldItem);
-                    }, 400);
-                }
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Update phrases to be longer to fill the wider space
-            const phrases = [
-                "自在造字 (ZizaoType)", 
-                "Variable Infinite", 
-                "可变，才自在", 
-                "Constructing Visual Voice",
-                "Design for Screens"
-            ];
-            const typeEl = document.getElementById('type-text');
-            if (typeEl) new TypeWriter(typeEl, phrases, 2500);
-
-            // 启动 Log 系统
-            new LogSystem('log-stack');
-
-            const featuredContainer = document.getElementById('featured-grid');
-            const toolsContainer = document.getElementById('tools-grid');
-            if (featuredContainer && typeof createBentoCard === 'function') {
-                featuredContainer.innerHTML = HOME_FONTS.map(item => createBentoCard(item)).join('');
-            }
-            if (toolsContainer && typeof createBentoCard === 'function') {
-                toolsContainer.innerHTML = HOME_TOOLS.map(item => createBentoCard(item)).join('');
-            }
-        });
-
-        const HOME_FONTS = [
-            { title: '自在致黑', subtitle: '免费商用 • 双轴可变', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251229/KeEE/1400X600/1.jpg/webp', link: 'fonts/zhisans.html', colSpan: 'md:col-span-2', rowSpan: 'md:row-span-1' },
-            { title: '暂未上线', subtitle: '敬请期待', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251229/tfQ5/680X600/2.jpg/webp', link: '', colSpan: 'md:col-span-1', rowSpan: 'md:row-span-1' },
-            { title: '暂未上线', subtitle: '敬请期待', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251229/MJ3B/680X1225/3.jpg/webp', link: '', colSpan: 'md:col-span-1', rowSpan: 'md:row-span-2' },
-            { title: '暂未上线', subtitle: '敬请期待', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251229/G803/680X600/4.jpg/webp', link: '', colSpan: 'md:col-span-1', rowSpan: 'md:row-span-1' },
-            { title: '暂未上线', subtitle: '敬请期待', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251229/ORK7/1400X600/5.jpg/webp', link: '', colSpan: 'md:col-span-2', rowSpan: 'md:row-span-1' },
-        ];
-        const HOME_TOOLS = [
-            { title: '设计导航', subtitle: '设计网站 · 灵感宝库', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251229/mxI1/680X600/6.jpg/webp', link: 'https://hao.zizao.top', colSpan: 'md:col-span-1' },
-            { title: '设计百宝库', subtitle: '资源 · 字体 · 软件...', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251229/QgE7/680X600/7.jpg/webp', link: 'https://bao.zizao.top', colSpan: 'md:col-span-1' },
-            { title: '超引-形近字', subtitle: '设计师造字神器', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251229/jJ3z/1400X600/8.jpg/webp', link: 'https://chaoyin.zizao.top', colSpan: 'md:col-span-2' },
-            { title: '可变空间', subtitle: '可变字体Web端工具', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251229/ei72/1400X600/9.jpg/webp', link: 'https://vf.zizao.top', colSpan: 'md:col-span-2' },
-            { title: '文本编辑器', subtitle: '在线编辑 · 自动保存', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251229/BHTq/680X600/10.jpg/webp', link: 'https://tool.zizao.top/txt', colSpan: 'md:col-span-1' },
-            { title: '文本字符工具', subtitle: '汉字转拼音 · 差异对比', imageUrl: 'https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251229/EBge/680X600/11.jpg/webp', link: 'https://tool.zizao.top/character', colSpan: 'md:col-span-1' }
-        ];
-    </script>
-    
     <script src="components.js"></script>
     <script src="script.js"></script>
+
+    <script>
+        // Hero 配置
+        const HERO_CONFIG = {
+            fontUrl: 'url("123.ttf")', 
+            textLines: ["自在致黑"],
+            description: "Variable Infinite.<br>Constructing Visual Voice<br>For The Digital Age.",
+            axis: { weight: { min: 100, max: 700, default: 300 }, width:  { min: 75,  max: 125, default: 80 } },
+            physics: { ease: 0.08 } // 平滑系数，越小越顺滑但延迟越高
+        };
+
+        // 线性插值函数 (Linear Interpolation)
+        const lerp = (start, end, factor) => start + (end - start) * factor;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. 注入 CSS
+            if (HERO_CONFIG.fontUrl) {
+                const style = document.createElement('style');
+                style.innerHTML = `@font-face { font-family: 'HeroVariableFont'; src: ${HERO_CONFIG.fontUrl} format('woff2'); font-display: swap; } :root { --hero-font: 'HeroVariableFont', 'sans-serif'; }`;
+                document.head.appendChild(style);
+            }
+
+            // 2. 初始化 DOM
+            const titleContainer = document.getElementById('hero-title-container');
+            if (titleContainer) {
+                const fragment = document.createDocumentFragment();
+                HERO_CONFIG.textLines.forEach(line => {
+                    const h1 = document.createElement('h1');
+                    h1.className = "hero-text text-[16vw] lg:text-[19vw] leading-[0.8] font-black tracking-tighter uppercase will-change-transform hero-var-target";
+                    h1.textContent = line;
+                    fragment.appendChild(h1);
+                });
+                titleContainer.innerHTML = '';
+                titleContainer.appendChild(fragment);
+            }
+            document.getElementById('hero-desc').innerHTML = HERO_CONFIG.description;
+
+            // 3. 高级交互逻辑 (Lerp + Lock + Gyro)
+            const hero = document.getElementById('hero-stage');
+            const targets = document.querySelectorAll('.hero-var-target');
+            const vals = { wght: document.getElementById('val-wght'), wdth: document.getElementById('val-wdth'), mouse: document.getElementById('val-mouse') };
+            const cursor = document.getElementById('cursor-follower');
+            const { weight, width } = HERO_CONFIG.axis;
+
+            if (hero && targets.length > 0) {
+                let rect = hero.getBoundingClientRect();
+                window.addEventListener('resize', () => rect = hero.getBoundingClientRect());
+
+                // 状态管理
+                const state = {
+                    targetX: 0.5, targetY: 0.5, // 目标位置 (0.0 - 1.0)
+                    currX: 0.5, currY: 0.5,     // 当前渲染位置 (Lerp后)
+                    rawX: 0, rawY: 0,           // 原始鼠标像素坐标
+                    isLocked: false,            // 是否锁定
+                    isHovering: false,          // 鼠标是否在区域内
+                    hasGyro: false              // 是否有陀螺仪数据
+                };
+
+                // 设置初始默认值
+                state.targetX = (width.default - width.min) / (width.max - width.min);
+                state.targetY = (weight.default - weight.min) / (weight.max - weight.min);
+                state.currX = state.targetX;
+                state.currY = state.targetY;
+
+                // 动画循环 (核心引擎)
+                const animate = () => {
+                    if (!state.isLocked) {
+                        // 使用 Lerp 计算平滑过渡
+                        state.currX = lerp(state.currX, state.targetX, HERO_CONFIG.physics.ease);
+                        state.currY = lerp(state.currY, state.targetY, HERO_CONFIG.physics.ease);
+                    }
+
+                    // 计算字体变体数值
+                    const w = Math.floor(width.min + (state.currX * (width.max - width.min)));
+                    const wg = Math.floor(weight.min + (state.currY * (weight.max - weight.min)));
+
+                    // 应用到 DOM
+                    targets.forEach(el => el.style.fontVariationSettings = `'wght' ${wg}, 'wdth' ${w}`);
+
+                    // 更新面板数值
+                    if(vals.wght) vals.wght.innerText = wg;
+                    if(vals.wdth) vals.wdth.innerText = w;
+                    
+                    // 更新跟随鼠标的坐标 (仅在非锁定时更新文字)
+                    if(vals.mouse && !state.isLocked && state.isHovering) {
+                        vals.mouse.innerText = `${Math.floor(state.rawX)}, ${Math.floor(state.rawY)}`;
+                    }
+
+                    // 更新 Cursor Follower 位置 (总是跟随平滑后的虚拟坐标，这样更优雅)
+                    if(cursor && state.isHovering) {
+                        // 将 0-1 的比例还原回像素坐标，用于显示 cursor
+                        const visualX = rect.left + state.currX * rect.width;
+                        const visualY = rect.top + state.currY * rect.height;
+                        
+                        // 如果锁定了，cursor 停留在锁定位置；如果没有锁定，跟随计算后的平滑位置
+                        // 这里我们选择让 cursor 始终跟随"当前字体状态"对应的位置，这样视觉联系最强
+                        cursor.style.transform = `translate3d(${visualX}px, ${visualY}px, 0) translate(-50%, -50%)`;
+                    }
+
+                    requestAnimationFrame(animate);
+                };
+                animate(); // 启动循环
+
+                // 事件监听：鼠标移动
+                const handleMove = (x, y) => {
+                    if (state.isLocked) return;
+                    state.rawX = x; state.rawY = y;
+                    
+                    // 归一化坐标 0-1
+                    state.targetX = Math.max(0, Math.min(1, (x - rect.left) / rect.width));
+                    state.targetY = Math.max(0, Math.min(1, (y - rect.top) / rect.height));
+                };
+
+                hero.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
+                hero.addEventListener('touchmove', e => {
+                    e.preventDefault(); // 防止滚动
+                    handleMove(e.touches[0].clientX, e.touches[0].clientY);
+                }, { passive: false });
+
+                // 事件监听：进出区域
+                hero.addEventListener('mouseenter', () => {
+                    state.isHovering = true;
+                    if(cursor) cursor.style.opacity = '1';
+                    rect = hero.getBoundingClientRect();
+                });
+
+                hero.addEventListener('mouseleave', () => {
+                    state.isHovering = false;
+                    if (!state.isLocked) {
+                        // 平滑回弹到默认值
+                        state.targetX = (width.default - width.min) / (width.max - width.min);
+                        state.targetY = (weight.default - weight.min) / (weight.max - weight.min);
+                    }
+                    if(cursor) cursor.style.opacity = '0';
+                });
+
+                // 事件监听：点击锁定
+                hero.addEventListener('click', () => {
+                    state.isLocked = !state.isLocked;
+                    
+                    // 切换 UI 状态
+                    if(state.isLocked) {
+                        hero.classList.add('is-locked-mode');
+                        if(cursor) cursor.classList.add('is-locked');
+                    } else {
+                        hero.classList.remove('is-locked-mode');
+                        if(cursor) cursor.classList.remove('is-locked');
+                        // 解锁时立即更新目标为当前鼠标位置，防止跳变
+                        handleMove(state.rawX, state.rawY);
+                    }
+
+                    // iOS 权限请求 (Trick: 只有在用户交互/点击时才能请求)
+                    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                        DeviceOrientationEvent.requestPermission()
+                            .then(permissionState => {
+                                if (permissionState === 'granted') {
+                                    window.addEventListener('deviceorientation', handleOrientation);
+                                }
+                            })
+                            .catch(console.error);
+                    }
+                });
+
+                // 事件监听：陀螺仪 (核心逻辑)
+                const handleOrientation = (e) => {
+                    // 只有在没有鼠标 hovering 且非锁定状态下才启用陀螺仪（优先响应鼠标）
+                    if (state.isHovering || state.isLocked) return;
+
+                    // Beta: 前后倾斜 (-180 to 180). 限制在 -45 到 45 之间用来控制 Weight
+                    // Gamma: 左右倾斜 (-90 to 90). 限制在 -45 到 45 之间用来控制 Width
+                    const maxTilt = 30; 
+                    
+                    let yTilt = Math.max(-maxTilt, Math.min(maxTilt, e.beta)); 
+                    let xTilt = Math.max(-maxTilt, Math.min(maxTilt, e.gamma));
+
+                    // 映射到 0-1
+                    state.targetY = (yTilt + maxTilt) / (maxTilt * 2); // 前后倾斜
+                    state.targetX = (xTilt + maxTilt) / (maxTilt * 2); // 左右倾斜
+                };
+
+                // 尝试添加非 iOS 的陀螺仪监听 (安卓通常直接支持)
+                if (window.DeviceOrientationEvent) {
+                    window.addEventListener('deviceorientation', handleOrientation);
+                }
+            }
+        });
+    </script>
 </body>
 </html>
