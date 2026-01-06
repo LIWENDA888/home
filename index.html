@@ -51,7 +51,7 @@
         .hover-card-effect:hover { background-color: rgba(0,0,0, 0.03); }
         .dark .hover-card-effect:hover { background-color: rgba(255,255,255, 0.05); }
 
-        /* Cursor Follower 样式增强 */
+        /* Cursor Follower 样式 */
         #cursor-follower { 
             will-change: transform, width, height, background-color; 
             pointer-events: none;
@@ -60,21 +60,25 @@
         
         /* 锁定状态下的 Cursor 样式 */
         #cursor-follower.is-locked {
-            width: 12px;
-            height: 12px;
-            background-color: #ff3b30; /* 红色警示色或强调色 */
+            width: 12px; height: 12px;
+            background-color: #ff3b30;
             border-color: transparent;
         }
 
         /* 锁定状态下的文字提示 */
         .lock-indicator {
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
+            opacity: 0; transform: translateY(10px); transition: all 0.3s ease;
         }
         .is-locked-mode .lock-indicator {
-            opacity: 1;
-            transform: translateY(0);
+            opacity: 1; transform: translateY(0);
+        }
+
+        /* 移动端呼吸模式提示 - 可选 */
+        .mobile-indicator {
+            display: none;
+        }
+        @media (hover: none) {
+            .mobile-indicator { display: block; }
         }
 
         /* ==================== 2. 组件化样式 ==================== */
@@ -111,13 +115,14 @@
 
     <main class="w-full flex-1">
         
-        <section id="hero-stage" class="relative w-full h-[100svh] flex flex-col justify-center items-center overflow-hidden border-b border-black dark:border-white cursor-crosshair">
+        <section id="hero-stage" class="relative w-full h-[100svh] flex flex-col justify-center items-center overflow-hidden border-b border-black dark:border-white md:cursor-crosshair">
             <div class="absolute inset-0 grid-bg pointer-events-none"></div>
 
             <div class="absolute top-24 right-6 lg:right-12 font-mono text-xs font-bold tracking-widest opacity-60 pointer-events-none flex flex-col items-end gap-1 z-20 blend-diff transition-opacity duration-300">
                 <div>WGHT (Y): <span id="val-wght">400</span></div>
                 <div>WDTH (X): <span id="val-wdth">100</span></div>
                 <div class="hidden md:block">POS: <span id="val-mouse">0, 0</span></div>
+                <div class="block md:hidden text-xs opacity-80 mt-1">[ AUTO FLOW ]</div>
                 <div class="text-[#ff3b30] lock-indicator font-black mt-2">[ LOCKED ]</div>
             </div>
 
@@ -335,10 +340,10 @@
             textLines: ["自在致黑"],
             description: "Variable Infinite.<br>Constructing Visual Voice<br>For The Digital Age.",
             axis: { weight: { min: 100, max: 700, default: 300 }, width:  { min: 75,  max: 125, default: 80 } },
-            physics: { ease: 0.08 } // 平滑系数，越小越顺滑但延迟越高
+            physics: { ease: 0.08 } // 桌面端跟随平滑系数
         };
 
-        // 线性插值函数 (Linear Interpolation)
+        // 线性插值函数
         const lerp = (start, end, factor) => start + (end - start) * factor;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -364,7 +369,7 @@
             }
             document.getElementById('hero-desc').innerHTML = HERO_CONFIG.description;
 
-            // 3. 高级交互逻辑 (Lerp + Lock + Gyro)
+            // 3. 核心交互逻辑 (鼠标跟随 + 自动呼吸)
             const hero = document.getElementById('hero-stage');
             const targets = document.querySelectorAll('.hero-var-target');
             const vals = { wght: document.getElementById('val-wght'), wdth: document.getElementById('val-wdth'), mouse: document.getElementById('val-mouse') };
@@ -375,78 +380,101 @@
                 let rect = hero.getBoundingClientRect();
                 window.addEventListener('resize', () => rect = hero.getBoundingClientRect());
 
+                // 检测是否为触摸设备 (粗略判断)
+                const isTouchDevice = () => window.matchMedia("(hover: none)").matches;
+
                 // 状态管理
                 const state = {
                     targetX: 0.5, targetY: 0.5, // 目标位置 (0.0 - 1.0)
-                    currX: 0.5, currY: 0.5,     // 当前渲染位置 (Lerp后)
-                    rawX: 0, rawY: 0,           // 原始鼠标像素坐标
-                    isLocked: false,            // 是否锁定
-                    isHovering: false,          // 鼠标是否在区域内
-                    hasGyro: false              // 是否有陀螺仪数据
+                    currX: 0.5, currY: 0.5,     // 当前位置
+                    rawX: 0, rawY: 0,           // 鼠标原始坐标
+                    isLocked: false,            // 锁定状态
+                    isHovering: false,          // 鼠标是否进入
+                    autoMode: false             // 自动模式 (用于移动端或未操作时)
                 };
 
-                // 设置初始默认值
+                // 设置初始值
                 state.targetX = (width.default - width.min) / (width.max - width.min);
                 state.targetY = (weight.default - weight.min) / (weight.max - weight.min);
                 state.currX = state.targetX;
                 state.currY = state.targetY;
 
-                // 动画循环 (核心引擎)
+                // 动画循环
                 const animate = () => {
-                    if (!state.isLocked) {
-                        // 使用 Lerp 计算平滑过渡
+                    // 判断模式：如果是触摸设备，或者是桌面端但没有 Hover 且没有锁定，进入自动呼吸模式
+                    // 为了简单起见：桌面端 Hover 时控制，不 Hover 时回弹或保持；移动端始终自动呼吸。
+                    
+                    if (isTouchDevice()) {
+                        state.autoMode = true;
+                    } else {
+                        state.autoMode = false;
+                    }
+
+                    if (state.autoMode && !state.isLocked) {
+                        // === 移动端/自动模式：优雅的正弦波呼吸 ===
+                        const time = Date.now() * 0.001; // 时间因子
+                        
+                        // 使用不同的频率和相位，形成 Lissajous 曲线般的随机感
+                        // Sin 结果从 -1 到 1，映射到 0 到 1
+                        const waveX = (Math.sin(time * 0.8) + 1) / 2; 
+                        const waveY = (Math.sin(time * 1.2 + 2) + 1) / 2; // +2 是相位偏移
+                        
+                        // 缓慢插值到波形目标，避免突变
+                        state.currX = lerp(state.currX, waveX, 0.05);
+                        state.currY = lerp(state.currY, waveY, 0.05);
+                        
+                    } else if (!state.isLocked) {
+                        // === 桌面端鼠标模式 ===
+                        // 如果没有 Hover，回弹到默认值
+                        if (!state.isHovering) {
+                            state.targetX = (width.default - width.min) / (width.max - width.min);
+                            state.targetY = (weight.default - weight.min) / (weight.max - weight.min);
+                        }
+                        
                         state.currX = lerp(state.currX, state.targetX, HERO_CONFIG.physics.ease);
                         state.currY = lerp(state.currY, state.targetY, HERO_CONFIG.physics.ease);
                     }
 
-                    // 计算字体变体数值
+                    // 计算变体数值
                     const w = Math.floor(width.min + (state.currX * (width.max - width.min)));
                     const wg = Math.floor(weight.min + (state.currY * (weight.max - weight.min)));
 
-                    // 应用到 DOM
+                    // 应用样式
                     targets.forEach(el => el.style.fontVariationSettings = `'wght' ${wg}, 'wdth' ${w}`);
 
-                    // 更新面板数值
+                    // 更新 UI 面板
                     if(vals.wght) vals.wght.innerText = wg;
                     if(vals.wdth) vals.wdth.innerText = w;
                     
-                    // 更新跟随鼠标的坐标 (仅在非锁定时更新文字)
-                    if(vals.mouse && !state.isLocked && state.isHovering) {
+                    // 只有在桌面端 Hover 时才更新鼠标坐标显示
+                    if(vals.mouse && !state.autoMode && state.isHovering && !state.isLocked) {
                         vals.mouse.innerText = `${Math.floor(state.rawX)}, ${Math.floor(state.rawY)}`;
                     }
 
-                    // 更新 Cursor Follower 位置 (总是跟随平滑后的虚拟坐标，这样更优雅)
-                    if(cursor && state.isHovering) {
-                        // 将 0-1 的比例还原回像素坐标，用于显示 cursor
+                    // Cursor Follower (仅桌面端)
+                    if(cursor && !isTouchDevice() && state.isHovering) {
                         const visualX = rect.left + state.currX * rect.width;
                         const visualY = rect.top + state.currY * rect.height;
-                        
-                        // 如果锁定了，cursor 停留在锁定位置；如果没有锁定，跟随计算后的平滑位置
-                        // 这里我们选择让 cursor 始终跟随"当前字体状态"对应的位置，这样视觉联系最强
                         cursor.style.transform = `translate3d(${visualX}px, ${visualY}px, 0) translate(-50%, -50%)`;
                     }
 
                     requestAnimationFrame(animate);
                 };
-                animate(); // 启动循环
+                animate();
 
-                // 事件监听：鼠标移动
+                // === 事件监听 (仅限桌面端鼠标) ===
                 const handleMove = (x, y) => {
-                    if (state.isLocked) return;
+                    if (state.isLocked || isTouchDevice()) return;
                     state.rawX = x; state.rawY = y;
                     
-                    // 归一化坐标 0-1
                     state.targetX = Math.max(0, Math.min(1, (x - rect.left) / rect.width));
                     state.targetY = Math.max(0, Math.min(1, (y - rect.top) / rect.height));
                 };
 
                 hero.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
-                hero.addEventListener('touchmove', e => {
-                    handleMove(e.touches[0].clientX, e.touches[0].clientY);
-                }, { passive: false });
-
-                // 事件监听：进出区域
+                
                 hero.addEventListener('mouseenter', () => {
+                    if(isTouchDevice()) return;
                     state.isHovering = true;
                     if(cursor) cursor.style.opacity = '1';
                     rect = hero.getBoundingClientRect();
@@ -454,62 +482,26 @@
 
                 hero.addEventListener('mouseleave', () => {
                     state.isHovering = false;
-                    if (!state.isLocked) {
-                        // 平滑回弹到默认值
-                        state.targetX = (width.default - width.min) / (width.max - width.min);
-                        state.targetY = (weight.default - weight.min) / (weight.max - weight.min);
-                    }
                     if(cursor) cursor.style.opacity = '0';
                 });
 
-                // 事件监听：点击锁定
+                // 点击锁定 (通用)
                 hero.addEventListener('click', () => {
+                    // 如果是移动端，点击不锁定，也许可以做点别的交互？
+                    // 建议：移动端点击也可以“暂停”呼吸，或者只是简单的视觉反馈
+                    // 这里保留锁定功能，这样用户如果觉得某个瞬间很好看，可以定格
                     state.isLocked = !state.isLocked;
                     
-                    // 切换 UI 状态
                     if(state.isLocked) {
                         hero.classList.add('is-locked-mode');
                         if(cursor) cursor.classList.add('is-locked');
                     } else {
                         hero.classList.remove('is-locked-mode');
                         if(cursor) cursor.classList.remove('is-locked');
-                        // 解锁时立即更新目标为当前鼠标位置，防止跳变
-                        handleMove(state.rawX, state.rawY);
-                    }
-
-                    // iOS 权限请求 (Trick: 只有在用户交互/点击时才能请求)
-                    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                        DeviceOrientationEvent.requestPermission()
-                            .then(permissionState => {
-                                if (permissionState === 'granted') {
-                                    window.addEventListener('deviceorientation', handleOrientation);
-                                }
-                            })
-                            .catch(console.error);
+                        // 解锁瞬间重置目标，防止跳变
+                        if (!state.autoMode) handleMove(state.rawX, state.rawY);
                     }
                 });
-
-                // 事件监听：陀螺仪 (核心逻辑)
-                const handleOrientation = (e) => {
-                    // 只有在没有鼠标 hovering 且非锁定状态下才启用陀螺仪（优先响应鼠标）
-                    if (state.isHovering || state.isLocked) return;
-
-                    // Beta: 前后倾斜 (-180 to 180). 限制在 -45 到 45 之间用来控制 Weight
-                    // Gamma: 左右倾斜 (-90 to 90). 限制在 -45 到 45 之间用来控制 Width
-                    const maxTilt = 30; 
-                    
-                    let yTilt = Math.max(-maxTilt, Math.min(maxTilt, e.beta)); 
-                    let xTilt = Math.max(-maxTilt, Math.min(maxTilt, e.gamma));
-
-                    // 映射到 0-1
-                    state.targetY = (yTilt + maxTilt) / (maxTilt * 2); // 前后倾斜
-                    state.targetX = (xTilt + maxTilt) / (maxTilt * 2); // 左右倾斜
-                };
-
-                // 尝试添加非 iOS 的陀螺仪监听 (安卓通常直接支持)
-                if (window.DeviceOrientationEvent) {
-                    window.addEventListener('deviceorientation', handleOrientation);
-                }
             }
         });
     </script>
