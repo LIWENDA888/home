@@ -15,7 +15,16 @@
         theme: {
           extend: {
             cursor: { 'crosshair': 'crosshair' },
-            animation: { 'spin-slow': 'spin 12s linear infinite' },
+            animation: { 
+                'spin-slow': 'spin 12s linear infinite',
+                'marquee': 'marquee 25s linear infinite', // 新增跑马灯动画
+            },
+            keyframes: {
+                marquee: {
+                    '0%': { transform: 'translateX(0%)' },
+                    '100%': { transform: 'translateX(-100%)' },
+                }
+            },
             transitionTimingFunction: {
                 'out-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
             }
@@ -26,9 +35,16 @@
     
     <style>
         /* ==================== 1. 基础设置 ==================== */
+        
+        /* 噪点纹理：改为绝对定位，仅用于 Hero 区域 */
         .noise-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 9999; opacity: 0.05;
+            position: absolute; 
+            inset: 0;
+            width: 100%; 
+            height: 100%;
+            pointer-events: none; 
+            z-index: 0; 
+            opacity: 0.05;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
         .dark .noise-overlay { opacity: 0.07; }
@@ -39,6 +55,7 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         html { scroll-behavior: smooth; }
 
+        /* 网格背景：仅用于 Hero */
         .grid-bg {
             background-size: 60px 60px;
             background-image: linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
@@ -73,14 +90,6 @@
             opacity: 1; transform: translateY(0);
         }
 
-        /* 移动端呼吸模式提示 - 可选 */
-        .mobile-indicator {
-            display: none;
-        }
-        @media (hover: none) {
-            .mobile-indicator { display: block; }
-        }
-
         /* ==================== 2. 组件化样式 ==================== */
         .ui-tag {
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -108,15 +117,16 @@
         .group:hover .ui-meta-label { opacity: 0.8; }
     </style>
 </head>
-<body class="bg-[#f2f2f2] text-black dark:bg-[#0a0a0a] dark:text-gray-100 transition-colors duration-500 flex flex-col min-h-screen selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black font-sans antialiased overflow-x-hidden">
+<body class="bg-white text-black dark:bg-neutral-950 dark:text-gray-100 transition-colors duration-500 flex flex-col min-h-screen selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black font-sans antialiased overflow-x-hidden">
 
-    <div class="noise-overlay"></div>
     <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-md dark:border-neutral-900 dark:bg-neutral-950/90"></nav>
 
     <main class="w-full flex-1">
         
-        <section id="hero-stage" class="relative w-full h-[100svh] flex flex-col justify-center items-center overflow-hidden border-b border-black dark:border-white md:cursor-crosshair">
-            <div class="absolute inset-0 grid-bg pointer-events-none"></div>
+        <section id="hero-stage" class="relative w-full h-[100svh] bg-[#f8fafc] dark:bg-[#0a0a0a] flex flex-col justify-center items-center overflow-hidden border-b border-black dark:border-white md:cursor-crosshair">
+            
+            <div class="noise-overlay"></div>
+            <div class="absolute inset-0 grid-bg pointer-events-none z-0"></div>
 
             <div class="absolute top-24 right-6 lg:right-12 font-mono text-xs font-bold tracking-widest opacity-60 pointer-events-none flex flex-col items-end gap-1 z-20 blend-diff transition-opacity duration-300">
                 <div>WGHT (Y): <span id="val-wght">400</span></div>
@@ -145,11 +155,11 @@
         </section>
 
 
-        <section class="relative w-full py-24 z-30">
+        <section class="relative w-full py-24 z-30 bg-white dark:bg-neutral-950">
             <div class="mx-auto max-w-[1800px] px-6 lg:px-12">
                 <div class="flex items-baseline justify-between mb-12 border-b border-black dark:border-white pb-4">
-                    <h2 class="text-5xl md:text-7xl font-black tracking-tighter uppercase text-black dark:text-white">Catalog</h2>
-                    <span class="font-mono text-xs font-bold tracking-widest opacity-50">[ SELECTED WORKS ]</span>
+                    <h2 class="text-5xl md:text-7xl font-black tracking-tighter uppercase text-black dark:text-white">FONTS</h2>
+                    <span class="font-mono text-xs font-bold tracking-widest opacity-50">[ SELECTED FONTS ]</span>
                 </div>
 
                 <div class="flex flex-col border-t border-l border-r border-black dark:border-white">
@@ -228,29 +238,50 @@
                 
                 <div class="mt-20 text-center">
                     <a href="fonts.html" class="inline-flex items-center gap-3 border-b-2 border-black dark:border-white pb-2 text-lg font-bold uppercase tracking-wider hover:tracking-[0.2em] transition-all duration-300">
-                        View Full Archive <span class="text-xl">→</span>
+                        查看全部All Fonts<span class="text-xl">→</span>
                     </a>
                 </div>
             </div>
         </section>
 
-        <div class="bg-black text-white dark:bg-white dark:text-black py-6 border-y border-white/20 dark:border-black/20">
-            <div class="mx-auto max-w-[1800px] px-6 lg:px-12 flex flex-wrap justify-between items-center gap-4">
-                <span class="text-sm md:text-base font-bold uppercase tracking-[0.2em]">Open Source</span>
-                <span class="hidden md:inline-block w-2 h-2 rounded-full bg-white dark:bg-black opacity-30"></span>
-                <span class="text-sm md:text-base font-bold uppercase tracking-[0.2em]">Variable Tech</span>
-                <span class="hidden md:inline-block w-2 h-2 rounded-full bg-white dark:bg-black opacity-30"></span>
-                <span class="text-sm md:text-base font-bold uppercase tracking-[0.2em]">Experimental</span>
-                <span class="hidden md:inline-block w-2 h-2 rounded-full bg-white dark:bg-black opacity-30"></span>
-                <span class="text-sm md:text-base font-bold uppercase tracking-[0.2em]">Global Match</span>
+        <div class="w-full overflow-hidden bg-black text-white dark:bg-white dark:text-black py-5 border-y border-white/20 dark:border-black/20 select-none">
+            <div class="relative flex items-center whitespace-nowrap">
+                <div class="flex items-center gap-12 animate-marquee pl-12">
+                    <span class="text-lg font-black uppercase tracking-tighter">Open Source</span>
+                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
+                    <span class="text-lg font-black uppercase tracking-tighter">Variable Technology</span>
+                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
+                    <span class="text-lg font-black uppercase tracking-tighter">Global Matchmaking</span>
+                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
+                    <span class="text-lg font-black uppercase tracking-tighter">Experimental Lab</span>
+                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
+                    <span class="text-lg font-black uppercase tracking-tighter">Open Source</span>
+                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
+                    <span class="text-lg font-black uppercase tracking-tighter">Variable Technology</span>
+                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
+                    <span class="text-lg font-black uppercase tracking-tighter">Global Matchmaking</span>
+                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
+                    <span class="text-lg font-black uppercase tracking-tighter">Experimental Lab</span>
+                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
+                </div>
+                <div class="flex items-center gap-12 animate-marquee pl-12" aria-hidden="true">
+                    <span class="text-lg font-black uppercase tracking-tighter">Open Source</span>
+                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
+                    <span class="text-lg font-black uppercase tracking-tighter">Variable Technology</span>
+                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
+                    <span class="text-lg font-black uppercase tracking-tighter">Global Matchmaking</span>
+                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
+                    <span class="text-lg font-black uppercase tracking-tighter">Experimental Lab</span>
+                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
+                </div>
             </div>
         </div>
 
-        <section class="w-full py-24">
+        <section class="w-full py-24 bg-white dark:bg-neutral-950">
             <div class="mx-auto max-w-[1800px] px-6 lg:px-12 mb-12">
                 <div class="flex items-baseline justify-between border-b border-black dark:border-white pb-4">
                     <h2 class="text-5xl md:text-7xl font-black tracking-tighter uppercase text-black dark:text-white">Tools</h2>
-                    <span class="font-mono text-xs font-bold tracking-widest opacity-50">[ LABORATORY ]</span>
+                    <span class="font-mono text-xs font-bold tracking-widest opacity-50">[ ORIGINAL TOOL ]</span>
                 </div>
             </div>
 
