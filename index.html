@@ -17,7 +17,7 @@
             cursor: { 'crosshair': 'crosshair' },
             animation: { 
                 'spin-slow': 'spin 12s linear infinite',
-                'marquee': 'marquee 25s linear infinite', // 新增跑马灯动画
+                'marquee': 'marquee 25s linear infinite', 
             },
             keyframes: {
                 marquee: {
@@ -64,9 +64,37 @@
             background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
         }
 
-        .hover-card-effect { transition: background-color 0.3s ease; }
-        .hover-card-effect:hover { background-color: rgba(0,0,0, 0.03); }
-        .dark .hover-card-effect:hover { background-color: rgba(255,255,255, 0.05); }
+        /* ==================== 悬浮反色核心样式 ==================== 
+           修改说明：
+           1. 移除原有的浅色背景 hover
+           2. 增加高对比度的反色逻辑 (黑底白字 / 白底黑字)
+           3. 强制覆盖子元素颜色 (!important)，确保 icon、标签等所有内容反色
+        */
+        .hover-card-effect { 
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); 
+        }
+
+        /* Light Mode Hover: 背景变黑，文字变白 */
+        .hover-card-effect:hover { 
+            background-color: #000; 
+            color: #fff; 
+        }
+        /* 强制子元素反色 */
+        .hover-card-effect:hover * {
+            color: #fff !important;
+            border-color: rgba(255,255,255, 0.3) !important;
+        }
+
+        /* Dark Mode Hover: 背景变白，文字变黑 */
+        .dark .hover-card-effect:hover { 
+            background-color: #fff; 
+            color: #000; 
+        }
+        /* 强制子元素反色 */
+        .dark .hover-card-effect:hover * {
+            color: #000 !important;
+            border-color: rgba(0,0,0, 0.3) !important;
+        }
 
         /* Cursor Follower 样式 */
         #cursor-follower { 
