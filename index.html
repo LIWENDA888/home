@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>自在造字 - 可变，才自在</title>
-    <meta name="description" content="自在造字，一家专注于中文可变字体技术的独立字库">
+    <meta name="description" content="自在造字，一家专注中文可变字体的独立字体工作室">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
     <script>
@@ -42,9 +42,11 @@
 
     <main class="w-full flex-1">
         
+        <!-- Hero Section: Reverted to Full Width (Atmospheric) -->
         <section class="relative w-full h-[75vh] min-h-[500px] max-h-[1080px] px-4 pt-24 pb-4 lg:px-12 lg:pt-28 lg:pb-8">
             <div id="hero-carousel" class="relative w-full h-full rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-neutral-900 group animate-fade-up shadow-sm">
                 
+                <!-- Spinning Text -->
                 <div class="absolute top-6 right-6 z-30 hidden lg:block mix-blend-overlay opacity-80 pointer-events-none">
                      <div class="relative flex items-center justify-center size-24">
                         <svg class="absolute inset-0 w-full h-full animate-spin-slow text-white" viewBox="0 0 100 100" width="100" height="100">
@@ -57,12 +59,21 @@
                     </div>
                 </div>
 
+                <!-- Navigation Buttons -->
+                <button onclick="prevHeroSlide(event)" class="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-40 size-12 lg:size-14 rounded-full bg-black/20 text-white backdrop-blur border border-white/10 hover:bg-white hover:text-black transition-all duration-300 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 flex items-center justify-center" aria-label="Previous Slide">
+                    <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button onclick="nextHeroSlide(event)" class="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-40 size-12 lg:size-14 rounded-full bg-black/20 text-white backdrop-blur border border-white/10 hover:bg-white hover:text-black transition-all duration-300 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 flex items-center justify-center" aria-label="Next Slide">
+                    <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+
+                <!-- Slides -->
                 <a href="fonts/zhisans.html" target="_blank" class="hero-slide absolute inset-0 transition-opacity duration-1000 ease-in-out z-20 opacity-100 block" data-index="0">
                     <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2670&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover filter grayscale contrast-125 scale-100 transition-transform duration-[8s] ease-linear slide-img" alt="Zhisans">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
                     <div class="absolute bottom-8 left-8 lg:bottom-12 lg:left-12 text-white mix-blend-difference z-20">
                         <div class="font-mono text-[10px] uppercase tracking-widest mb-2 opacity-80">Featured Typeface</div>
-                        <div class="text-3xl lg:text-5xl font-black tracking-tight">Zhisans Variable 1.0</div>
+                        <div class="text-3xl lg:text-5xl font-black tracking-tight">自在致黑Zhisans</div>
                     </div>
                 </a>
 
@@ -71,7 +82,7 @@
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
                     <div class="absolute bottom-8 left-8 lg:bottom-12 lg:left-12 text-white mix-blend-difference z-20">
                         <div class="font-mono text-[10px] uppercase tracking-widest mb-2 opacity-80">New Release</div>
-                        <div class="text-3xl lg:text-5xl font-black tracking-tight">Ke Serif Display</div>
+                        <div class="text-3xl lg:text-5xl font-black tracking-tight">超引形近字</div>
                     </div>
                 </a>
 
@@ -80,10 +91,11 @@
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
                     <div class="absolute bottom-8 left-8 lg:bottom-12 lg:left-12 text-white mix-blend-difference z-20">
                         <div class="font-mono text-[10px] uppercase tracking-widest mb-2 opacity-80">Service</div>
-                        <div class="text-3xl lg:text-5xl font-black tracking-tight">Bespoke Customization</div>
+                        <div class="text-3xl lg:text-5xl font-black tracking-tight">可变字体空间</div>
                     </div>
                 </a>
 
+                <!-- Pagination Dots -->
                 <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-3 p-2 rounded-full bg-black/20 backdrop-blur-md border border-white/10">
                     <button onclick="switchHeroSlide(0, event)" class="hero-dot w-6 h-1.5 rounded-full bg-white transition-all duration-300 opacity-100" aria-label="Slide 1"></button>
                     <button onclick="switchHeroSlide(1, event)" class="hero-dot w-1.5 h-1.5 rounded-full bg-white transition-all duration-300 opacity-40 hover:opacity-100" aria-label="Slide 2"></button>
@@ -92,21 +104,22 @@
             </div>
         </section>
 
-        <div class="w-full border-y border-gray-100 dark:border-neutral-900 py-12 bg-white dark:bg-neutral-950 z-20 relative">
-             <div class="max-w-[1800px] mx-auto px-6 lg:px-12 flex flex-col md:flex-row items-center justify-between gap-8">
+        <!-- Slogan Area: Kept Constrained -->
+        <div class="max-w-[1800px] mx-auto px-6 lg:px-12 z-20 relative">
+             <div class="w-full border-y border-gray-100 dark:border-neutral-900 py-12 bg-white dark:bg-neutral-950 flex flex-col md:flex-row items-center justify-between gap-8">
                 <div class="flex items-center gap-4">
                     <span class="w-2 h-2 rounded-full bg-black dark:bg-white animate-pulse"></span>
                     <h2 class="text-2xl md:text-3xl font-black tracking-[0.2em] uppercase">可变，才自在。</h2>
                 </div>
                 <div class="flex items-center gap-12">
                     <div class="hidden lg:block text-right">
-                        <p class="text-[10px] font-bold font-mono uppercase tracking-widest text-gray-400 mb-1">Variable Font Technology</p>
-                        <p class="text-xs font-bold text-black dark:text-white">Constructing Visual Voice</p>
+                        <p class="text-[10px] font-bold font-mono uppercase tracking-widest text-gray-400 mb-1">Technology</p>
+                        <p class="text-xs font-bold text-black dark:text-white">Variable Font</p>
                     </div>
                     <div class="h-8 w-px bg-gray-100 dark:bg-neutral-800 hidden md:block"></div>
                     <div class="text-center md:text-left">
-                        <p class="text-[10px] font-bold font-mono uppercase tracking-widest text-gray-400 mb-1">Studio Location</p>
-                        <p class="text-xs font-bold text-black dark:text-white">Shanghai, China</p>
+                        <p class="text-[10px] font-bold font-mono uppercase tracking-widest text-gray-400 mb-1">Location</p>
+                        <p class="text-xs font-bold text-black dark:text-white">Hubei, China</p>
                     </div>
                 </div>
              </div>
@@ -121,16 +134,17 @@
             </div>
 
             <div class="grid grid-cols-1 gap-y-24">
+                <!-- Item 1: Zhisans -->
                 <a href="fonts/zhisans.html" target="_blank" class="group block relative">
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                         <div class="lg:col-span-8 relative aspect-[16/10] overflow-hidden rounded-[2rem]">
                             <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/i4a1/6803X1701/123-01.jpg/webp" class="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-105" alt="Zhisans Preview">
                             <div class="absolute top-6 left-6 flex gap-2">
-                                <span class="bg-white/90 backdrop-blur text-black px-3 py-1 text-[10px] font-bold uppercase rounded-full tracking-widest shadow-sm">Variable</span>
+                                <span class="bg-white/90 backdrop-blur text-black px-3 py-1 text-[10px] font-bold uppercase rounded-full tracking-widest shadow-sm">免费商用</span>
                             </div>
                         </div>
                         <div class="lg:col-span-4 flex flex-col justify-center h-full pt-4 lg:pl-8">
-                            <h3 class="text-5xl md:text-6xl font-black mb-4 group-hover:text-gray-600 dark:group-hover:text-neutral-400 transition-colors">致黑<br><span class="text-2xl md:text-3xl font-bold tracking-tight text-gray-400">Zhisans</span></h3>
+                            <h3 class="text-5xl md:text-6xl font-black mb-4 text-black dark:text-white transition-colors">自在致黑<br><span class="text-2xl md:text-3xl font-bold tracking-tight text-gray-400">Zhisans</span></h3>
                             <div class="h-px w-12 bg-black dark:bg-white mb-6"></div>
                             <p class="text-gray-500 dark:text-neutral-400 text-sm leading-relaxed mb-8 max-w-sm">
                                 极具现代感的双轴可变黑体。在保留汉字骨架力度的同时，融入了流体般的几何美感。
@@ -139,25 +153,27 @@
                     </div>
                 </a>
 
-                <a href="fonts/zhisans.html" target="_blank" class="group block relative">
+                <!-- Item 2: Qidian -->
+                <a href="https://hao.zizao.top" target="_blank" class="group block relative">
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center lg:flex-row-reverse">
                         <div class="lg:col-span-4 flex flex-col justify-center h-full pt-4 lg:pr-8 order-2 lg:order-1">
-                            <h3 class="text-5xl md:text-6xl font-black mb-4 group-hover:text-gray-600 dark:group-hover:text-neutral-400 transition-colors">起点<br><span class="text-2xl md:text-3xl font-bold tracking-tight text-gray-400">Qidian</span></h3>
+                            <h3 class="text-5xl md:text-6xl font-black mb-4 text-black dark:text-white transition-colors">设计导航<br><span class="text-2xl md:text-3xl font-bold tracking-tight text-gray-400">HAO</span></h3>
                             <div class="h-px w-12 bg-black dark:bg-white mb-6"></div>
                             <p class="text-gray-500 dark:text-neutral-400 text-sm leading-relaxed mb-8 max-w-sm">
-                                回归原点的开源实验项目。专注于阅读的本质。
+                                设计师的灵感百宝库
                             </p>
                         </div>
                         <div class="lg:col-span-8 relative aspect-[16/10] overflow-hidden rounded-[2rem] order-1 lg:order-2">
                             <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/i4a1/6803X1701/123-01.jpg/webp" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Qidian Preview">
                              <div class="absolute top-6 left-6 flex gap-2">
-                                <span class="bg-black/90 backdrop-blur text-white px-3 py-1 text-[10px] font-bold uppercase rounded-full tracking-widest shadow-sm">Free</span>
+                                <span class="bg-black/90 backdrop-blur text-white px-3 py-1 text-[10px] font-bold uppercase rounded-full tracking-widest shadow-sm">New</span>
                             </div>
                         </div>
                     </div>
                 </a>
 
-                <a href="fonts/zizaikeserif.html" target="_blank" class="group block relative">
+                <!-- Item 3: Ke Serif -->
+                <a href="https://tools.zizao.top" target="_blank" class="group block relative">
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                         <div class="lg:col-span-8 relative aspect-[16/10] overflow-hidden rounded-[2rem]">
                             <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/i4a1/6803X1701/123-01.jpg/webp" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Ke Serif Preview">
@@ -166,10 +182,10 @@
                             </div>
                         </div>
                         <div class="lg:col-span-4 flex flex-col justify-center h-full pt-4 lg:pl-8">
-                            <h3 class="text-5xl md:text-6xl font-black mb-4 group-hover:text-gray-600 dark:group-hover:text-neutral-400 transition-colors">刻宋<br><span class="text-2xl md:text-3xl font-bold tracking-tight text-gray-400">Ke Serif</span></h3>
+                            <h3 class="text-5xl md:text-6xl font-black mb-4 text-black dark:text-white transition-colors">工具箱<br><span class="text-2xl md:text-3xl font-bold tracking-tight text-gray-400">Tools</span></h3>
                             <div class="h-px w-12 bg-black dark:bg-white mb-6"></div>
                             <p class="text-gray-500 dark:text-neutral-400 text-sm leading-relaxed mb-8 max-w-sm">
-                                向传统雕版印刷致敬。专为高分辨率屏幕打造的标题宋体。
+                                自动保存本地的Web多文本编辑器
                             </p>
                         </div>
                     </div>

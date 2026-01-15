@@ -454,6 +454,15 @@ function switchHeroSlide(index, event) {
     });
 }
 
-function nextHeroSlide() { switchHeroSlide(currentSlide + 1); }
-function startSlideTimer() { stopSlideTimer(); slideInterval = setInterval(nextHeroSlide, 5000); }
+function nextHeroSlide(event) { 
+    if (event) { event.stopPropagation(); }
+    switchHeroSlide(currentSlide + 1); 
+}
+
+function prevHeroSlide(event) {
+    if (event) { event.stopPropagation(); }
+    switchHeroSlide(currentSlide - 1);
+}
+
+function startSlideTimer() { stopSlideTimer(); slideInterval = setInterval(() => nextHeroSlide(), 5000); }
 function stopSlideTimer() { if (slideInterval) clearInterval(slideInterval); }
