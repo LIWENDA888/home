@@ -15,14 +15,8 @@ const SITE_CONFIG = {
             type: 'dropdown', 
             name: '字体产品', 
             items: [
-                { title: '自在致黑', path: 'https://www.zizao.top//fonts/zhisans.html', tag: 'Free', desc: '免费商用双轴可变微变形字体' },
-                { title: '敬请期待', path: '', tag: '-', desc: '-' },
-                { title: '敬请期待', path: '', tag: '-', desc: '-' },
-                { title: '敬请期待', path: '', tag: '-', desc: '-' }, 
-                { title: '敬请期待', path: '', tag: '-', desc: '-' }, 
-                { title: '敬请期待', path: '', tag: '-', desc: '-' }, 
-                { title: '敬请期待', path: '', tag: '-', desc: '-' }, 
-                { title: '敬请期待', path: '', tag: '-', desc: '-' }, 
+                { title: '自在致黑', path: 'https://www.zizao.top/fonts/?zhisans', tag: '免费商用', desc: '双轴可变微变形黑体' },
+                { title: '查看所有字体', path: 'https://www.zizao.top/fonts/', tag: 'ALL', desc: '自在全部字体产品列表' }, 
             ]
         },
         { type: 'link', name: '授权定制', path: 'https://www.zizao.top/licensing', id: 'licensing' },
