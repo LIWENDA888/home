@@ -6,7 +6,7 @@ const FONT_DATABASE = {
         meta: {
             title: "自在致黑 ZizaiZhisans - 自在造字",
             badge: "Version 1.0 Beta",
-            tag: "黑体"
+            tags: ["Variable", "免费"] 
         },
         hero: {
             title: "自在致黑",
@@ -60,12 +60,11 @@ const FONT_DATABASE = {
             link: "#" 
         }
     },
-    // 模拟数据 2
     "zhisong": {
         meta: {
             title: "自在刻宋 KeSerif - 自在造字",
             badge: "New",
-            tag: "Serif"
+            tags: ["Serif"] 
         },
         hero: {
             title: "自在刻宋",
@@ -83,6 +82,11 @@ const FONT_DATABASE = {
             {
                 title: "雕版风味",
                 desc: "保留了刻刀的痕迹，极具人文气息。",
+                icon: "M12 6v6m0 0v6m0-6h6m-6 0H6"
+            },
+            {
+                title: "人文气息",
+                desc: "传统与现代的碰撞。",
                 icon: "M12 6v6m0 0v6m0-6h6m-6 0H6"
             }
         ],

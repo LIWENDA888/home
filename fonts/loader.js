@@ -1,55 +1,62 @@
 /**
  * fonts/loader.js
- * 核心渲染引擎：处理路由、数据填充、搜索与筛选
+ * 核心渲染引擎
  */
+
+// 🔴 修改点1：固定域名 URL 前缀
+const URL_PREFIX = "https://www.zizao.top/fonts/";
 
 let currentFilter = 'All';
 let currentSearch = '';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. 获取 URL 参数
     let fontId = decodeURIComponent(window.location.search.substring(1));
     fontId = fontId.split('/')[0].split('&')[0];
 
-    // 2. 路由判断
     if (!fontId || !FONT_DATABASE[fontId]) {
-        renderListView(); // 显示列表
+        renderListView();
     } else {
-        renderProductView(fontId); // 显示详情
+        renderProductView(fontId);
     }
 });
 
-/**
- * 渲染列表视图 (List Mode)
- * 包含：自动生成 Tag、搜索逻辑、卡片渲染
- */
 function renderListView() {
     document.title = "字体产品 - 自在造字";
     
-    // DOM 切换
     const listView = document.getElementById('list-view');
     const productView = document.getElementById('product-view');
     if(listView) listView.classList.remove('hidden');
     if(productView) productView.classList.add('hidden');
 
-    // === 1. 初始化过滤器 (从 Data 提取唯一 Tag) ===
     const filterContainer = document.getElementById('filter-container');
     const uniqueTags = new Set();
-    Object.values(FONT_DATABASE).forEach(item => uniqueTags.add(item.meta.tag));
     
-    // 生成 Tag 按钮 (保留 All 按钮)
-    if (filterContainer && filterContainer.children.length === 1) { // 避免重复生成
-        uniqueTags.forEach(tag => {
+    Object.values(FONT_DATABASE).forEach(item => {
+        if (Array.isArray(item.meta.tags)) {
+            item.meta.tags.forEach(tag => uniqueTags.add(tag));
+        }
+    });
+    
+    if (filterContainer && filterContainer.children.length === 1) { 
+        let sortedTags = Array.from(uniqueTags);
+        const freeIndex = sortedTags.indexOf("免费");
+        if (freeIndex > -1) {
+            sortedTags.splice(freeIndex, 1);
+            sortedTags.sort();
+            sortedTags.unshift("免费");
+        } else {
+            sortedTags.sort();
+        }
+
+        sortedTags.forEach(tag => {
             const btn = document.createElement('button');
-            btn.className = "filter-btn px-4 py-3 rounded-full border border-gray-200 text-gray-500 bg-transparent text-xs font-bold transition-all hover:border-black hover:text-black dark:border-neutral-800 dark:text-neutral-500 dark:hover:border-white dark:hover:text-white";
+            btn.className = "filter-btn shrink-0 px-5 py-2.5 rounded-full border border-gray-200 text-gray-500 bg-transparent text-xs font-bold transition-all hover:border-black hover:text-black dark:border-neutral-800 dark:text-neutral-500 dark:hover:border-white dark:hover:text-white whitespace-nowrap";
             btn.textContent = tag;
-            btn.dataset.tag = tag;
             btn.onclick = () => handleFilterClick(tag, btn);
             filterContainer.appendChild(btn);
         });
     }
 
-    // === 2. 绑定搜索事件 ===
     const searchInput = document.getElementById('font-search');
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
@@ -58,44 +65,29 @@ function renderListView() {
         });
     }
 
-    // === 3. 初始渲染网格 ===
     updateGrid();
 }
 
-/**
- * 处理筛选点击
- */
 function handleFilterClick(tag, btnElement) {
     currentFilter = tag;
     
-    // 更新按钮样式
     document.querySelectorAll('.filter-btn').forEach(btn => {
-        // Reset Style
-        btn.className = "filter-btn px-4 py-3 rounded-full border border-gray-200 text-gray-500 bg-transparent text-xs font-bold transition-all hover:border-black hover:text-black dark:border-neutral-800 dark:text-neutral-500 dark:hover:border-white dark:hover:text-white";
+        btn.className = "filter-btn shrink-0 px-5 py-2.5 rounded-full border border-gray-200 text-gray-500 bg-transparent text-xs font-bold transition-all hover:border-black hover:text-black dark:border-neutral-800 dark:text-neutral-500 dark:hover:border-white dark:hover:text-white whitespace-nowrap";
     });
     
-    // Active Style
-    btnElement.className = "filter-btn active-filter px-4 py-3 rounded-full border border-black bg-black text-white text-xs font-bold transition-all hover:opacity-80 dark:border-white dark:bg-white dark:text-black";
+    btnElement.className = "filter-btn shrink-0 active-filter px-5 py-2.5 rounded-full border border-black bg-black text-white text-xs font-bold transition-all hover:opacity-80 dark:border-white dark:bg-white dark:text-black whitespace-nowrap";
     
     updateGrid();
 }
 
-/**
- * 重置筛选
- */
 function resetFilters() {
     currentSearch = '';
     currentFilter = 'All';
     document.getElementById('font-search').value = '';
-    
-    // 触发 All 按钮点击以重置 UI
     const allBtn = document.querySelector('.filter-btn[data-tag="All"]');
     if(allBtn) handleFilterClick('All', allBtn);
 }
 
-/**
- * 核心网格更新逻辑
- */
 function updateGrid() {
     const listGrid = document.getElementById('font-list-grid');
     const emptyState = document.getElementById('empty-state');
@@ -107,25 +99,29 @@ function updateGrid() {
     Object.keys(FONT_DATABASE).forEach(key => {
         const item = FONT_DATABASE[key];
         
-        // 匹配逻辑
         const matchesSearch = item.hero.title.toLowerCase().includes(currentSearch) || 
                               item.hero.enName.toLowerCase().includes(currentSearch);
-        const matchesFilter = currentFilter === 'All' || item.meta.tag === currentFilter;
+        
+        const itemTags = Array.isArray(item.meta.tags) ? item.meta.tags : [item.meta.tags];
+        const matchesFilter = currentFilter === 'All' || itemTags.includes(currentFilter);
 
         if (matchesSearch && matchesFilter) {
             hasResults = true;
-            // 获取封面图：优先用相册第一张，没有则用 Hero 图
             const coverImage = (item.gallery && item.gallery.length > 0) ? item.gallery[0] : item.hero.lightImg;
+            const displayTag = itemTags[0]; 
+
+            // 🔴 修改点2：拼接完整 URL 并添加 target="_blank"
+            const fullUrl = `${URL_PREFIX}?${key}`;
 
             html += `
-            <a href="?${key}" class="group block relative bg-gray-50 dark:bg-neutral-900 rounded-[1.5rem] overflow-hidden border border-gray-100 dark:border-neutral-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <a href="${fullUrl}" target="_blank" class="group block relative bg-gray-50 dark:bg-neutral-900 rounded-[1.5rem] overflow-hidden border border-gray-100 dark:border-neutral-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div class="aspect-[4/3] overflow-hidden bg-gray-200 dark:bg-neutral-800">
                     <img src="${coverImage}" alt="${item.hero.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter grayscale group-hover:grayscale-0">
                 </div>
                 <div class="p-6">
                     <div class="flex justify-between items-start mb-3">
                         <h3 class="text-xl font-black text-black dark:text-white">${item.hero.title}</h3>
-                        <span class="inline-flex items-center px-2 py-0.5 rounded border border-gray-200 dark:border-neutral-700 text-[9px] font-bold uppercase tracking-widest text-gray-500">${item.meta.tag}</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded border border-gray-200 dark:border-neutral-700 text-[9px] font-bold uppercase tracking-widest text-gray-500">${displayTag}</span>
                     </div>
                     <p class="text-xs text-gray-500 dark:text-neutral-400 line-clamp-2 leading-relaxed">${item.hero.description}</p>
                 </div>
@@ -136,7 +132,6 @@ function updateGrid() {
 
     listGrid.innerHTML = html;
 
-    // 空状态处理
     if (hasResults) {
         emptyState.classList.add('hidden');
         listGrid.classList.remove('hidden');
@@ -146,11 +141,6 @@ function updateGrid() {
     }
 }
 
-
-/**
- * 渲染详情视图 (Product Mode)
- * 逻辑与之前保持一致
- */
 function renderProductView(id) {
     const data = FONT_DATABASE[id];
     const listView = document.getElementById('list-view');
@@ -159,17 +149,16 @@ function renderProductView(id) {
     if(listView) listView.classList.add('hidden');
     if(productView) productView.classList.remove('hidden');
 
-    // Meta
     document.title = data.meta.title;
-    safeText('f-tag', data.meta.tag);
+    
+    const itemTags = Array.isArray(data.meta.tags) ? data.meta.tags : [data.meta.tags];
+    safeText('f-tag', itemTags[0]);
     safeText('f-badge', data.meta.badge);
 
-    // Hero
     safeHTML('f-title', data.hero.title);
     safeText('f-enName', data.hero.enName);
     safeText('f-desc', data.hero.description);
 
-    // Image
     const imgEl = document.getElementById('p-image');
     if (imgEl) {
         imgEl.src = data.hero.lightImg;
@@ -179,7 +168,6 @@ function renderProductView(id) {
         }
     }
 
-    // Stats
     safeText('f-designer', data.stats.designer);
     safeText('f-license', data.stats.license);
     const axesContainer = document.getElementById('f-axes');
@@ -193,7 +181,6 @@ function renderProductView(id) {
         }
     }
 
-    // Features
     const featuresGrid = document.getElementById('f-features-grid');
     if (featuresGrid) {
         featuresGrid.innerHTML = data.features.map(feat => `
@@ -207,7 +194,6 @@ function renderProductView(id) {
         `).join('');
     }
 
-    // Gallery
     const galleryContainer = document.getElementById('f-gallery-container');
     if (galleryContainer) {
         galleryContainer.innerHTML = data.gallery.map((src, index) => `
@@ -217,7 +203,6 @@ function renderProductView(id) {
         `).join('');
     }
 
-    // Download Info
     safeText('dl-version', data.download.version);
     safeText('dl-type', data.download.type);
     safeText('dl-date', data.download.date);
