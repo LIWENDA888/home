@@ -1,13 +1,6 @@
 /**
  * TYPEFOUNDRY STUDIO - CORE LOGIC
- * Refined: 2025-12-18 (Complete & Exquisite Version)
- * Modified: Subtle Blur & Refined Typography Size
  */
-
-
-// ==============================================================
-// 2. MAIN INITIALIZATION
-// ==============================================================
 
 document.addEventListener('DOMContentLoaded', () => {
     // 通用初始化
@@ -20,15 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
     injectBackToTop(); 
     initDocsNavigation();
     
-    // 页面特定初始化
-    if (document.getElementById('hero-slides')) {
-        initHeroSlider(); 
-    }
-    
-    // 仅在字体列表页存在 products-grid 时初始化
+    // 如果存在产品网格（Fonts页），则初始化
     if (document.getElementById('products-grid')) {
         initProductGrid(); 
     }
+    
+    // 初始化首页轮播图
+    initHeroCarousel();
 });
 
 // ================= 3. Theme Logic =================
@@ -86,6 +77,7 @@ function initScrollLogic() {
         const backToTop = document.getElementById('back-to-top');
         
         if (nav) {
+            // 向下滚动隐藏导航，向上滚动显示
             if (currentScrollY > lastScrollY && currentScrollY > 100) {
                 nav.classList.add('nav-hidden');
                 nav.classList.remove('nav-visible');
@@ -118,7 +110,8 @@ function highlightCurrentPage() {
         
         if (path === '/' || path.endsWith('/index.html') || path.endsWith('/')) {
             page = 'home';
-        } else if (path.includes('fonts')) {
+        } else if (path.includes('fonts/')) {
+            // 修正：只要地址包含 fonts/，就设置当前页面状态为 products
             page = 'products'; 
         } else if (path.includes('licensing')) {
             page = 'licensing';
@@ -129,10 +122,14 @@ function highlightCurrentPage() {
         }
 
         document.querySelectorAll('.nav-link').forEach(link => {
+            // “字体产品”在 components.js 中是 dropdown，其按钮文本包含“字体产品”
+            const isProductsBtn = link.textContent.trim().includes('字体产品');
+
             link.classList.remove('text-black', 'dark:text-white', 'opacity-100', 'font-bold');
             link.classList.add('text-gray-500', 'dark:text-neutral-500');
 
-            if (link.dataset.page === page) {
+            // 检查逻辑：如果是普通链接匹配 data-page，或者地址在 fonts/ 下且是“字体产品”按钮
+            if ((link.dataset.page === page) || (page === 'products' && isProductsBtn)) {
                 link.classList.remove('text-gray-500', 'dark:text-neutral-500');
                 link.classList.add('text-black', 'dark:text-white', 'opacity-100', 'font-bold');
             }
@@ -200,34 +197,8 @@ function toggleMenu() {
     }
 }
 
-// ================= 5. Bento Card Generator (Subtle Blur & Smaller Text) =================
-function createBentoCard(item) {
-    const href = item.link || '#';
-    return `
-        <a href="${href}" target="_blank" class="group relative isolate overflow-hidden rounded-2xl bg-gray-100 dark:bg-neutral-800 border border-transparent dark:border-neutral-800 ${item.colSpan || 'md:col-span-1'} ${item.rowSpan || 'md:row-span-1'} min-h-[300px] lg:min-h-[360px] block transition-all duration-500 ease-out hover:shadow-2xl">
-            <div class="absolute inset-0 size-full overflow-hidden rounded-2xl">
-                <img src="${item.imageUrl}" alt="${item.title}" class="size-full object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:blur-[1px]" />
-                
-                <div class="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
-            </div>
-            
-            <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-8">
-                <div class="flex items-end justify-between">
-                    <div class="transform translate-y-4 opacity-0 transition-all duration-500 ease-out group-hover:translate-y-0 group-hover:opacity-100 text-shadow-subtle">
-                        <span class="mb-2 block text-xs font-bold uppercase tracking-widest text-white/90">${item.subtitle}</span>
-                        <h3 class="text-xl font-black text-white md:text-2xl lg:text-3xl tracking-tight">${item.title}</h3>
-                    </div>
-                    
-                    <div class="flex size-12 translate-y-4 opacity-0 transition-all duration-500 ease-out delay-75 group-hover:translate-y-0 group-hover:opacity-100 items-center justify-center rounded-full bg-white text-black shadow-lg">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"></path></svg>
-                    </div>
-                </div>
-            </div>
-        </a>
-    `;
-}
 
-// ================= 6. Product Grid Logic (Correct Interaction & Font Unity) =================
+// ================= 6. Product Grid Logic =================
 function initProductGrid() {
     const grid = document.getElementById('products-grid');
     const emptyState = document.getElementById('empty-state');
@@ -243,12 +214,10 @@ function initProductGrid() {
     function renderGrid() {
         if (!grid) return;
         
-        // 更新文案：当前上线 X 款字体
         if (heroCountLabel) {
             heroCountLabel.textContent = `当前上线 ${ALL_PRODUCTS.length} 款字体`;
         }
 
-        // 生成卡片 HTML (注意：移除了 font-mono，保持黑体统一)
         grid.innerHTML = ALL_PRODUCTS.map((item, index) => {
             const catString = item.categories.join(' '); 
 
@@ -308,7 +277,6 @@ function initProductGrid() {
             const itemCats = card.dataset.categories;
             
             const matchSearch = title.includes(searchQuery) || subtitle.includes(searchQuery);
-            // 搜索时不校验分类，因为分类被清空了
             const matchCat = !activeCategory || activeCategory === '全部' || itemCats.includes(activeCategory);
 
             if (matchSearch && matchCat) {
@@ -347,7 +315,6 @@ function initProductGrid() {
 
     function movePillTo(element) {
         if (!filterPill) return;
-        // 如果没有传入元素（即搜索模式），隐藏 pill
         if (!element) {
             filterPill.style.opacity = '0';
             return;
@@ -361,28 +328,22 @@ function initProductGrid() {
         filterPill.style.transform = `translateX(${left - padding}px)`; 
     }
 
-    // 初始化 Pill 位置
     if(categoryBtns.length > 0) {
         setTimeout(() => movePillTo(categoryBtns[0]), 50);
     }
 
     if(searchInput) {
-        // 【逻辑修正】输入搜索时：
         searchInput.addEventListener('input', (e) => { 
             searchQuery = e.target.value.toLowerCase();
             
             if (searchQuery.length > 0) {
-                // 1. 清空当前分类状态
                 activeCategory = null; 
-                // 2. 移除所有按钮的高亮样式
                 categoryBtns.forEach(b => { 
                     b.classList.remove('text-black', 'dark:text-white', 'font-bold'); 
                     b.classList.add('text-gray-500', 'font-medium'); 
                 });
-                // 3. 隐藏 Pill
                 movePillTo(null);
             } else {
-                // 如果删空了搜索词，默认回滚到“全部”
                 activeCategory = '全部';
                 const allBtn = categoryBtns[0];
                 movePillTo(allBtn);
@@ -395,15 +356,11 @@ function initProductGrid() {
         });
     }
 
-    // 【逻辑修正】点击分类时：
     categoryBtns.forEach(btn => btn.addEventListener('click', (e) => {
-        // 1. 清空搜索框
         if (searchInput) {
             searchInput.value = '';
             searchQuery = '';
         }
-        
-        // 2. 正常移动 Pill 和切换样式
         movePillTo(e.target);
         categoryBtns.forEach(b => { 
             b.classList.remove('text-black', 'dark:text-white', 'font-bold'); 
@@ -412,13 +369,11 @@ function initProductGrid() {
         btn.classList.remove('text-gray-500', 'font-medium'); 
         btn.classList.add('text-black', 'dark:text-white', 'font-bold');
         
-        // 3. 设置分类并筛选
         activeCategory = btn.dataset.category; 
         updateFilter();
     }));
 
     window.addEventListener('resize', () => {
-        // 只有当有激活分类时才重置 Pill 位置
         if (activeCategory) {
             const activeBtn = Array.from(categoryBtns).find(b => b.dataset.category === activeCategory);
             if(activeBtn) movePillTo(activeBtn);
@@ -428,7 +383,7 @@ function initProductGrid() {
     renderGrid();
 }
 
-// ================= 7. Image Viewer & Modal (Mobile Optimized) =================
+// ================= 7. Image Viewer =================
 function setupGlobalImageViewer() {
     const container = document.getElementById('image-viewer-container');
     const img = document.getElementById('p-image');
@@ -437,15 +392,10 @@ function setupGlobalImageViewer() {
     
     if (!container || !img) return;
 
-    // 状态变量
     let zoom = 1;
     let pan = { x: 0, y: 0 };
-    
-    // 鼠标拖拽变量
     let startPan = { x: 0, y: 0 };
     let isDragging = false;
-
-    // 触摸手势变量
     let initialPinchDistance = null;
     let initialZoom = 1;
     let lastTouchPos = { x: 0, y: 0 };
@@ -454,14 +404,11 @@ function setupGlobalImageViewer() {
     const darkSrc = img.getAttribute('data-dark-src');
     let viewMode = 'light';
 
-    // === 通用逻辑：更新变换 ===
     function updateTransform() {
-        // 限制 zoom 范围
         zoom = Math.min(Math.max(1, zoom), 3);
         
-        // 限制 pan 范围 (确保不出界)
         if (zoom <= 1) {
-            pan = { x: 0, y: 0 }; // 缩回 1.0 时自动归位
+            pan = { x: 0, y: 0 }; 
         } else {
             const width = container.offsetWidth;
             const height = container.offsetHeight;
@@ -470,18 +417,11 @@ function setupGlobalImageViewer() {
             pan.x = Math.min(Math.max(pan.x, -maxOverflowX), maxOverflowX);
             pan.y = Math.min(Math.max(pan.y, -maxOverflowY), maxOverflowY);
         }
-
-        // 应用变换
         img.style.transform = `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`;
-        
-        // 同步更新 Slider (如果存在)
         if (slider) slider.value = zoom;
-        
-        // 更新光标状态
         container.style.cursor = zoom > 1 ? 'grab' : 'default';
     }
 
-    // === 桌面端：滑杆与鼠标逻辑 ===
     if (slider) {
         slider.addEventListener('mousedown', (e) => e.stopPropagation());
         slider.addEventListener('touchstart', (e) => e.stopPropagation());
@@ -497,7 +437,7 @@ function setupGlobalImageViewer() {
             isDragging = true;
             startPan = { x: e.clientX - pan.x, y: e.clientY - pan.y };
             container.style.cursor = 'grabbing';
-            e.preventDefault(); // 防止默认拖拽图片行为
+            e.preventDefault(); 
         }
     });
 
@@ -519,67 +459,43 @@ function setupGlobalImageViewer() {
     
     container.addEventListener('mouseleave', () => { isDragging = false; });
 
-    // === 移动端：触摸逻辑 (Touch Events) ===
-    
-    // 辅助函数：计算两指距离
-    function getDistance(touches) {
-        return Math.hypot(
-            touches[0].pageX - touches[1].pageX,
-            touches[0].pageY - touches[1].pageY
-        );
-    }
-
     container.addEventListener('touchstart', (e) => {
         if (e.touches.length === 2) {
-            // --- 双指开始：缩放 ---
-            e.preventDefault(); // 阻止浏览器默认缩放
-            initialPinchDistance = getDistance(e.touches);
+            e.preventDefault(); 
+            initialPinchDistance = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
             initialZoom = zoom;
-        } else if (e.touches.length === 1) {
-            // --- 单指开始：准备拖拽 ---
-            // 只有当已经放大时，才记录坐标，否则允许页面滚动
-            if (zoom > 1) {
-                lastTouchPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-            }
+        } else if (e.touches.length === 1 && zoom > 1) {
+            lastTouchPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
         }
     }, { passive: false });
 
     container.addEventListener('touchmove', (e) => {
         if (e.touches.length === 2 && initialPinchDistance) {
-            // --- 双指移动：缩放 ---
             e.preventDefault();
-            const currentDistance = getDistance(e.touches);
-            // 计算新的缩放比例
-            const scaleFactor = currentDistance / initialPinchDistance;
-            zoom = initialZoom * scaleFactor;
+            const currentDistance = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
+            zoom = initialZoom * (currentDistance / initialPinchDistance);
             updateTransform();
         } else if (e.touches.length === 1 && zoom > 1) {
-            // --- 单指移动：拖拽 (仅在放大状态下) ---
-            e.preventDefault(); // 阻止页面滚动，专注于看图
+            e.preventDefault();
             const currentX = e.touches[0].clientX;
             const currentY = e.touches[0].clientY;
-            
-            // 计算位移差
-            const deltaX = currentX - lastTouchPos.x;
-            const deltaY = currentY - lastTouchPos.y;
-            
-            pan.x += deltaX;
-            pan.y += deltaY;
-            
+            pan.x += currentX - lastTouchPos.x;
+            pan.y += currentY - lastTouchPos.y;
             lastTouchPos = { x: currentX, y: currentY };
             updateTransform();
         }
-        // 如果 zoom === 1 且单指滑动，不调用 preventDefault，允许用户滑动页面
     }, { passive: false });
 
     container.addEventListener('touchend', (e) => {
-        // 手指离开时，清理状态
-        if (e.touches.length < 2) {
-            initialPinchDistance = null;
-        }
+        if (e.touches.length < 2) initialPinchDistance = null;
     });
 
-    // === 其他：背景切换 ===
     if (!darkSrc && toggleBtn) toggleBtn.style.display = 'none';
     if (toggleBtn) {
         toggleBtn.addEventListener('click', () => {
@@ -594,91 +510,9 @@ function openDownloadModal() { document.getElementById('download-modal')?.classL
 function closeDownloadModal() { document.getElementById('download-modal')?.classList.add('hidden'); }
 function initDocsNavigation() {
     const params = new URLSearchParams(window.location.search);
-    const target = params.get('section');
 }
 
-// ================= 8. HERO SLIDER =================
-function initHeroSlider() {
-    const slidesContainer = document.getElementById('hero-slides');
-    const menuContainer = document.getElementById('hero-menu');
-    const imageLink = document.getElementById('hero-image-link');
-    
-    if (!slidesContainer || !menuContainer) return;
-
-    let activeIndex = 0;
-    let autoPlayInterval;
-
-    slidesContainer.innerHTML = HERO_CONFIG.map((slide, index) => `
-        <div class="hero-slide absolute inset-0 size-full transition-all duration-[1500ms] cubic-bezier(0.19, 1, 0.22, 1) ${index === 0 ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-105'}" data-index="${index}">
-            <img src="${slide.poster}" alt="${slide.label}" class="size-full object-cover select-none" draggable="false">
-        </div>
-    `).join('');
-
-    const renderMenu = () => {
-        menuContainer.innerHTML = HERO_CONFIG.map((slide, index) => {
-            const isActive = index === activeIndex;
-            return `
-            <button class="hero-menu-item group flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full backdrop-blur-md transition-all duration-300
-                ${isActive 
-                    ? 'bg-white text-black shadow-xl scale-105 border border-transparent' 
-                    : 'bg-black/30 text-white/90 border border-white/20 hover:bg-black/50'}" 
-                data-index="${index}">
-                
-                <span class="text-[10px] font-bold uppercase tracking-widest ${isActive ? 'opacity-100' : 'opacity-70'}">0${index + 1}</span>
-                <span class="text-xs md:text-sm font-bold whitespace-nowrap tracking-wide">${slide.label}</span>
-                
-            </button>
-            `;
-        }).join('');
-        
-        document.querySelectorAll('.hero-menu-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const newIndex = parseInt(item.dataset.index);
-                if (newIndex !== activeIndex) {
-                    resetAutoPlay();
-                    switchSlide(newIndex);
-                }
-            });
-        });
-    };
-
-    const switchSlide = (index) => {
-        activeIndex = index;
-        const config = HERO_CONFIG[index];
-
-        const slides = document.querySelectorAll('.hero-slide');
-        slides.forEach((s, idx) => {
-            if (idx === index) {
-                s.classList.remove('opacity-0', 'z-0', 'scale-105');
-                s.classList.add('opacity-100', 'z-10', 'scale-100');
-            } else {
-                s.classList.remove('opacity-100', 'z-10', 'scale-100');
-                s.classList.add('opacity-0', 'z-0', 'scale-105');
-            }
-        });
-
-        if (imageLink) imageLink.href = config.link;
-        renderMenu();
-    };
-
-    const startAutoPlay = () => {
-        autoPlayInterval = setInterval(() => {
-            const nextIndex = (activeIndex + 1) % HERO_CONFIG.length;
-            switchSlide(nextIndex);
-        }, 5000); 
-    };
-
-    const resetAutoPlay = () => {
-        clearInterval(autoPlayInterval);
-        startAutoPlay();
-    };
-
-    renderMenu();
-    switchSlide(0);
-    startAutoPlay();
-}
-
-// ================= 9. Utils (Accordion & ScrollSpy) =================
+// ================= 9. Utils =================
 function setupAccordion() {
     document.querySelectorAll('.accordion-btn').forEach(button => {
         button.addEventListener('click', () => {
@@ -735,4 +569,77 @@ function setupAboutScrollSpy() {
 
     window.addEventListener('scroll', onScroll);
     onScroll(); 
+}
+
+// ================= 10. Hero Carousel Logic =================
+let currentSlide = 0;
+let slideInterval;
+const totalSlides = 3; 
+
+function initHeroCarousel() {
+    if (!document.getElementById('hero-carousel')) return;
+    
+    startSlideTimer();
+    
+    const container = document.getElementById('hero-carousel');
+    container.addEventListener('mouseenter', stopSlideTimer);
+    container.addEventListener('mouseleave', startSlideTimer);
+}
+
+function switchHeroSlide(index, event) {
+    // 阻止冒泡，防止触发父级 <a> 标签跳转
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    const slides = document.querySelectorAll('.hero-slide');
+    const dots = document.querySelectorAll('.hero-dot');
+    
+    if (index >= totalSlides) index = 0;
+    if (index < 0) index = totalSlides - 1;
+    
+    currentSlide = index;
+
+    slides.forEach((slide, i) => {
+        const img = slide.querySelector('.slide-img');
+        if (i === currentSlide) {
+            slide.classList.remove('opacity-0', 'z-10');
+            slide.classList.add('opacity-100', 'z-20');
+            if(img) {
+                img.style.transition = 'none';
+                img.style.transform = 'scale(1)';
+                setTimeout(() => {
+                    img.style.transition = 'transform 8s linear';
+                    img.style.transform = 'scale(1.1)';
+                }, 50);
+            }
+        } else {
+            slide.classList.remove('opacity-100', 'z-20');
+            slide.classList.add('opacity-0', 'z-10');
+            if(img) img.style.transform = 'scale(1)';
+        }
+    });
+
+    dots.forEach((dot, i) => {
+        if (i === currentSlide) {
+            dot.classList.remove('opacity-40', 'w-1.5');
+            dot.classList.add('opacity-100', 'w-6');
+        } else {
+            dot.classList.remove('opacity-100', 'w-6');
+            dot.classList.add('opacity-40', 'w-1.5');
+        }
+    });
+}
+
+function nextHeroSlide() { switchHeroSlide(currentSlide + 1); }
+function prevHeroSlide() { switchHeroSlide(currentSlide - 1); }
+
+function startSlideTimer() {
+    stopSlideTimer();
+    slideInterval = setInterval(nextHeroSlide, 5000); 
+}
+
+function stopSlideTimer() {
+    if (slideInterval) clearInterval(slideInterval);
 }

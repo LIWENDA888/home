@@ -4,387 +4,194 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>自在造字 - 可变，才自在</title>
-    <meta name="description" content="可变，才自在 Variable Infinite">
-    
+    <meta name="description" content="自在造字，一家专注于中文可变字体技术的独立字库">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
-    
     <script>
       tailwind.config = {
         darkMode: 'class',
         theme: {
           extend: {
-            cursor: { 'crosshair': 'crosshair' },
+            fontFamily: { 
+                sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'sans-serif'],
+                mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+            },
             animation: { 
+                'fade-up': 'fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                 'spin-slow': 'spin 12s linear infinite',
-                'marquee': 'marquee 25s linear infinite', 
             },
             keyframes: {
-                marquee: {
-                    '0%': { transform: 'translateX(0%)' },
-                    '100%': { transform: 'translateX(-100%)' },
-                }
+                fadeUp: { '0%': { opacity: 0, transform: 'translateY(40px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } }
             },
-            transitionTimingFunction: {
-                'out-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
+            colors: {
+                neutral: { 950: '#0a0a0a' }
             }
           },
         },
       }
     </script>
-    
     <style>
-        /* ==================== 1. 基础设置 ==================== */
-        
-        /* 噪点纹理：改为绝对定位，仅用于 Hero 区域 */
-        .noise-overlay {
-            position: absolute; 
-            inset: 0;
-            width: 100%; 
-            height: 100%;
-            pointer-events: none; 
-            z-index: 0; 
-            opacity: 0.05;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-        .dark .noise-overlay { opacity: 0.07; }
-
-        :root { --hero-font: sans-serif; } 
-        .hero-text { font-family: var(--hero-font); }
-        .blend-diff { mix-blend-mode: difference; color: #fff; }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        html { scroll-behavior: smooth; }
-
-        /* 网格背景：仅用于 Hero */
-        .grid-bg {
-            background-size: 60px 60px;
-            background-image: linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
-        }
-        .dark .grid-bg {
-            background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
-        }
-
-        /* ==================== 悬浮反色核心样式 ==================== 
-           修改说明：
-           1. 移除原有的浅色背景 hover
-           2. 增加高对比度的反色逻辑 (黑底白字 / 白底黑字)
-           3. 强制覆盖子元素颜色 (!important)，确保 icon、标签等所有内容反色
-        */
-        .hover-card-effect { 
-            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); 
-        }
-
-        /* Light Mode Hover: 背景变黑，文字变白 */
-        .hover-card-effect:hover { 
-            background-color: #000; 
-            color: #fff; 
-        }
-        /* 强制子元素反色 */
-        .hover-card-effect:hover * {
-            color: #fff !important;
-            border-color: rgba(255,255,255, 0.3) !important;
-        }
-
-        /* Dark Mode Hover: 背景变白，文字变黑 */
-        .dark .hover-card-effect:hover { 
-            background-color: #fff; 
-            color: #000; 
-        }
-        /* 强制子元素反色 */
-        .dark .hover-card-effect:hover * {
-            color: #000 !important;
-            border-color: rgba(0,0,0, 0.3) !important;
-        }
-
-        /* Cursor Follower 样式 */
-        #cursor-follower { 
-            will-change: transform, width, height, background-color; 
-            pointer-events: none;
-            z-index: 50;
-        }
-        
-        /* 锁定状态下的 Cursor 样式 */
-        #cursor-follower.is-locked {
-            width: 12px; height: 12px;
-            background-color: #ff3b30;
-            border-color: transparent;
-        }
-
-        /* 锁定状态下的文字提示 */
-        .lock-indicator {
-            opacity: 0; transform: translateY(10px); transition: all 0.3s ease;
-        }
-        .is-locked-mode .lock-indicator {
-            opacity: 1; transform: translateY(0);
-        }
-
-        /* ==================== 2. 组件化样式 ==================== */
-        .ui-tag {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-            font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
-            border: 1px solid currentColor;
-            padding: 2px 8px; border-radius: 9999px;
-            opacity: 0.6; transition: opacity 0.3s; white-space: nowrap;
-        }
-        .group:hover .ui-tag { opacity: 1; }
-
-        .ui-arrow {
-            font-weight: 300; opacity: 0.3;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: center; display: inline-block;
-        }
-        .group:hover .ui-arrow { opacity: 1; transform: rotate(-45deg); }
-
-        .ui-fade-text { opacity: 0.5; transition: opacity 0.3s; }
-        .group:hover .ui-fade-text { opacity: 1; }
-
-        .ui-meta-label {
-            font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
-            margin-bottom: 4px; opacity: 0.4; transition: opacity 0.3s;
-        }
-        .group:hover .ui-meta-label { opacity: 0.8; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .slide-img { will-change: transform; }
     </style>
 </head>
-<body class="bg-white text-black dark:bg-neutral-950 dark:text-gray-100 transition-colors duration-500 flex flex-col min-h-screen selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black font-sans antialiased overflow-x-hidden">
+<body class="bg-white text-black dark:bg-neutral-950 dark:text-gray-100 flex flex-col min-h-screen selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black font-sans antialiased overflow-x-hidden">
 
-    <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-md dark:border-neutral-900 dark:bg-neutral-950/90"></nav>
+    <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 border-b border-gray-100 bg-white/80 backdrop-blur-md dark:border-neutral-900 dark:bg-neutral-950/80"></nav>
 
     <main class="w-full flex-1">
         
-        <section id="hero-stage" class="relative w-full h-[100svh] bg-[#f8fafc] dark:bg-[#0a0a0a] flex flex-col justify-center items-center overflow-hidden border-b border-black dark:border-white md:cursor-crosshair">
-            
-            <div class="noise-overlay"></div>
-            <div class="absolute inset-0 grid-bg pointer-events-none z-0"></div>
-
-            <div class="absolute top-24 right-6 lg:right-12 font-mono text-xs font-bold tracking-widest opacity-60 pointer-events-none flex flex-col items-end gap-1 z-20 blend-diff transition-opacity duration-300">
-                <div>WGHT (Y): <span id="val-wght">400</span></div>
-                <div>WDTH (X): <span id="val-wdth">100</span></div>
-                <div class="hidden md:block">POS: <span id="val-mouse">0, 0</span></div>
-                <div class="block md:hidden text-xs opacity-80 mt-1">[ AUTO FLOW ]</div>
-                <div class="text-[#ff3b30] lock-indicator font-black mt-2">[ LOCKED ]</div>
-            </div>
-
-            <div id="hero-title-container" class="relative z-10 text-center select-none w-full px-4 blend-diff flex flex-col items-center justify-center pt-12"></div>
-
-            <div class="absolute bottom-12 left-6 lg:left-12 max-w-md pointer-events-none z-20 blend-diff">
-                <p id="hero-desc" class="text-sm md:text-base font-medium leading-relaxed uppercase tracking-widest"></p>
-            </div>
-
-            <div class="absolute bottom-12 right-6 lg:right-12 hidden md:block pointer-events-none z-20 blend-diff animate-spin-slow">
-                 <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path id="circlePath" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="transparent" />
-                    <text class="text-[10px] font-bold uppercase tracking-[0.2em]" fill="currentColor">
-                        <textPath href="#circlePath" startOffset="0%">• Click to Lock • Scroll Down • Zizao •</textPath>
-                    </text>
-                </svg>
-            </div>
-            
-            <div id="cursor-follower" class="hidden md:flex fixed w-16 h-16 rounded-full border border-white items-center justify-center blend-diff bg-white text-black transition-opacity duration-200 ease-out opacity-0 top-0 left-0"></div>
-        </section>
-
-
-        <section class="relative w-full py-24 z-30 bg-white dark:bg-neutral-950">
-            <div class="mx-auto max-w-[1800px] px-6 lg:px-12">
-                <div class="flex items-baseline justify-between mb-12 border-b border-black dark:border-white pb-4">
-                    <h2 class="text-5xl md:text-7xl font-black tracking-tighter uppercase text-black dark:text-white">FONTS</h2>
-                    <span class="font-mono text-xs font-bold tracking-widest opacity-50">[ SELECTED FONTS ]</span>
-                </div>
-
-                <div class="flex flex-col border-t border-l border-r border-black dark:border-white">
-                    <a href="fonts/zhisans.html" target="_blank" class="group hover-card-effect relative border-b border-black dark:border-white py-12 px-8 md:px-12">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-                            <div class="md:w-1/2 flex flex-col items-start gap-3">
-                                <div class="flex flex-wrap gap-2">
-                                    <span class="ui-tag">v1.0 Beta</span>
-                                    <span class="ui-tag">Variable</span>
-                                </div>
-                                <h3 class="text-4xl md:text-5xl font-bold tracking-tight leading-none">自在致黑</h3>
-                                <p class="font-mono text-sm uppercase tracking-widest ui-fade-text">Zizai Zhisans</p>
-                            </div>
-                            <div class="md:w-1/2 flex items-end justify-between md:justify-end gap-16">
-                                <div class="text-right">
-                                    <div class="ui-meta-label">Class</div>
-                                    <div class="font-mono text-sm font-medium">Variable Sans</div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="ui-meta-label">Axes</div>
-                                    <div class="font-mono text-sm font-medium">Weight, Width</div>
-                                </div>
-                                <div class="text-4xl ui-arrow">→</div>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="fonts.html" target="_blank" class="group hover-card-effect relative border-b border-black dark:border-white py-12 px-8 md:px-12">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-                            <div class="md:w-1/2 flex flex-col items-start gap-3">
-                                <div class="flex flex-wrap gap-2">
-                                    <span class="ui-tag">Free</span>
-                                    <span class="ui-tag">Open Source</span>
-                                </div>
-                                <h3 class="text-4xl md:text-5xl font-bold tracking-tight leading-none">自在起点黑</h3>
-                                <p class="font-mono text-sm uppercase tracking-widest ui-fade-text">Qidian Sans</p>
-                            </div>
-                            <div class="md:w-1/2 flex items-end justify-between md:justify-end gap-16">
-                                <div class="text-right">
-                                    <div class="ui-meta-label">Class</div>
-                                    <div class="font-mono text-sm font-medium">Static Sans</div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="ui-meta-label">Weights</div>
-                                    <div class="font-mono text-sm font-medium">5 Styles</div>
-                                </div>
-                                <div class="text-4xl ui-arrow">→</div>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="fonts/zizaikeserif.html" target="_blank" class="group hover-card-effect relative border-b border-black dark:border-white py-12 px-8 md:px-12">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-                            <div class="md:w-1/2 flex flex-col items-start gap-3">
-                                <div class="flex flex-wrap gap-2">
-                                    <span class="ui-tag">New</span>
-                                    <span class="ui-tag">Serif</span>
-                                </div>
-                                <h3 class="text-4xl md:text-5xl font-bold tracking-tight leading-none">自在刻宋</h3>
-                                <p class="font-mono text-sm uppercase tracking-widest ui-fade-text">Ke Serif</p>
-                            </div>
-                            <div class="md:w-1/2 flex items-end justify-between md:justify-end gap-16">
-                                <div class="text-right">
-                                    <div class="ui-meta-label">Class</div>
-                                    <div class="font-mono text-sm font-medium">Display Serif</div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="ui-meta-label">Status</div>
-                                    <div class="font-mono text-sm font-medium">Released</div>
-                                </div>
-                                <div class="text-4xl ui-arrow">→</div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
+        <section class="relative w-full h-[75vh] min-h-[500px] max-h-[1080px] px-4 pt-24 pb-4 lg:px-12 lg:pt-28 lg:pb-8">
+            <div id="hero-carousel" class="relative w-full h-full rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-neutral-900 group animate-fade-up shadow-sm">
                 
-                <div class="mt-20 text-center">
-                    <a href="fonts.html" class="inline-flex items-center gap-3 border-b-2 border-black dark:border-white pb-2 text-lg font-bold uppercase tracking-wider hover:tracking-[0.2em] transition-all duration-300">
-                        查看全部All Fonts<span class="text-xl">→</span>
-                    </a>
+                <div class="absolute top-6 right-6 z-30 hidden lg:block mix-blend-overlay opacity-80 pointer-events-none">
+                     <div class="relative flex items-center justify-center size-24">
+                        <svg class="absolute inset-0 w-full h-full animate-spin-slow text-white" viewBox="0 0 100 100" width="100" height="100">
+                            <defs><path id="circle" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" /></defs>
+                            <text font-size="10.5" font-weight="bold" letter-spacing="1.5">
+                                <textPath xlink:href="#circle" fill="currentColor">SCROLL TO EXPLORE • ZIZAO TYPE • </textPath>
+                            </text>
+                        </svg>
+                        <div class="text-xl font-black text-white">Z</div>
+                    </div>
+                </div>
+
+                <a href="fonts/zhisans.html" target="_blank" class="hero-slide absolute inset-0 transition-opacity duration-1000 ease-in-out z-20 opacity-100 block" data-index="0">
+                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2670&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover filter grayscale contrast-125 scale-100 transition-transform duration-[8s] ease-linear slide-img" alt="Zhisans">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+                    <div class="absolute bottom-8 left-8 lg:bottom-12 lg:left-12 text-white mix-blend-difference z-20">
+                        <div class="font-mono text-[10px] uppercase tracking-widest mb-2 opacity-80">Featured Typeface</div>
+                        <div class="text-3xl lg:text-5xl font-black tracking-tight">Zhisans Variable 1.0</div>
+                    </div>
+                </a>
+
+                <a href="fonts/zizaikeserif.html" target="_blank" class="hero-slide absolute inset-0 transition-opacity duration-1000 ease-in-out z-10 opacity-0 block" data-index="1">
+                    <img src="https://images.unsplash.com/photo-1620317377821-6f68744155fb?q=80&w=2574&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover filter grayscale contrast-125 scale-100 transition-transform duration-[8s] ease-linear slide-img" alt="Ke Serif">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+                    <div class="absolute bottom-8 left-8 lg:bottom-12 lg:left-12 text-white mix-blend-difference z-20">
+                        <div class="font-mono text-[10px] uppercase tracking-widest mb-2 opacity-80">New Release</div>
+                        <div class="text-3xl lg:text-5xl font-black tracking-tight">Ke Serif Display</div>
+                    </div>
+                </a>
+
+                <a href="licensing.html" target="_blank" class="hero-slide absolute inset-0 transition-opacity duration-1000 ease-in-out z-10 opacity-0 block" data-index="2">
+                    <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover filter grayscale contrast-125 scale-100 transition-transform duration-[8s] ease-linear slide-img" alt="Bespoke">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+                    <div class="absolute bottom-8 left-8 lg:bottom-12 lg:left-12 text-white mix-blend-difference z-20">
+                        <div class="font-mono text-[10px] uppercase tracking-widest mb-2 opacity-80">Service</div>
+                        <div class="text-3xl lg:text-5xl font-black tracking-tight">Bespoke Customization</div>
+                    </div>
+                </a>
+
+                <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-3 p-2 rounded-full bg-black/20 backdrop-blur-md border border-white/10">
+                    <button onclick="switchHeroSlide(0, event)" class="hero-dot w-6 h-1.5 rounded-full bg-white transition-all duration-300 opacity-100" aria-label="Slide 1"></button>
+                    <button onclick="switchHeroSlide(1, event)" class="hero-dot w-1.5 h-1.5 rounded-full bg-white transition-all duration-300 opacity-40 hover:opacity-100" aria-label="Slide 2"></button>
+                    <button onclick="switchHeroSlide(2, event)" class="hero-dot w-1.5 h-1.5 rounded-full bg-white transition-all duration-300 opacity-40 hover:opacity-100" aria-label="Slide 3"></button>
                 </div>
             </div>
         </section>
 
-        <div class="w-full overflow-hidden bg-black text-white dark:bg-white dark:text-black py-5 border-y border-white/20 dark:border-black/20 select-none">
-            <div class="relative flex items-center whitespace-nowrap">
-                <div class="flex items-center gap-12 animate-marquee pl-12">
-                    <span class="text-lg font-black uppercase tracking-tighter">ZIZAO.TOP</span>
-                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
-                    <span class="text-lg font-black uppercase tracking-tighter">Variable font</span>
-                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
-                    <span class="text-lg font-black uppercase tracking-tighter">Global Matchmaking</span>
-                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
-                    <span class="text-lg font-black uppercase tracking-tighter">Experimental Lab</span>
-                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
-                    <span class="text-lg font-black uppercase tracking-tighter">ZIZAO.TOP</span>
-                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
-                    <span class="text-lg font-black uppercase tracking-tighter">Variable font</span>
-                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
-                    <span class="text-lg font-black uppercase tracking-tighter">Global Matchmaking</span>
-                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
-                    <span class="text-lg font-black uppercase tracking-tighter">Experimental Lab</span>
-                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
+        <div class="w-full border-y border-gray-100 dark:border-neutral-900 py-12 bg-white dark:bg-neutral-950 z-20 relative">
+             <div class="max-w-[1800px] mx-auto px-6 lg:px-12 flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="flex items-center gap-4">
+                    <span class="w-2 h-2 rounded-full bg-black dark:bg-white animate-pulse"></span>
+                    <h2 class="text-2xl md:text-3xl font-black tracking-[0.2em] uppercase">可变，才自在。</h2>
                 </div>
-                <div class="flex items-center gap-12 animate-marquee pl-12" aria-hidden="true">
-                    <span class="text-lg font-black uppercase tracking-tighter">ZIZAO.TOP</span>
-                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
-                    <span class="text-lg font-black uppercase tracking-tighter">Variable font</span>
-                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
-                    <span class="text-lg font-black uppercase tracking-tighter">Global Matchmaking</span>
-                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
-                    <span class="text-lg font-black uppercase tracking-tighter">Experimental Lab</span>
-                    <span class="w-16 h-[1px] bg-white/30 dark:bg-black/30"></span>
+                <div class="flex items-center gap-12">
+                    <div class="hidden lg:block text-right">
+                        <p class="text-[10px] font-bold font-mono uppercase tracking-widest text-gray-400 mb-1">Variable Font Technology</p>
+                        <p class="text-xs font-bold text-black dark:text-white">Constructing Visual Voice</p>
+                    </div>
+                    <div class="h-8 w-px bg-gray-100 dark:bg-neutral-800 hidden md:block"></div>
+                    <div class="text-center md:text-left">
+                        <p class="text-[10px] font-bold font-mono uppercase tracking-widest text-gray-400 mb-1">Studio Location</p>
+                        <p class="text-xs font-bold text-black dark:text-white">Shanghai, China</p>
+                    </div>
                 </div>
-            </div>
+             </div>
         </div>
 
-        <section class="w-full py-24 bg-white dark:bg-neutral-950">
-            <div class="mx-auto max-w-[1800px] px-6 lg:px-12 mb-12">
-                <div class="flex items-baseline justify-between border-b border-black dark:border-white pb-4">
-                    <h2 class="text-5xl md:text-7xl font-black tracking-tighter uppercase text-black dark:text-white">Tools</h2>
-                    <span class="font-mono text-xs font-bold tracking-widest opacity-50">[ ORIGINAL TOOL ]</span>
+        <section id="featured" class="py-24 px-6 lg:px-12 max-w-[1800px] mx-auto">
+            <div class="flex items-end justify-between mb-20">
+                <div>
+                     <span class="font-mono text-xs font-bold uppercase tracking-widest text-gray-400 mb-4 block">Selected Works</span>
+                     <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tighter">Type<br><span class="text-gray-300 dark:text-neutral-700">Collection.</span></h2>
                 </div>
             </div>
 
-            <div class="mx-auto max-w-[1800px] px-6 lg:px-12">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 border-t border-l border-black dark:border-white">
-                    <a href="https://chaoyin.zizao.top" target="_blank" class="group hover-card-effect relative bg-transparent p-10 h-80 lg:min-h-[40rem] flex flex-col justify-between border-r border-b border-black dark:border-white lg:col-span-1 lg:row-span-2">
-                        <div class="flex justify-between items-start w-full relative z-10">
-                            <span class="ui-tag">Utility</span>
-                            <span class="text-3xl ui-arrow">→</span>
-                        </div>
-                        <div class="relative z-10">
-                            <h3 class="text-3xl font-black uppercase tracking-tight leading-none mb-3">超引检索</h3>
-                            <div class="text-sm font-medium ui-fade-text leading-relaxed max-w-[90%]">快速查找视觉近似字，寻找设计参考。</div>
-                        </div>
-                    </a>
-
-                    <a href="https://vf.zizao.top" target="_blank" class="group hover-card-effect relative bg-transparent p-10 h-80 flex flex-col justify-between border-r border-b border-black dark:border-white lg:col-span-1">
-                        <div class="flex justify-between items-start w-full relative z-10">
-                            <span class="ui-tag">Beta</span>
-                            <span class="text-3xl ui-arrow">→</span>
-                        </div>
-                        <div class="relative z-10">
-                            <h3 class="text-3xl font-black uppercase tracking-tight leading-none mb-3">可变实验</h3>
-                            <div class="text-xs font-medium ui-fade-text leading-relaxed">浏览器端字体排查与测试工具。</div>
-                        </div>
-                    </a>
-
-                    <a href="https://bao.zizao.top" target="_blank" class="group hover-card-effect relative bg-transparent p-10 h-80 flex flex-col justify-between border-r border-b border-black dark:border-white lg:col-span-2">
-                        <div class="flex justify-between items-start w-full relative z-10">
-                            <span class="ui-tag">Res</span>
-                            <span class="text-3xl ui-arrow">→</span>
-                        </div>
-                        <div class="relative z-10 flex items-end justify-between">
-                            <div>
-                                <h3 class="text-3xl font-black uppercase tracking-tight leading-none mb-3">素材仓库</h3>
-                                <div class="text-xs font-medium ui-fade-text leading-relaxed">免费字体、样机与矢量资源合集。</div>
+            <div class="grid grid-cols-1 gap-y-24">
+                <a href="fonts/zhisans.html" target="_blank" class="group block relative">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        <div class="lg:col-span-8 relative aspect-[16/10] overflow-hidden rounded-[2rem]">
+                            <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/i4a1/6803X1701/123-01.jpg/webp" class="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-105" alt="Zhisans Preview">
+                            <div class="absolute top-6 left-6 flex gap-2">
+                                <span class="bg-white/90 backdrop-blur text-black px-3 py-1 text-[10px] font-bold uppercase rounded-full tracking-widest shadow-sm">Variable</span>
                             </div>
                         </div>
-                    </a>
+                        <div class="lg:col-span-4 flex flex-col justify-center h-full pt-4 lg:pl-8">
+                            <h3 class="text-5xl md:text-6xl font-black mb-4 group-hover:text-gray-600 dark:group-hover:text-neutral-400 transition-colors">致黑<br><span class="text-2xl md:text-3xl font-bold tracking-tight text-gray-400">Zhisans</span></h3>
+                            <div class="h-px w-12 bg-black dark:bg-white mb-6"></div>
+                            <p class="text-gray-500 dark:text-neutral-400 text-sm leading-relaxed mb-8 max-w-sm">
+                                极具现代感的双轴可变黑体。在保留汉字骨架力度的同时，融入了流体般的几何美感。
+                            </p>
+                        </div>
+                    </div>
+                </a>
 
-                    <a href="https://hao.zizao.top" target="_blank" class="group hover-card-effect relative bg-transparent p-10 h-80 flex flex-col justify-between border-r border-b border-black dark:border-white lg:col-span-1">
-                        <div class="flex justify-between items-start w-full relative z-10">
-                            <span class="ui-tag">Web</span>
-                            <span class="text-3xl ui-arrow">→</span>
+                <a href="fonts/zhisans.html" target="_blank" class="group block relative">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center lg:flex-row-reverse">
+                        <div class="lg:col-span-4 flex flex-col justify-center h-full pt-4 lg:pr-8 order-2 lg:order-1">
+                            <h3 class="text-5xl md:text-6xl font-black mb-4 group-hover:text-gray-600 dark:group-hover:text-neutral-400 transition-colors">起点<br><span class="text-2xl md:text-3xl font-bold tracking-tight text-gray-400">Qidian</span></h3>
+                            <div class="h-px w-12 bg-black dark:bg-white mb-6"></div>
+                            <p class="text-gray-500 dark:text-neutral-400 text-sm leading-relaxed mb-8 max-w-sm">
+                                回归原点的开源实验项目。专注于阅读的本质。
+                            </p>
                         </div>
-                        <div class="relative z-10">
-                            <h3 class="text-3xl font-black uppercase tracking-tight leading-none mb-3">设计导航</h3>
-                            <div class="text-xs font-medium ui-fade-text leading-relaxed">精选设计网站与灵感来源。</div>
+                        <div class="lg:col-span-8 relative aspect-[16/10] overflow-hidden rounded-[2rem] order-1 lg:order-2">
+                            <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/i4a1/6803X1701/123-01.jpg/webp" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Qidian Preview">
+                             <div class="absolute top-6 left-6 flex gap-2">
+                                <span class="bg-black/90 backdrop-blur text-white px-3 py-1 text-[10px] font-bold uppercase rounded-full tracking-widest shadow-sm">Free</span>
+                            </div>
                         </div>
-                    </a>
+                    </div>
+                </a>
 
-                    <a href="https://tool.zizao.top/txt" target="_blank" class="group hover-card-effect relative bg-transparent p-10 h-80 flex flex-col justify-between border-r border-b border-black dark:border-white lg:col-span-1">
-                        <div class="flex justify-between items-start w-full relative z-10">
-                            <span class="ui-tag">Tool</span>
-                            <span class="text-3xl ui-arrow">→</span>
+                <a href="fonts/zizaikeserif.html" target="_blank" class="group block relative">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        <div class="lg:col-span-8 relative aspect-[16/10] overflow-hidden rounded-[2rem]">
+                            <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/i4a1/6803X1701/123-01.jpg/webp" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Ke Serif Preview">
+                             <div class="absolute top-6 left-6 flex gap-2">
+                                <span class="bg-white/90 backdrop-blur text-black px-3 py-1 text-[10px] font-bold uppercase rounded-full tracking-widest shadow-sm">New</span>
+                            </div>
                         </div>
-                        <div class="relative z-10">
-                            <h3 class="text-3xl font-black uppercase tracking-tight leading-none mb-3">文本工具</h3>
-                            <div class="text-xs font-medium ui-fade-text leading-relaxed">在线纯文本编辑与格式化。</div>
+                        <div class="lg:col-span-4 flex flex-col justify-center h-full pt-4 lg:pl-8">
+                            <h3 class="text-5xl md:text-6xl font-black mb-4 group-hover:text-gray-600 dark:group-hover:text-neutral-400 transition-colors">刻宋<br><span class="text-2xl md:text-3xl font-bold tracking-tight text-gray-400">Ke Serif</span></h3>
+                            <div class="h-px w-12 bg-black dark:bg-white mb-6"></div>
+                            <p class="text-gray-500 dark:text-neutral-400 text-sm leading-relaxed mb-8 max-w-sm">
+                                向传统雕版印刷致敬。专为高分辨率屏幕打造的标题宋体。
+                            </p>
                         </div>
-                    </a>
+                    </div>
+                </a>
+            </div>
 
-                    <a href="https://tool.zizao.top/character" target="_blank" class="group hover-card-effect relative bg-transparent p-10 h-80 flex flex-col justify-between border-r border-b border-black dark:border-white lg:col-span-1">
-                        <div class="flex justify-between items-start w-full relative z-10">
-                            <span class="ui-tag">Data</span>
-                            <span class="text-3xl ui-arrow">→</span>
-                        </div>
-                        <div class="relative z-10">
-                            <h3 class="text-3xl font-black uppercase tracking-tight leading-none mb-3">字符数据</h3>
-                            <div class="text-xs font-medium ui-fade-text leading-relaxed">拼音标注与Unicdoe数据查询。</div>
-                        </div>
-                    </a>
+            <div class="mt-32 p-12 lg:p-24 bg-gray-50 dark:bg-neutral-900 rounded-[3rem] text-center border border-gray-100 dark:border-neutral-800">
+                <h3 class="text-3xl md:text-5xl font-black mb-6">Have a Project?</h3>
+                <p class="text-gray-500 dark:text-neutral-400 max-w-xl mx-auto mb-10 text-lg">
+                    寻找独特的品牌声音？我们提供专业的企业定制字体服务。
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                     <a href="licensing.html" target="_blank" class="h-14 px-10 rounded-full bg-black text-white font-bold text-sm flex items-center justify-center hover:bg-gray-800 transition-colors dark:bg-white dark:text-black">
+                         定制咨询
+                     </a>
+                     <a href="mailto:type@zizao.top" class="h-14 px-10 rounded-full border border-gray-200 text-black font-bold text-sm flex items-center justify-center hover:border-black transition-colors dark:border-neutral-700 dark:text-white">
+                         type@zizao.top
+                     </a>
                 </div>
             </div>
         </section>
+
     </main>
 
     <footer id="footer-placeholder" class="bg-white/90 backdrop-blur-md pt-20 pb-12 dark:bg-neutral-950/90 border-t border-gray-100 dark:border-neutral-900 mt-auto"></footer>
@@ -392,177 +199,5 @@
     <script src="components.js"></script>
     <script src="script.js"></script>
 
-    <script>
-        // Hero 配置
-        const HERO_CONFIG = {
-            fontUrl: 'url("123.ttf")', 
-            textLines: ["自在致黑"],
-            description: "Variable Infinite.<br>Constructing Visual Voice<br>For The Digital Age.",
-            axis: { weight: { min: 100, max: 700, default: 300 }, width:  { min: 75,  max: 125, default: 80 } },
-            physics: { ease: 0.08 } // 桌面端跟随平滑系数
-        };
-
-        // 线性插值函数
-        const lerp = (start, end, factor) => start + (end - start) * factor;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. 注入 CSS
-            if (HERO_CONFIG.fontUrl) {
-                const style = document.createElement('style');
-                style.innerHTML = `@font-face { font-family: 'HeroVariableFont'; src: ${HERO_CONFIG.fontUrl} format('woff2'); font-display: swap; } :root { --hero-font: 'HeroVariableFont', 'sans-serif'; }`;
-                document.head.appendChild(style);
-            }
-
-            // 2. 初始化 DOM
-            const titleContainer = document.getElementById('hero-title-container');
-            if (titleContainer) {
-                const fragment = document.createDocumentFragment();
-                HERO_CONFIG.textLines.forEach(line => {
-                    const h1 = document.createElement('h1');
-                    h1.className = "hero-text text-[16vw] lg:text-[19vw] leading-[0.8] font-black tracking-tighter uppercase will-change-transform hero-var-target";
-                    h1.textContent = line;
-                    fragment.appendChild(h1);
-                });
-                titleContainer.innerHTML = '';
-                titleContainer.appendChild(fragment);
-            }
-            document.getElementById('hero-desc').innerHTML = HERO_CONFIG.description;
-
-            // 3. 核心交互逻辑 (鼠标跟随 + 自动呼吸)
-            const hero = document.getElementById('hero-stage');
-            const targets = document.querySelectorAll('.hero-var-target');
-            const vals = { wght: document.getElementById('val-wght'), wdth: document.getElementById('val-wdth'), mouse: document.getElementById('val-mouse') };
-            const cursor = document.getElementById('cursor-follower');
-            const { weight, width } = HERO_CONFIG.axis;
-
-            if (hero && targets.length > 0) {
-                let rect = hero.getBoundingClientRect();
-                window.addEventListener('resize', () => rect = hero.getBoundingClientRect());
-
-                // 检测是否为触摸设备 (粗略判断)
-                const isTouchDevice = () => window.matchMedia("(hover: none)").matches;
-
-                // 状态管理
-                const state = {
-                    targetX: 0.5, targetY: 0.5, // 目标位置 (0.0 - 1.0)
-                    currX: 0.5, currY: 0.5,     // 当前位置
-                    rawX: 0, rawY: 0,           // 鼠标原始坐标
-                    isLocked: false,            // 锁定状态
-                    isHovering: false,          // 鼠标是否进入
-                    autoMode: false             // 自动模式 (用于移动端或未操作时)
-                };
-
-                // 设置初始值
-                state.targetX = (width.default - width.min) / (width.max - width.min);
-                state.targetY = (weight.default - weight.min) / (weight.max - weight.min);
-                state.currX = state.targetX;
-                state.currY = state.targetY;
-
-                // 动画循环
-                const animate = () => {
-                    // 判断模式：如果是触摸设备，或者是桌面端但没有 Hover 且没有锁定，进入自动呼吸模式
-                    // 为了简单起见：桌面端 Hover 时控制，不 Hover 时回弹或保持；移动端始终自动呼吸。
-                    
-                    if (isTouchDevice()) {
-                        state.autoMode = true;
-                    } else {
-                        state.autoMode = false;
-                    }
-
-                    if (state.autoMode && !state.isLocked) {
-                        // === 移动端/自动模式：优雅的正弦波呼吸 ===
-                        const time = Date.now() * 0.001; // 时间因子
-                        
-                        // 使用不同的频率和相位，形成 Lissajous 曲线般的随机感
-                        // Sin 结果从 -1 到 1，映射到 0 到 1
-                        const waveX = (Math.sin(time * 0.8) + 1) / 2; 
-                        const waveY = (Math.sin(time * 1.2 + 2) + 1) / 2; // +2 是相位偏移
-                        
-                        // 缓慢插值到波形目标，避免突变
-                        state.currX = lerp(state.currX, waveX, 0.05);
-                        state.currY = lerp(state.currY, waveY, 0.05);
-                        
-                    } else if (!state.isLocked) {
-                        // === 桌面端鼠标模式 ===
-                        // 如果没有 Hover，回弹到默认值
-                        if (!state.isHovering) {
-                            state.targetX = (width.default - width.min) / (width.max - width.min);
-                            state.targetY = (weight.default - weight.min) / (weight.max - weight.min);
-                        }
-                        
-                        state.currX = lerp(state.currX, state.targetX, HERO_CONFIG.physics.ease);
-                        state.currY = lerp(state.currY, state.targetY, HERO_CONFIG.physics.ease);
-                    }
-
-                    // 计算变体数值
-                    const w = Math.floor(width.min + (state.currX * (width.max - width.min)));
-                    const wg = Math.floor(weight.min + (state.currY * (weight.max - weight.min)));
-
-                    // 应用样式
-                    targets.forEach(el => el.style.fontVariationSettings = `'wght' ${wg}, 'wdth' ${w}`);
-
-                    // 更新 UI 面板
-                    if(vals.wght) vals.wght.innerText = wg;
-                    if(vals.wdth) vals.wdth.innerText = w;
-                    
-                    // 只有在桌面端 Hover 时才更新鼠标坐标显示
-                    if(vals.mouse && !state.autoMode && state.isHovering && !state.isLocked) {
-                        vals.mouse.innerText = `${Math.floor(state.rawX)}, ${Math.floor(state.rawY)}`;
-                    }
-
-                    // Cursor Follower (仅桌面端)
-                    if(cursor && !isTouchDevice() && state.isHovering) {
-                        const visualX = rect.left + state.currX * rect.width;
-                        const visualY = rect.top + state.currY * rect.height;
-                        cursor.style.transform = `translate3d(${visualX}px, ${visualY}px, 0) translate(-50%, -50%)`;
-                    }
-
-                    requestAnimationFrame(animate);
-                };
-                animate();
-
-                // === 事件监听 (仅限桌面端鼠标) ===
-                const handleMove = (x, y) => {
-                    if (state.isLocked || isTouchDevice()) return;
-                    state.rawX = x; state.rawY = y;
-                    
-                    state.targetX = Math.max(0, Math.min(1, (x - rect.left) / rect.width));
-                    state.targetY = Math.max(0, Math.min(1, (y - rect.top) / rect.height));
-                };
-
-                hero.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
-                
-                hero.addEventListener('mouseenter', () => {
-                    if(isTouchDevice()) return;
-                    state.isHovering = true;
-                    if(cursor) cursor.style.opacity = '1';
-                    rect = hero.getBoundingClientRect();
-                });
-
-                hero.addEventListener('mouseleave', () => {
-                    state.isHovering = false;
-                    if(cursor) cursor.style.opacity = '0';
-                });
-
-                // 点击锁定 (通用)
-                hero.addEventListener('click', () => {
-                    // 如果是移动端，点击不锁定，也许可以做点别的交互？
-                    // 建议：移动端点击也可以“暂停”呼吸，或者只是简单的视觉反馈
-                    // 这里保留锁定功能，这样用户如果觉得某个瞬间很好看，可以定格
-                    state.isLocked = !state.isLocked;
-                    
-                    if(state.isLocked) {
-                        hero.classList.add('is-locked-mode');
-                        if(cursor) cursor.classList.add('is-locked');
-                    } else {
-                        hero.classList.remove('is-locked-mode');
-                        if(cursor) cursor.classList.remove('is-locked');
-                        // 解锁瞬间重置目标，防止跳变
-                        if (!state.autoMode) handleMove(state.rawX, state.rawY);
-                    }
-                });
-            }
-        });
-    </script>
 </body>
 </html>
