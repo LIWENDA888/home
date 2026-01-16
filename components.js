@@ -14,14 +14,23 @@ const SITE_CONFIG = {
         {
             type: 'dropdown', 
             name: '字体产品', 
+            layout: 'grid', // ✨ 关键修改：标记为网格/双列布局
             items: [
                 { title: '自在致黑', path: 'https://www.zizao.top/fonts/?zhisans', tag: '免费商用', desc: '双轴可变微变形黑体' },
                 { title: '查看所有字体', path: 'https://www.zizao.top/fonts/', tag: 'ALL', desc: '自在全部字体产品列表' }, 
             ]
         },
+        {
+            type: 'dropdown', 
+            name: '设计工具', 
+            // 没有 layout 属性，默认为竖向单列布局
+            items: [
+                { title: '设计导航', path: 'https://hao.zizao.top', tag: 'hao', desc: '设计师的灵感百宝库' },
+                { title: '字符工具', path: 'https://tools.zizao.top', tag: 'Tools', desc: 'web端多文本编辑器' }, 
+            ]
+        },
         { type: 'link', name: '授权定制', path: 'https://www.zizao.top/licensing', id: 'licensing' },
-        { type: 'link', name: '帮助中心', path: 'https://www.zizao.top/docs', id: 'docs' },
-        { type: 'link', name: '关于我们', path: 'https://www.zizao.top/about', id: 'about' }
+        { type: 'link', name: '帮助中心', path: 'https://www.zizao.top/docs', id: 'docs' }
     ],
 
     footer: {
@@ -68,17 +77,17 @@ const SITE_CONFIG = {
  * ==============================================================================
  */
 
-// 1. 桌面端导航渲染
+// 1. 桌面端导航渲染 (混合布局逻辑)
 const renderDesktopNav = () => {
     return SITE_CONFIG.menu.map(item => {
         if (item.type === 'dropdown') {
             const listItems = item.items.map(sub => `
-                <a href="${sub.path}" target="_blank" class="group/item flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-all duration-200">
+                <a href="${sub.path}" target="_blank" class="group/item flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-all duration-200">
                     <div class="flex items-center justify-center">
                         <div class="size-1.5 rounded-full bg-gray-200 dark:bg-neutral-700 group-hover/item:bg-black dark:group-hover/item:bg-white group-hover/item:scale-125 transition-all duration-300"></div>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2 mb-1">
+                        <div class="flex items-center gap-2 mb-0.5">
                             <span class="text-[13px] font-bold text-gray-900 dark:text-gray-200 group-hover/item:text-black dark:group-hover/item:text-white transition-colors">
                                 ${sub.title}
                             </span>
@@ -96,16 +105,25 @@ const renderDesktopNav = () => {
                 </a>
             `).join('');
 
+            // ✨ 逻辑判断：是网格(双列)还是竖向(单列)？
+            const isGrid = item.layout === 'grid';
+            
+            // 根据布局类型设置样式
+            // 宽度：双列 540px，单列 260px
+            const widthClass = isGrid ? 'w-[540px]' : 'w-[260px]';
+            // 排版：双列 grid，单列 flex-col
+            const layoutClass = isGrid ? 'grid grid-cols-2 gap-2' : 'flex flex-col gap-1';
+
             return `
             <div class="group relative h-full flex items-center">
                 <button class="text-xs uppercase tracking-widest font-bold text-gray-500 hover:text-black dark:text-neutral-400 dark:hover:text-white nav-link transition-colors flex items-center gap-1.5 h-full px-2">
                     ${item.name}
                     <svg class="w-2.5 h-2.5 opacity-50 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
-                <div class="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-[640px] opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 ease-out z-50">
+                <div class="absolute top-full left-1/2 -translate-x-1/2 pt-2 ${widthClass} opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 ease-out z-50 origin-top">
                     <div class="bg-white/95 dark:bg-[#0f0f0f]/95 backdrop-blur-xl rounded-2xl border border-gray-100 dark:border-neutral-800 shadow-2xl overflow-hidden ring-1 ring-black/5">
-                        <div class="p-8">
-                            <div class="grid grid-cols-2 gap-x-6 gap-y-2">${listItems}</div>
+                        <div class="p-2">
+                            <div class="${layoutClass}">${listItems}</div>
                         </div>
                     </div>
                 </div>
