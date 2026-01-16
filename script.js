@@ -1,3 +1,5 @@
+--- START OF FILE script.js ---
+
 /**
  * TYPEFOUNDRY STUDIO - CORE LOGIC
  * Optimized & De-duplicated
@@ -36,7 +38,7 @@ function toggleTheme() {
     const img = document.getElementById('p-image');
     if (img && img.dataset.darkSrc) {
         // Reset src based on new theme if user hasn't manually toggled it
-        const lightSrc = img.src.includes(img.dataset.darkSrc) ? img.dataset.darkSrc : img.src; // Fallback logic
+        const lightSrc = img.src.includes(img.dataset.darkSrc) ? img.dataset.darkSrc : img.src; 
     }
 }
 
@@ -144,7 +146,7 @@ function highlightCurrentPage() {
 function toggleMenu() {
     const menu = document.getElementById('mobile-menu');
     const top = document.getElementById('hamburger-top');
-    const mid = document.getElementById('hamburger-mid'); // Might not exist in some designs
+    const mid = document.getElementById('hamburger-mid'); 
     const bot = document.getElementById('hamburger-bot');
     
     if (!menu) return;
@@ -216,9 +218,6 @@ function setupGlobalImageViewer() {
     const originalSrc = img.src.includes(img.dataset.darkSrc) && img.dataset.darkSrc ? 
                         (isDark ? (img.getAttribute('src') !== img.getAttribute('data-dark-src') ? img.src : img.src) : img.src) 
                         : img.src; 
-    // Simplified Toggle Logic
-    const lightSrc = img.getAttribute('src'); 
-    const darkSrc = img.getAttribute('data-dark-src');
     let isToggled = false; 
 
     function updateTransform() {
@@ -312,27 +311,6 @@ function setupGlobalImageViewer() {
     container.addEventListener('touchend', (e) => {
         if (e.touches.length < 2) initialPinchDistance = null;
     });
-
-    // Toggle Background/Image logic
-    if (toggleBtn) {
-        if (!darkSrc) toggleBtn.style.display = 'none';
-        
-        toggleBtn.addEventListener('click', () => {
-            isToggled = !isToggled;
-            
-            if (isToggled) {
-                container.style.backgroundColor = '#0f0f0f';
-                if(darkSrc) img.src = darkSrc;
-                toggleBtn.classList.add('bg-white', 'text-black');
-                toggleBtn.classList.remove('bg-black', 'text-white');
-            } else {
-                container.style.backgroundColor = '#f3f4f6'; // gray-100
-                img.src = "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/zTEv/6803X1701/123-02.jpg/webp"; 
-                toggleBtn.classList.add('bg-black', 'text-white');
-                toggleBtn.classList.remove('bg-white', 'text-black');
-            }
-        });
-    }
 }
 
 // ================= 4. Utils =================
@@ -395,7 +373,7 @@ function setupAboutScrollSpy() {
     onScroll(); 
 }
 
-// ================= 5. Hero Carousel =================
+// ================= 5. Hero Carousel (Mobile Swipe Added) =================
 let currentSlide = 0;
 let slideInterval;
 const totalSlides = 3; 
@@ -408,20 +386,20 @@ function initHeroCarousel() {
     container.addEventListener('mouseenter', stopSlideTimer);
     container.addEventListener('mouseleave', startSlideTimer);
 
-    // --- Mobile Swipe Logic Start ---
+    // --- ✨ Mobile Swipe Logic ---
     let touchStartX = 0;
     let touchEndX = 0;
-    const minSwipeDistance = 50; // Threshold
+    const minSwipeDistance = 50; // 最小滑动距离触发
 
     container.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
-        stopSlideTimer(); // Pause auto-slide on touch
+        stopSlideTimer(); // 触摸时暂停自动轮播
     }, { passive: true });
 
     container.addEventListener('touchend', (e) => {
         touchEndX = e.changedTouches[0].screenX;
         handleSwipe();
-        startSlideTimer(); // Resume auto-slide
+        startSlideTimer(); // 触摸结束恢复
     }, { passive: true });
 
     function handleSwipe() {
@@ -429,15 +407,14 @@ function initHeroCarousel() {
         
         if (Math.abs(swipeDistance) > minSwipeDistance) {
             if (swipeDistance < 0) {
-                // Swiped Left -> Next Slide
+                // 向左滑 (下一张)
                 nextHeroSlide();
             } else {
-                // Swiped Right -> Prev Slide
+                // 向右滑 (上一张)
                 prevHeroSlide();
             }
         }
     }
-    // --- Mobile Swipe Logic End ---
 }
 
 function switchHeroSlide(index, event) {
