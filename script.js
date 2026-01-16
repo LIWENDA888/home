@@ -2,7 +2,6 @@
 
 /**
  * TYPEFOUNDRY STUDIO - CORE LOGIC
- * Optimized & De-duplicated
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -37,7 +36,6 @@ function toggleTheme() {
     // Sync Image Viewer if exists
     const img = document.getElementById('p-image');
     if (img && img.dataset.darkSrc) {
-        // Reset src based on new theme if user hasn't manually toggled it
         const lightSrc = img.src.includes(img.dataset.darkSrc) ? img.dataset.darkSrc : img.src; 
     }
 }
@@ -386,20 +384,20 @@ function initHeroCarousel() {
     container.addEventListener('mouseenter', stopSlideTimer);
     container.addEventListener('mouseleave', startSlideTimer);
 
-    // --- ✨ Mobile Swipe Logic ---
+    // --- ✨ 新增：手机端触摸滑动逻辑 ---
     let touchStartX = 0;
     let touchEndX = 0;
-    const minSwipeDistance = 50; // 最小滑动距离触发
+    const minSwipeDistance = 50; 
 
     container.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
-        stopSlideTimer(); // 触摸时暂停自动轮播
+        stopSlideTimer(); 
     }, { passive: true });
 
     container.addEventListener('touchend', (e) => {
         touchEndX = e.changedTouches[0].screenX;
         handleSwipe();
-        startSlideTimer(); // 触摸结束恢复
+        startSlideTimer(); 
     }, { passive: true });
 
     function handleSwipe() {
@@ -407,11 +405,9 @@ function initHeroCarousel() {
         
         if (Math.abs(swipeDistance) > minSwipeDistance) {
             if (swipeDistance < 0) {
-                // 向左滑 (下一张)
-                nextHeroSlide();
+                nextHeroSlide(); // 向左滑，下一张
             } else {
-                // 向右滑 (上一张)
-                prevHeroSlide();
+                prevHeroSlide(); // 向右滑，上一张
             }
         }
     }
