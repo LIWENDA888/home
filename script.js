@@ -36,7 +36,6 @@ function toggleTheme() {
     const img = document.getElementById('p-image');
     if (img && img.dataset.darkSrc) {
         // Reset src based on new theme if user hasn't manually toggled it
-        // Note: Complex viewer logic might handle this differently, keeping it simple here.
         const lightSrc = img.src.includes(img.dataset.darkSrc) ? img.dataset.darkSrc : img.src; // Fallback logic
     }
 }
@@ -215,12 +214,10 @@ function setupGlobalImageViewer() {
 
     // Toggle Variables
     const originalSrc = img.src.includes(img.dataset.darkSrc) && img.dataset.darkSrc ? 
-                        // If current is dark, original "light" is inferred or hard to track without data-light-src
-                        // Simple fix: assume page load state is correct.
-                        (isDark ? (img.getAttribute('src') !== img.getAttribute('data-dark-src') ? img.src : img.src /*placeholder logic*/) : img.src) 
+                        (isDark ? (img.getAttribute('src') !== img.getAttribute('data-dark-src') ? img.src : img.src) : img.src) 
                         : img.src; 
     // Simplified Toggle Logic
-    const lightSrc = img.getAttribute('src'); // Initial load is usually correct
+    const lightSrc = img.getAttribute('src'); 
     const darkSrc = img.getAttribute('data-dark-src');
     let isToggled = false; 
 
@@ -323,7 +320,6 @@ function setupGlobalImageViewer() {
         toggleBtn.addEventListener('click', () => {
             isToggled = !isToggled;
             
-            // Simple logic: flip background color and image source if available
             if (isToggled) {
                 container.style.backgroundColor = '#0f0f0f';
                 if(darkSrc) img.src = darkSrc;
@@ -331,8 +327,7 @@ function setupGlobalImageViewer() {
                 toggleBtn.classList.remove('bg-black', 'text-white');
             } else {
                 container.style.backgroundColor = '#f3f4f6'; // gray-100
-                // Use a known light source or original
-                img.src = "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/zTEv/6803X1701/123-02.jpg/webp"; // Hardcoding for stability in this demo
+                img.src = "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/zTEv/6803X1701/123-02.jpg/webp"; 
                 toggleBtn.classList.add('bg-black', 'text-white');
                 toggleBtn.classList.remove('bg-white', 'text-black');
             }
@@ -406,11 +401,43 @@ let slideInterval;
 const totalSlides = 3; 
 
 function initHeroCarousel() {
-    if (!document.getElementById('hero-carousel')) return;
-    startSlideTimer();
     const container = document.getElementById('hero-carousel');
+    if (!container) return;
+    
+    startSlideTimer();
     container.addEventListener('mouseenter', stopSlideTimer);
     container.addEventListener('mouseleave', startSlideTimer);
+
+    // --- Mobile Swipe Logic Start ---
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const minSwipeDistance = 50; // Threshold
+
+    container.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        stopSlideTimer(); // Pause auto-slide on touch
+    }, { passive: true });
+
+    container.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+        startSlideTimer(); // Resume auto-slide
+    }, { passive: true });
+
+    function handleSwipe() {
+        const swipeDistance = touchEndX - touchStartX;
+        
+        if (Math.abs(swipeDistance) > minSwipeDistance) {
+            if (swipeDistance < 0) {
+                // Swiped Left -> Next Slide
+                nextHeroSlide();
+            } else {
+                // Swiped Right -> Prev Slide
+                prevHeroSlide();
+            }
+        }
+    }
+    // --- Mobile Swipe Logic End ---
 }
 
 function switchHeroSlide(index, event) {
