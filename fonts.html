@@ -173,7 +173,25 @@
                             <span id="f-tag" class="inline-flex items-center px-3 py-1 rounded-full bg-black text-white text-[10px] font-bold uppercase tracking-widest dark:bg-white dark:text-black shadow-lg shadow-black/5"></span>
                             <span id="f-badge" class="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-500 text-[10px] font-bold uppercase tracking-widest dark:bg-neutral-800 dark:text-neutral-400"></span>
                         </div>
-                        <h1 id="f-title" class="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-4 text-black dark:text-white"></h1>
+                        
+                        <!-- TITLE & DEMO LINK BUTTON CONTAINER -->
+                        <div class="flex items-center gap-4 mb-4">
+                            <h1 id="f-title" class="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] text-black dark:text-white"></h1>
+                            <a id="f-demo-link" href="#" target="_blank" class="hidden size-12 lg:size-14 flex items-center justify-center rounded-full border border-gray-200 dark:border-neutral-800 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300 group/demo" title="在线预览/调节">
+                                <svg class="w-6 h-6 lg:w-7 lg:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                                </svg>
+                            </a>
+                        </div>
+
                         <p id="f-enName" class="text-xl md:text-2xl font-medium text-gray-400 dark:text-neutral-500 tracking-wide mb-8 font-mono"></p>
                         <p id="f-desc" class="text-base text-gray-600 dark:text-neutral-400 leading-relaxed mb-10 max-w-md"></p>
                         <div class="flex flex-wrap gap-4 w-full sm:w-auto">
@@ -281,8 +299,6 @@
 
     <script>
         // --- 预设分类配置 ---
-        // label: 显示在网页上的文字
-        // tag: 对应 fonts-data.js 中 meta.tags 里的关键词 (All 为特殊关键词，显示全部)
         const PREDEFINED_CATEGORIES = [
             { label: '全部', tag: 'All' },
             { label: '免费商用', tag: '免费' },
@@ -354,12 +370,9 @@
             updateNav('list');
 
             const filterContainer = document.getElementById('filter-container');
-            
-            // 重新渲染预设分类按钮
             filterContainer.innerHTML = '<div id="filter-active-slider" class="nav-slider"></div>';
             
             PREDEFINED_CATEGORIES.forEach(cat => {
-                // 计算当前分类下的字体数量
                 const count = Object.values(FONT_DATABASE).filter(item => {
                     const itemTags = Array.isArray(item.meta.tags) ? item.meta.tags : [item.meta.tags];
                     return cat.tag === 'All' || itemTags.includes(cat.tag);
@@ -373,7 +386,6 @@
                 filterContainer.appendChild(btn);
             });
 
-            // 定位滑块到当前激活的分类
             setTimeout(() => {
                 const activeBtn = Array.from(filterContainer.querySelectorAll('.filter-btn')).find(b => b.getAttribute('data-tag') === currentFilter);
                 if(activeBtn) moveSlider('filter-active-slider', activeBtn);
@@ -398,11 +410,8 @@
             Object.keys(FONT_DATABASE).forEach(key => {
                 const item = FONT_DATABASE[key];
                 const itemTags = Array.isArray(item.meta.tags) ? item.meta.tags : [item.meta.tags];
-                
                 const matchesSearch = item.hero.title.toLowerCase().includes(currentSearch) || 
                                      item.hero.enName.toLowerCase().includes(currentSearch);
-                
-                // 核心过滤逻辑：匹配预设标签
                 const matchesFilter = currentFilter === 'All' || itemTags.includes(currentFilter);
 
                 if (matchesSearch && matchesFilter) {
@@ -434,7 +443,7 @@
             currentFilter = 'All';
             const input = document.getElementById('font-search'); 
             if(input) input.value = '';
-            renderListView(); // 重新渲染以重置滑块和按钮状态
+            renderListView();
         }
 
         // --- 商品详情视图逻辑 ---
@@ -453,6 +462,17 @@
             safeHTML('f-title', data.hero.title);
             safeText('f-enName', data.hero.enName);
             safeText('f-desc', data.hero.description);
+
+            // --- 处理预览/调节链接按钮 ---
+            const demoLinkBtn = document.getElementById('f-demo-link');
+            if (demoLinkBtn) {
+                if (data.hero.demoLink) {
+                    demoLinkBtn.href = data.hero.demoLink;
+                    demoLinkBtn.classList.remove('hidden');
+                } else {
+                    demoLinkBtn.classList.add('hidden');
+                }
+            }
 
             const imgEl = document.getElementById('p-image');
             const zoomSlider = document.getElementById('zoom-slider');

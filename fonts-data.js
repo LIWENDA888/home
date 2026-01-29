@@ -11,6 +11,7 @@ const FONT_DATABASE = {
         hero: {
             title: "自在致黑",
             enName: "ZizaiZhisans",
+            demoLink: "https://example.com/demo-page", 
             description: "融合线条与骨感美，极具视觉张力的字形结构。双轴可变（Weight & Width）。",
             lightImg: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/zTEv/6803X1701/123-02.jpg/webp",
             darkImg: "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/i4a1/6803X1701/123-01.jpg/webp"
@@ -67,6 +68,7 @@ const FONT_DATABASE = {
         hero: {
             title: "自在刻宋",
             enName: "Zizai KeSerif",
+            demoLink: "https://example.com/demo-page", 
             description: "向传统雕版印刷致敬。专为高分辨率屏幕打造的标题宋体。",
             lightImg: "https://images.unsplash.com/photo-1620317377821-6f68744155fb?q=80&w=2574&auto=format&fit=crop",
             darkImg: "https://images.unsplash.com/photo-1620317377821-6f68744155fb?q=80&w=2574&auto=format&fit=crop"
