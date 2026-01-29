@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>字体产品 - 自在造字</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: { sans: ['Inter', 'sans-serif'] },
+            cursor: { 'grab': 'grab', 'grabbing': 'grabbing' },
+            boxShadow: { 'soft-xl': '0 20px 40px -10px rgba(0, 0, 0, 0.08)' },
+            animation: {
+                'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+                'fade-in': 'fadeIn 0.5s ease-out forwards',
+            },
+            keyframes: {
+                shake: {
+                    '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                    '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                    '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                    '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+                },
+                fadeIn: {
+                    '0%': { opacity: '0', transform: 'translateY(10px)' },
+                    '100%': { opacity: '1', transform: 'translateY(0)' }
+                }
+            }
+          },
+        },
+      }
+    </script>
+
+    <style>
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; height: 30px; margin: 0; padding: 0; cursor: pointer; position: relative; z-index: 20; }
+        input[type=range]:focus { outline: none; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 100%; cursor: pointer; background: transparent; border: none; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%; background: #000; cursor: pointer; margin-top: 3px; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.3); transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .dark input[type=range]::-webkit-slider-thumb { background: #fff; border-color: #000; }
+        input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.15); }
+        input[type=range]:active::-webkit-slider-thumb { transform: scale(1.25); cursor: grabbing; }
+        .search-focus:focus-within { box-shadow: 0 0 0 2px black; }
+        .dark .search-focus:focus-within { box-shadow: 0 0 0 2px white; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .input-valid { border-color: #10B981 !important; color: #059669 !important; background-color: #ECFDF5 !important; padding-right: 2.5rem !important; }
+        .dark .input-valid { background-color: #064E3B !important; color: #34D399 !important; border-color: #059669 !important; }
+    </style>
+</head>
+<body class="bg-white text-gray-900 dark:bg-neutral-950 dark:text-gray-100 flex flex-col min-h-screen selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
+    
+    <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-md dark:border-neutral-900 dark:bg-neutral-950/90"></nav>
+
+    <main class="w-full flex-1">
+        
+        <!-- LIST VIEW -->
+        <div id="list-view" class="hidden pt-32 pb-20 px-4 lg:px-12 max-w-[1800px] mx-auto animate-fade-in">
+            <div class="mb-12">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tighter">全部字体产品</h1>
+                    <div class="search-focus relative flex items-center bg-gray-50 dark:bg-neutral-900 rounded-full border border-gray-200 dark:border-neutral-800 transition-shadow w-full md:w-72">
+                        <svg class="w-4 h-4 text-gray-400 ml-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <input type="text" id="font-search" placeholder="搜索字体..." class="w-full bg-transparent border-none py-3 px-3 text-sm font-bold focus:ring-0 placeholder-gray-400">
+                    </div>
+                </div>
+                <div id="filter-wrapper" class="w-full overflow-hidden relative group">
+                    <div id="filter-container" class="flex gap-2 overflow-x-auto no-scrollbar pb-1 sm:pb-0">
+                        <button onclick="handleFilterClick('All', this)" class="filter-btn active-filter shrink-0 px-5 py-2.5 rounded-full border border-black bg-black text-white text-xs font-bold transition-all hover:opacity-80 dark:border-white dark:bg-white dark:text-black whitespace-nowrap" data-tag="All">全部字体</button>
+                    </div>
+                </div>
+            </div>
+            <div id="font-list-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 min-h-[400px]"></div>
+            <div id="empty-state" class="hidden py-20 text-center">
+                <p class="text-gray-400 font-medium">没有找到匹配的字体</p>
+                <button onclick="resetFilters()" class="mt-4 text-sm font-bold underline hover:text-gray-600 dark:hover:text-gray-300">清除筛选条件</button>
+            </div>
+        </div>
+
+        <!-- PRODUCT VIEW -->
+        <div id="product-view" class="hidden">
+            <section class="relative pt-20 pb-8 lg:pt-32 lg:pb-12 px-4 lg:px-12 max-w-[1800px] mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+                    <div class="lg:col-span-5 flex flex-col items-start text-left animate-fade-in order-2 lg:order-1">
+                        <div class="flex items-center gap-3 mb-8">
+                            <span id="f-tag" class="inline-flex items-center px-3 py-1 rounded-full bg-black text-white text-[10px] font-bold uppercase tracking-widest dark:bg-white dark:text-black shadow-lg shadow-black/5"></span>
+                            <span id="f-badge" class="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-500 text-[10px] font-bold uppercase tracking-widest dark:bg-neutral-800 dark:text-neutral-400"></span>
+                        </div>
+                        <h1 id="f-title" class="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-4 text-black dark:text-white"></h1>
+                        <p id="f-enName" class="text-xl md:text-2xl font-medium text-gray-400 dark:text-neutral-500 tracking-wide mb-8 font-mono"></p>
+                        <p id="f-desc" class="text-base text-gray-600 dark:text-neutral-400 leading-relaxed mb-10 max-w-md"></p>
+                        <div class="flex flex-wrap gap-4 w-full sm:w-auto">
+                            <button onclick="openDownloadModal()" class="flex-1 sm:flex-none h-14 px-8 rounded-full bg-black text-white font-bold text-sm transition-all duration-300 hover:bg-gray-800 hover:shadow-xl hover:-translate-y-0.5 dark:bg-white dark:text-black dark:hover:bg-gray-200 flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>下载字体
+                            </button>
+                            <a href="https://zzfonts.taobao.com" target="_blank" class="flex-1 sm:flex-none h-14 px-8 rounded-full border border-gray-200 text-black font-bold text-sm transition-all duration-300 hover:border-black hover:bg-gray-50 hover:shadow-lg hover:-translate-y-0.5 dark:border-neutral-800 dark:text-white dark:hover:border-white dark:hover:bg-neutral-900 flex items-center justify-center gap-2">获取授权</a>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-7 w-full animate-fade-in order-1 lg:order-2">
+                        <div class="relative group isolate">
+                            <!-- 容器增加 ID 以便监听拖拽 -->
+                            <div id="image-viewer-container" class="relative aspect-[3/2] w-full overflow-hidden rounded-[2.5rem] bg-gray-50 dark:bg-[#0f0f0f] ring-1 ring-black/5 dark:ring-white/10 shadow-soft-xl cursor-grab active:cursor-grabbing">
+                                <img id="p-image" src="" alt="Hero" class="size-full object-cover origin-center transition-transform duration-75 ease-linear will-change-transform" draggable="false">
+                                <div class="absolute bottom-6 right-6 z-30">
+                                    <button id="view-toggle-btn" class="size-10 rounded-full flex items-center justify-center bg-white text-black shadow-lg ring-1 ring-black/5 hover:scale-105 active:scale-95 transition-transform" title="切换背景/模式">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-72 md:w-96 z-40 flex items-center justify-center">
+                                <div class="absolute w-full h-1.5 bg-gray-200/60 dark:bg-gray-700/60 backdrop-blur-sm rounded-full pointer-events-none border border-white/20"></div>
+                                <input id="zoom-slider" type="range" min="1" max="3" step="0.01" value="1" aria-label="Zoom Level" class="relative z-10">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="border-y border-gray-100 dark:border-neutral-900 bg-gray-50/50 dark:bg-neutral-900/20">
+                <div class="max-w-[1800px] mx-auto px-4 lg:px-12 py-10">
+                    <div id="f-stats-grid" class="grid grid-cols-2 md:grid-cols-4 gap-8"></div>
+                </div>
+            </section>
+
+            <section class="py-24 px-4 lg:px-12 max-w-[1800px] mx-auto">
+                <div class="mb-16 text-center">
+                    <h2 class="text-3xl md:text-4xl font-black mb-4 tracking-tight">设计细节与特性</h2>
+                    <p class="text-gray-500 dark:text-neutral-400 font-medium">Features & Details</p>
+                </div>
+                <div id="f-features-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8"></div>
+            </section>
+
+            <section class="pb-24 px-4 lg:px-12 max-w-[1800px] mx-auto">
+                 <div class="mb-16 text-center">
+                    <h2 class="text-3xl md:text-4xl font-black mb-4 tracking-tight">视觉展示</h2>
+                    <p class="text-gray-500 dark:text-neutral-400 font-medium">Gallery & Applications</p>
+                </div>
+                <div id="f-gallery-container" class="flex flex-col rounded-[2.5rem] overflow-hidden border border-gray-100 dark:border-neutral-800 bg-gray-50 dark:bg-neutral-900 leading-none shadow-sm"></div>
+            </section>
+
+            <section class="py-24 bg-gray-50 dark:bg-neutral-900 border-t border-gray-100 dark:border-neutral-800">
+                <div class="max-w-2xl mx-auto px-4 text-center">
+                    <h2 class="text-3xl font-black mb-6 tracking-tight">准备好开始创作了吗？</h2>
+                    <p class="text-gray-500 dark:text-neutral-400 mb-10 text-lg">立即下载体验版，或获取完整的商用授权。</p>
+                    <button onclick="openDownloadModal()" class="h-14 px-10 rounded-full bg-black text-white font-bold hover:scale-105 transition-all shadow-xl dark:bg-white dark:text-black">立即下载</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- DOWNLOAD MODAL -->
+        <div id="download-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center px-4">
+            <div class="absolute inset-0 bg-white/90 dark:bg-black/90 backdrop-blur-sm" onclick="closeDownloadModal()"></div>
+            <div class="relative w-full max-w-4xl md:h-[480px] overflow-hidden rounded-[2rem] bg-white shadow-2xl dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 flex flex-col md:flex-row">
+                <!-- Left: Info -->
+                <div class="w-full md:w-5/12 bg-gray-50/50 dark:bg-neutral-950/50 p-8 md:p-10 border-b md:border-b-0 md:border-r border-gray-100 dark:border-neutral-800 flex flex-col justify-between">
+                    <div><h3 class="text-2xl font-black mb-3 tracking-tight">下载字体</h3><p class="text-xs text-gray-500 leading-relaxed max-w-xs">您正在下载的是字体的试用版本。商业使用请购买正式授权。</p></div>
+                    <div class="space-y-6 mt-8 md:mt-0">
+                         <div class="group"><span class="block text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-1.5">当前版本</span><span id="dl-version" class="text-base font-bold text-gray-900 dark:text-white"></span></div>
+                         <div class="group"><span class="block text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-1.5">授权类型</span><span id="dl-type" class="text-base font-bold text-gray-900 dark:text-white"></span></div>
+                         <div class="group"><span class="block text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-1.5">发布时间</span><span id="dl-date" class="text-base font-bold text-gray-900 dark:text-white"></span></div>
+                    </div>
+                </div>
+                <!-- Right: Verification -->
+                <div class="w-full md:w-7/12 flex flex-col bg-white dark:bg-neutral-900">
+                    <div class="flex-1 flex flex-col items-center justify-center p-6 md:p-0">
+                        <div class="mb-6 text-center">
+                            <div class="w-28 h-28 mx-auto p-1.5 rounded-xl border border-gray-100 dark:border-neutral-800 shadow-sm mb-4 bg-white dark:bg-neutral-950">
+                                <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/4dAf/251X251/iwg.webp/webp" class="w-full h-full object-cover rounded-lg" alt="QR">
+                            </div>
+                            <h4 class="font-bold text-base mb-1">关注「自在造字」公众号</h4>
+                            <p class="text-xs text-gray-400 font-medium">点击 <span class="font-bold text-black dark:text-white bg-gray-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded mx-1">下载</span> 获取口令</p>
+                        </div>
+                        <div class="w-full max-w-[260px] relative">
+                            <input type="text" id="access-code" placeholder="输入口令" autocomplete="off" class="w-full bg-gray-50 dark:bg-neutral-950 border border-gray-200 dark:border-neutral-800 rounded-lg px-4 py-3 text-center font-bold tracking-widest text-lg uppercase focus:ring-2 focus:ring-black dark:focus:ring-white outline-none transition-all" oninput="checkDownloadState()">
+                            <div id="code-status-icon" class="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 transition-all scale-50"><div class="w-5 h-5 rounded-full bg-green-500 text-white flex items-center justify-center shadow-sm"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg></div></div>
+                        </div>
+                    </div>
+                    <div class="w-full border-t border-gray-50 dark:border-neutral-800 p-5 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-2.5">
+                            <input type="checkbox" id="eula-check" class="w-3.5 h-3.5 accent-black cursor-pointer rounded" onchange="checkDownloadState()">
+                            <label for="eula-check" class="text-xs text-gray-500 cursor-pointer select-none">同意 <a href="https://www.zizao.top/docs?section=terms" target="_blank" class="text-black dark:text-white underline decoration-1">许可协议 (EULA)</a></label>
+                        </div>
+                        <div class="flex gap-2.5 w-full md:w-auto">
+                            <button onclick="closeDownloadModal()" class="flex-1 md:flex-none px-5 py-2 text-xs font-bold text-gray-500 hover:text-black transition-colors">取消</button>
+                            <button id="dl-confirm-btn" disabled class="flex-1 md:flex-none rounded-full bg-black px-6 py-2 text-xs font-bold text-white opacity-20 cursor-not-allowed transition-all hover:bg-gray-800 min-w-[100px] dark:bg-white dark:text-black">立即下载</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer id="footer-placeholder" class="bg-white pt-20 pb-12 dark:bg-neutral-950 border-t border-gray-100 dark:border-neutral-900 mt-auto"></footer>
+    
+    <!-- External Scripts -->
+    <script src="components.js"></script>
+    <script src="fonts-data.js"></script>
+    <script src="script.js"></script>
+
+    <!-- CORE RENDER ENGINE -->
+    <script>
+        // --- 1. CONFIG & ROUTING ---
+        let currentFilter = 'All';
+        let currentSearch = '';
+
+        function handleRouting() {
+            if (typeof FONT_DATABASE === 'undefined') return;
+            const fontId = window.location.hash.substring(1).split('&')[0];
+            if (!fontId || !FONT_DATABASE[fontId]) {
+                renderListView();
+            } else {
+                renderProductView(fontId);
+            }
+        }
+
+        window.addEventListener('hashchange', handleRouting);
+        document.addEventListener('DOMContentLoaded', handleRouting);
+
+        // --- 2. LIST VIEW LOGIC ---
+        function renderListView() {
+            document.title = "字体产品 - 自在造字";
+            document.getElementById('list-view').classList.remove('hidden');
+            document.getElementById('product-view').classList.add('hidden');
+
+            const filterContainer = document.getElementById('filter-container');
+            if (filterContainer && filterContainer.children.length === 1) { 
+                const uniqueTags = new Set();
+                Object.values(FONT_DATABASE).forEach(item => {
+                    if (Array.isArray(item.meta.tags)) item.meta.tags.forEach(tag => uniqueTags.add(tag));
+                });
+                let sortedTags = Array.from(uniqueTags).sort();
+                const freeIdx = sortedTags.indexOf("免费");
+                if (freeIdx > -1) { sortedTags.splice(freeIdx, 1); sortedTags.unshift("免费"); }
+
+                sortedTags.forEach(tag => {
+                    const btn = document.createElement('button');
+                    btn.className = "filter-btn shrink-0 px-5 py-2.5 rounded-full border border-gray-200 text-gray-500 text-xs font-bold transition-all hover:text-black dark:border-neutral-800 whitespace-nowrap";
+                    btn.textContent = tag;
+                    btn.setAttribute('data-tag', tag);
+                    btn.onclick = () => handleFilterClick(tag, btn);
+                    filterContainer.appendChild(btn);
+                });
+            }
+
+            const searchInput = document.getElementById('font-search');
+            if (searchInput) searchInput.oninput = (e) => { currentSearch = e.target.value.toLowerCase(); updateGrid(); };
+            updateGrid();
+        }
+
+        function handleFilterClick(tag, btnElement) {
+            currentFilter = tag;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.className = "filter-btn shrink-0 px-5 py-2.5 rounded-full border border-gray-200 text-gray-500 text-xs font-bold transition-all hover:text-black dark:border-neutral-800 whitespace-nowrap";
+            });
+            btnElement.className = "filter-btn shrink-0 active-filter px-5 py-2.5 rounded-full border border-black bg-black text-white text-xs font-bold dark:border-white dark:bg-white dark:text-black whitespace-nowrap";
+            updateGrid();
+        }
+
+        function updateGrid() {
+            const listGrid = document.getElementById('font-list-grid');
+            const emptyState = document.getElementById('empty-state');
+            if (!listGrid) return;
+            let html = '';
+            let count = 0;
+
+            Object.keys(FONT_DATABASE).forEach(key => {
+                const item = FONT_DATABASE[key];
+                const matchesSearch = item.hero.title.toLowerCase().includes(currentSearch) || item.hero.enName.toLowerCase().includes(currentSearch);
+                const itemTags = Array.isArray(item.meta.tags) ? item.meta.tags : [item.meta.tags];
+                const matchesFilter = currentFilter === 'All' || itemTags.includes(currentFilter);
+
+                if (matchesSearch && matchesFilter) {
+                    count++;
+                    const cover = (item.gallery && item.gallery.length > 0) ? item.gallery[0] : item.hero.lightImg;
+                    html += `
+                    <a href="#${key}" class="group block bg-gray-50 dark:bg-neutral-900 rounded-[1.5rem] overflow-hidden border border-gray-100 dark:border-neutral-800 hover:shadow-xl transition-all duration-300">
+                        <div class="aspect-[4/3] overflow-hidden bg-gray-200 dark:bg-neutral-800">
+                            <img src="${cover}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105" loading="lazy">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-black text-black dark:text-white">${item.hero.title}</h3>
+                                <span class="px-2 py-0.5 rounded border border-gray-200 dark:border-neutral-700 text-[9px] font-bold uppercase tracking-widest text-gray-500">${itemTags[0]}</span>
+                            </div>
+                            <p class="text-xs text-gray-500 dark:text-neutral-400 line-clamp-2 leading-relaxed">${item.hero.description}</p>
+                        </div>
+                    </a>`;
+                }
+            });
+            listGrid.innerHTML = html;
+            emptyState.classList.toggle('hidden', count > 0);
+            listGrid.classList.toggle('hidden', count === 0);
+        }
+
+        function resetFilters() {
+            currentSearch = ''; currentFilter = 'All';
+            const input = document.getElementById('font-search'); if(input) input.value = '';
+            const btn = document.querySelector('.filter-btn[data-tag="All"]'); if(btn) handleFilterClick('All', btn);
+        }
+
+        // --- 3. PRODUCT VIEW LOGIC & IMAGE INTERACTION ---
+        let scale = 1, translateX = 0, translateY = 0, isDragging = false, startX, startY;
+
+        function renderProductView(id) {
+            const data = FONT_DATABASE[id];
+            document.title = data.meta.title;
+            document.getElementById('list-view').classList.add('hidden');
+            document.getElementById('product-view').classList.remove('hidden');
+
+            const itemTags = Array.isArray(data.meta.tags) ? data.meta.tags : [data.meta.tags];
+            safeText('f-tag', itemTags[0]);
+            safeText('f-badge', data.meta.badge);
+            safeHTML('f-title', data.hero.title);
+            safeText('f-enName', data.hero.enName);
+            safeText('f-desc', data.hero.description);
+
+            // 初始化图片
+            const imgEl = document.getElementById('p-image');
+            const zoomSlider = document.getElementById('zoom-slider');
+            const toggleBtn = document.getElementById('view-toggle-btn');
+            
+            if (imgEl) {
+                // 重置缩放状态
+                scale = 1; translateX = 0; translateY = 0;
+                imgEl.style.transform = `scale(1) translate(0, 0)`;
+                if(zoomSlider) zoomSlider.value = 1;
+
+                imgEl.src = document.documentElement.classList.contains('dark') ? data.hero.darkImg : data.hero.lightImg;
+                imgEl.setAttribute('data-light-src', data.hero.lightImg);
+                imgEl.setAttribute('data-dark-src', data.hero.darkImg);
+            }
+
+            // 绑定切换按钮
+            if (toggleBtn) {
+                toggleBtn.onclick = () => {
+                    const currentSrc = imgEl.getAttribute('src');
+                    const light = imgEl.getAttribute('data-light-src');
+                    const dark = imgEl.getAttribute('data-dark-src');
+                    imgEl.src = (currentSrc === light) ? dark : light;
+                };
+            }
+
+            // 绑定缩放滑动条
+            if (zoomSlider) {
+                zoomSlider.oninput = (e) => {
+                    scale = e.target.value;
+                    imgEl.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
+                };
+            }
+
+            // 绑定图片拖拽逻辑
+            const container = document.getElementById('image-viewer-container');
+            if(container && imgEl) {
+                container.onmousedown = (e) => {
+                    if(scale <= 1) return;
+                    isDragging = true;
+                    startX = e.clientX - translateX;
+                    startY = e.clientY - translateY;
+                };
+                window.onmousemove = (e) => {
+                    if(!isDragging) return;
+                    translateX = e.clientX - startX;
+                    translateY = e.clientY - startY;
+                    imgEl.style.transform = `scale(${scale}) translate(${translateX/scale}px, ${translateY/scale}px)`;
+                };
+                window.onmouseup = () => isDragging = false;
+            }
+
+            // 渲染数据网格...
+            const statsGrid = document.getElementById('f-stats-grid');
+            if (statsGrid && data.stats) {
+                statsGrid.innerHTML = data.stats.map(s => `
+                    <div class="flex flex-col gap-1.5 animate-fade-in">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-neutral-500">${s.label}</span>
+                        <span class="text-sm font-bold text-gray-900 dark:text-white">${s.value}</span>
+                    </div>`).join('');
+            }
+
+            const featuresGrid = document.getElementById('f-features-grid');
+            if (featuresGrid && data.features) {
+                featuresGrid.innerHTML = data.features.map(f => `
+                    <div class="group bg-gray-50 dark:bg-neutral-900/50 rounded-[2rem] p-8 lg:p-12 hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors">
+                        <div class="size-14 rounded-2xl bg-black dark:bg-white text-white dark:text-black flex items-center justify-center mb-8 shadow-sm group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${f.icon}"></path></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">${f.title}</h3>
+                        <p class="text-gray-500 dark:text-neutral-400 leading-relaxed">${f.desc}</p>
+                    </div>`).join('');
+            }
+
+            const galleryContainer = document.getElementById('f-gallery-container');
+            if (galleryContainer && data.gallery) {
+                galleryContainer.innerHTML = data.gallery.map((src, i) => `
+                    <div class="relative w-full ${i > 0 ? '-mt-px' : ''}">
+                        <img src="${src}" class="block w-full h-auto hover:scale-[1.01] transition-transform duration-700" loading="lazy">
+                    </div>`).join('');
+            }
+
+            safeText('dl-version', data.download.version);
+            safeText('dl-type', data.download.type);
+            safeText('dl-date', data.download.date);
+            const dlConfirm = document.getElementById('dl-confirm-btn');
+            if (dlConfirm) {
+                const clone = dlConfirm.cloneNode(true);
+                dlConfirm.replaceWith(clone);
+                clone.onclick = () => window.open(data.download.link, '_blank');
+            }
+            window.scrollTo(0, 0);
+        }
+
+        function safeText(id, txt) { const el = document.getElementById(id); if(el) el.textContent = txt || ''; }
+        function safeHTML(id, html) { const el = document.getElementById(id); if(el) el.innerHTML = html || ''; }
+
+        // --- 4. DOWNLOAD & VALIDATION ---
+        const VALID_CODES = ["ZIZAO2026", "TYPEISFREE", "VARIABLE", "HELLOFONT", "OPENTYPE", "DESIGNLAB", "ZIZAOVP", "STUDIO25", "NEWFONT", "FREEDOM"];
+        
+        function checkDownloadState() {
+            const input = document.getElementById('access-code'), chk = document.getElementById('eula-check'), btn = document.getElementById('dl-confirm-btn'), icon = document.getElementById('code-status-icon');
+            const val = input.value.trim().toUpperCase();
+            const isValid = VALID_CODES.includes(val);
+            input.classList.toggle('input-valid', isValid);
+            icon.classList.toggle('opacity-0', !isValid);
+            icon.classList.toggle('scale-100', isValid);
+            if (isValid && chk.checked) {
+                btn.disabled = false; btn.classList.remove('opacity-20', 'cursor-not-allowed');
+                if (btn.dataset.prev === "true") { btn.classList.add('animate-bounce'); setTimeout(() => btn.classList.remove('animate-bounce'), 500); }
+                btn.dataset.prev = "false";
+            } else {
+                btn.disabled = true; btn.classList.add('opacity-20', 'cursor-not-allowed'); btn.dataset.prev = "true";
+            }
+        }
+
+        window.openDownloadModal = () => document.getElementById('download-modal').classList.remove('hidden');
+        window.closeDownloadModal = () => {
+            document.getElementById('download-modal').classList.add('hidden');
+            setTimeout(() => {
+                const input = document.getElementById('access-code');
+                const chk = document.getElementById('eula-check');
+                if(input) input.value = '';
+                if(chk) chk.checked = false;
+                checkDownloadState();
+            }, 300);
+        };
+    </script>
+</body>
+</html>

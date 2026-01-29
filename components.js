@@ -225,32 +225,27 @@ const SHARED_FOOTER_HTML = `
 <div class="mx-auto max-w-[1800px] px-6 lg:px-12">
     <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-12 lg:gap-8">
         
-        <!-- 1. 左侧：社交媒体 -->
         <div class="max-w-xs shrink-0">
              <div class="mb-6">
                 <h2 class="text-lg font-black uppercase tracking-widest text-black dark:text-white">${SITE_CONFIG.footer.socialTitle}</h2>
              </div>
-             <!-- 图片填满容器：object-cover + rounded-xl + overflow-hidden -->
              <div class="flex flex-wrap gap-3">
                 ${SITE_CONFIG.footer.socials.map(s => `
                     <a href="${s.link}" target="_blank" class="group block size-10 overflow-hidden rounded-xl bg-gray-100 dark:bg-neutral-900 hover:scale-105 transition-transform duration-300">
-                        <img src="${s.icon}" class="size-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300" alt="${s.name}">
+                        <img src="${s.icon}" class="size-full object-cover transition-all duration-300" alt="${s.name}">
                     </a>
                 `).join('')}
              </div>
         </div>
 
-        <!-- 2. 右侧：二维码卡片 -->
         <div class="shrink-0">
              ${renderFooterQRs()}
         </div>
 
     </div>
 
-    <!-- 底部版权栏：双侧双行平衡布局 -->
     <div class="mt-20 border-t border-gray-100 pt-8 dark:border-neutral-900 flex flex-col md:flex-row md:items-end justify-between gap-8">
         
-        <!-- 左侧：版权 + ICP -->
         <div class="flex flex-col gap-2">
             <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400">${SITE_CONFIG.footer.copyright}</p>
             <a href="${SITE_CONFIG.footer.icp.path}" target="_blank" class="text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-black dark:hover:text-white transition-colors w-fit">
@@ -258,7 +253,6 @@ const SHARED_FOOTER_HTML = `
             </a>
         </div>
 
-        <!-- 右侧：推荐链接标题 + 链接 -->
         <div class="flex flex-col gap-2 md:items-end">
             <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400">${SITE_CONFIG.footer.recommendTitle}</p>
             <div class="flex gap-6 text-[10px] font-bold uppercase tracking-widest text-gray-400">
