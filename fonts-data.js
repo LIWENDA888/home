@@ -91,7 +91,7 @@ const FONT_DATABASE = {
             }
         ],
         gallery: [
-            "https://images.unsplash.com/photo-1620317377821-6f68744155fb?q=80&w=2574&auto=format&fit=crop"
+            "https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/zTEv/6803X1701/123-02.jpg/webp"
         ],
         download: {
             version: "1.0 Demo",
