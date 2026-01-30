@@ -118,10 +118,8 @@ function highlightCurrentPage() {
         
         if (path === '/' || path.endsWith('/index.html') || path.endsWith('/')) {
             page = 'home';
-        } else if (path.includes('fonts/') || path.includes('zhisans') || path.includes('zizaikeserif')) {
-            page = 'products'; 
-        } else if (path.includes('tools')) {
-            page = 'tools';
+        } else if (path.includes('fonts')) {
+            page = 'fonts';
         } else if (path.includes('licensing')) {
             page = 'licensing';
         } else if (path.includes('docs')) {
