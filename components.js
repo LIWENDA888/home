@@ -11,7 +11,7 @@ const SITE_CONFIG = {
     },
 
     menu: [
-        { type: 'link', name: '字库产品', path: 'https://www.zizao.top/fonts', id: 'fonts' },
+        { type: 'link', name: '字体产品', path: 'https://www.zizao.top/fonts', id: 'fonts' },
         { type: 'link', name: '授权定制', path: 'https://www.zizao.top/licensing', id: 'licensing' },
         { type: 'link', name: '帮助中心', path: 'https://www.zizao.top/docs', id: 'docs' },
         {
