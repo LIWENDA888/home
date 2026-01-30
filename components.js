@@ -11,26 +11,18 @@ const SITE_CONFIG = {
     },
 
     menu: [
-        {
-            type: 'dropdown', 
-            name: '字体产品', 
-            layout: 'grid', // ✨ 关键修改：标记为网格/双列布局
-            items: [
-                { title: '自在致黑', path: 'https://www.zizao.top/fonts/?zhisans', tag: '免费商用', desc: '双轴可变微变形黑体' },
-                { title: '查看所有字体', path: 'https://www.zizao.top/fonts/', tag: 'ALL', desc: '自在全部字体产品列表' }, 
-            ]
-        },
+        { type: 'link', name: '字库产品', path: 'https://www.zizao.top/fonts', id: 'fonts' },
+        { type: 'link', name: '授权定制', path: 'https://www.zizao.top/licensing', id: 'licensing' },
+        { type: 'link', name: '帮助中心', path: 'https://www.zizao.top/docs', id: 'docs' },
         {
             type: 'dropdown', 
             name: '设计工具', 
-            // 没有 layout 属性，默认为竖向单列布局
+             //   layout: 'grid',    默认为竖布局，加这行横向布局
             items: [
                 { title: '设计导航', path: 'https://hao.zizao.top', tag: 'hao', desc: '设计师的灵感百宝库' },
                 { title: '字符工具', path: 'https://tools.zizao.top', tag: 'Tools', desc: 'web端多文本编辑器' }, 
             ]
-        },
-        { type: 'link', name: '授权定制', path: 'https://www.zizao.top/licensing', id: 'licensing' },
-        { type: 'link', name: '帮助中心', path: 'https://www.zizao.top/docs', id: 'docs' }
+        }
     ],
 
     footer: {
