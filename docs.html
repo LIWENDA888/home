@@ -12,16 +12,13 @@
         theme: {
           extend: {
             fontFamily: { sans: ['Inter', 'sans-serif'] },
-            colors: {
-                gray: { 850: '#1f2937' }
-            },
             animation: {
-                'bounce-sm': 'bounceSmall 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+                'fade-in': 'fadeIn 0.5s ease-out forwards',
             },
             keyframes: {
-                bounceSmall: {
-                    '0%, 100%': { transform: 'scale(1)' },
-                    '50%': { transform: 'scale(0.95)' },
+                fadeIn: {
+                    '0%': { opacity: '0', transform: 'translateY(10px)' },
+                    '100%': { opacity: '1', transform: 'translateY(0)' }
                 }
             }
           },
@@ -31,367 +28,280 @@
     <style>
         /* 文档基础排版 */
         .doc-content h2 { 
-            font-size: 1.75rem; 
-            letter-spacing: -0.02em; 
-            font-weight: 700; 
-            margin-top: 3.5rem; 
-            margin-bottom: 1.5rem; 
-            color: #111827; 
-            scroll-margin-top: 120px; 
+            font-size: 2.25rem; 
+            letter-spacing: -0.05em; 
+            font-weight: 900; 
+            margin-top: 0; 
+            margin-bottom: 2.5rem; 
+            color: #000; 
+            scroll-margin-top: 140px; 
+            line-height: 1;
         }
+        /* 后续章节的间距 */
+        .doc-content article:not(:first-child) h2 { margin-top: 6rem; }
         .dark .doc-content h2 { color: #fff; }
         
         .doc-content h3 { 
-            font-size: 1.25rem; 
-            font-weight: 600; 
-            margin-top: 2.5rem; 
-            margin-bottom: 1rem; 
-            color: #111827; 
-            scroll-margin-top: 120px;
+            font-size: 1.5rem; 
+            font-weight: 800; 
+            margin-top: 3.5rem; 
+            margin-bottom: 1.25rem; 
+            color: #111; 
+            letter-spacing: -0.02em;
         }
         .dark .doc-content h3 { color: #fff; }
         
-        .doc-content p { 
-            margin-bottom: 1.5rem; 
-            line-height: 1.8; 
+        .doc-content p, .doc-content li { 
+            max-width: 75ch; 
+            line-height: 1.85; 
             color: #4b5563; 
-            font-size: 1rem;
+            font-size: 1.05rem;
+            margin-bottom: 1.5rem;
         }
-        .dark .doc-content p { color: #a3a3a3; }
+        .dark .doc-content p, .dark .doc-content li { color: #a3a3a3; }
         
-        .doc-content ul { 
-            list-style-type: disc; 
-            padding-left: 1.25rem; 
-            margin-bottom: 1.5rem; 
-            color: #4b5563; 
-            line-height: 1.75;
+        /* 左侧导航项：选中态样式 */
+        .docs-nav-btn {
+            position: relative;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .dark .doc-content ul { color: #a3a3a3; }
-        
-        .doc-content li { margin-bottom: 0.5rem; }
-
-        /* Callout 样式 */
-        .callout { padding: 1.25rem; border-radius: 0.75rem; margin: 2rem 0; display: flex; gap: 1rem; align-items: flex-start; border: 1px solid transparent; }
-        .callout-info { background: #F3F4F6; color: #1F2937; }
-        .dark .callout-info { background: #171717; border-color: #262626; color: #E5E5E5; }
-        .callout-warning { background: #FFFBEB; border-color: #FEF3C7; color: #92400E; }
-        .dark .callout-warning { background: #2C1A05; border-color: #451A03; color: #FCD34D; }
-
-        /* 左侧导航激活状态 */
-        .nav-btn-active { background-color: #F3F4F6; color: #000; font-weight: 600; }
-        .dark .nav-btn-active { background-color: #171717; color: #fff; }
-        .nav-btn-active::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; border-radius: 0 4px 4px 0; background-color: #000; }
+        /* 选中态：浅灰背景 + 左侧边线 */
+        .nav-btn-active { 
+            background-color: #f3f4f6; 
+            color: #000 !important; 
+            font-weight: 700;
+        }
+        .dark .nav-btn-active { 
+            background-color: #111; 
+            color: #fff !important; 
+        }
+        .nav-btn-active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 25%;
+            height: 50%;
+            width: 3px;
+            background-color: #000;
+            border-radius: 0 4px 4px 0;
+        }
         .dark .nav-btn-active::before { background-color: #fff; }
 
-        /* 反馈按钮激活样式 */
-        .feedback-active {
-            background-color: #000 !important;
-            color: #fff !important;
-            border-color: transparent;
+        .docs-nav-btn:hover:not(.nav-btn-active) {
+            background-color: #f9fafb;
+            color: #000;
         }
-        .dark .feedback-active {
-            background-color: #fff !important;
-            color: #000 !important;
+        .dark .docs-nav-btn:hover:not(.nav-btn-active) { 
+            background-color: #0a0a0a;
+            color: #fff; 
         }
+
+        /* Callout */
+        .callout { width: 100%; padding: 1.75rem; border-radius: 1.25rem; margin: 2.5rem 0; display: flex; gap: 1.25rem; align-items: flex-start; border: 1px solid transparent; }
+        .callout-info { background: #f9fafb; border-color: #f3f4f6; color: #1F2937; }
+        .dark .callout-info { background: #0a0a0a; border-color: #1a1a1a; color: #E5E5E5; }
+        .callout-warning { background: #FFFBEB; border-color: #FEF3C7; color: #92400E; }
+        .dark .callout-warning { background: #1a1608; border-color: #3b2a0a; color: #FCD34D; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="bg-white text-gray-900 dark:bg-neutral-950 dark:text-gray-100 flex flex-col min-h-screen antialiased selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
     
     <nav id="nav-placeholder" class="fixed inset-x-0 top-0 z-50 border-b border-gray-100 bg-white/80 backdrop-blur-md dark:border-neutral-900 dark:bg-neutral-950/80"></nav>
 
-    <main class="mx-auto w-full max-w-[1440px] px-6 lg:px-12 pt-28 pb-20 flex-1">
+    <!-- 主容器：严格对齐 1800px 全局宽度 -->
+    <main class="mx-auto w-full max-w-[1800px] px-6 lg:px-12 pt-32 pb-20 flex-1">
         
-        <header class="mb-12 lg:mb-16 border-b border-gray-100 dark:border-neutral-800 pb-8">
-            <h1 class="text-4xl md:text-5xl font-black tracking-tighter mb-4">帮助中心</h1>
-            <p class="text-lg text-gray-500 dark:text-neutral-400 max-w-2xl">
-                自在造字官方文档库。从设计理念到授权细节，我们为您提供全方位的支持。
-            </p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-12 lg:gap-20">
+        <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-12 lg:gap-32 items-start">
             
-            <aside class="hidden lg:block sticky top-32 h-[calc(100vh-140px)] overflow-y-auto no-scrollbar pb-10 self-start">
-                <nav class="space-y-8">
-                    <!-- 新增：工作室 -->
+            <!-- 左侧描边容器：固定在顶部 -->
+            <aside class="hidden lg:block sticky top-32 border border-gray-100 dark:border-neutral-900 rounded-[2.5rem] p-8 h-[calc(100vh-160px)] overflow-y-auto no-scrollbar">
+                <nav class="space-y-12">
                     <div>
-                        <h4 class="mb-3 px-3 text-[11px] font-bold uppercase tracking-widest text-gray-400 dark:text-neutral-500">Studio 工作室</h4>
-                        <div class="space-y-1">
-                            <button class="docs-nav-btn group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-white" data-target="about">
-                                <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                关于我们
-                            </button>
+                        <h4 class="mb-5 px-4 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-neutral-600">Studio 工作室</h4>
+                        <div class="space-y-0.5">
+                            <button class="docs-nav-btn flex w-full items-center rounded-xl px-4 py-2.5 text-[14px] font-bold text-gray-400 dark:text-neutral-500" data-target="about">关于我们</button>
                         </div>
                     </div>
 
-                    <!-- 法律 -->
                     <div>
-                        <h4 class="mb-3 px-3 text-[11px] font-bold uppercase tracking-widest text-gray-400 dark:text-neutral-500">Legal 法律与声明</h4>
-                        <div class="space-y-1">
-                            <button class="docs-nav-btn group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-white" data-target="copyright">
-                                <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                                版权归属
-                            </button>
-                            <button class="docs-nav-btn group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-white" data-target="licensing">
-                                <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                                授权指南
-                            </button>
-                            <button class="docs-nav-btn group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-white" data-target="terms">
-                                <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                使用条款 (EULA)
-                            </button>
+                        <h4 class="mb-5 px-4 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-neutral-600">Legal 法律声明</h4>
+                        <div class="space-y-0.5">
+                            <button class="docs-nav-btn flex w-full items-center rounded-xl px-4 py-2.5 text-[14px] font-bold text-gray-400 dark:text-neutral-500" data-target="copyright">版权归属</button>
+                            <button class="docs-nav-btn flex w-full items-center rounded-xl px-4 py-2.5 text-[14px] font-bold text-gray-400 dark:text-neutral-500" data-target="licensing">授权指南</button>
+                            <button class="docs-nav-btn flex w-full items-center rounded-xl px-4 py-2.5 text-[14px] font-bold text-gray-400 dark:text-neutral-500" data-target="terms">使用条款 (EULA)</button>
                         </div>
                     </div>
-                    
-                    <!-- 支持 -->
+
                     <div>
-                        <h4 class="mb-3 px-3 text-[11px] font-bold uppercase tracking-widest text-gray-400 dark:text-neutral-500">Support 客服与支持</h4>
-                        <div class="space-y-1">
-                             <button class="docs-nav-btn group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-white" data-target="faq">
-                                <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                常见问题 (FAQ)
-                            </button>
-                            <button class="docs-nav-btn group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-white" data-target="contact">
-                                <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                                联系我们
-                            </button>
+                        <h4 class="mb-5 px-4 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-neutral-600">Support 技术支持</h4>
+                        <div class="space-y-0.5">
+                            <button class="docs-nav-btn flex w-full items-center rounded-xl px-4 py-2.5 text-[14px] font-bold text-gray-400 dark:text-neutral-500" data-target="faq">常见问题 (FAQ)</button>
+                            <button class="docs-nav-btn flex w-full items-center rounded-xl px-4 py-2.5 text-[14px] font-bold text-gray-400 dark:text-neutral-500" data-target="contact">联系我们</button>
                         </div>
                     </div>
                 </nav>
             </aside>
 
-            <div id="docs-content" class="min-w-0 max-w-3xl lg:pt-1">
+            <!-- 右侧正文：通透布局，无外边框 -->
+            <div id="docs-content" class="w-full">
                 
-                <!-- 新增：关于我们板块 -->
-                <article id="about" class="docs-section doc-content hidden transition-opacity duration-300">
-                    <div class="mb-8 flex items-center gap-3 text-xs font-mono text-gray-400 uppercase tracking-widest">
-                        <span>Zao Studio</span>
-                        <span class="w-1 h-1 rounded-full bg-gray-300 dark:bg-neutral-700"></span>
-                        <span>Philosophy</span>
-                    </div>
-                    
-                    <h1 class="text-3xl lg:text-4xl font-black text-gray-900 dark:text-white mb-8">关于自在造字</h1>
-                    
-                    <p class="lead text-xl text-gray-600 dark:text-neutral-400 mb-10">
-                        自在造字 (Zizao Studio) 是一家专注中文可变字体技术的独立设计工作室。我们探索汉字在数字时代的全新表达，认为“可变，才自在”。
-                    </p>
+                <!-- 关于我们 -->
+                <article id="about" class="docs-section doc-content hidden animate-fade-in">
+                    <h2 class="tracking-tighter">关于自在造字</h2>
+                    <p class="text-2xl font-medium text-gray-600 dark:text-neutral-300 mb-12 leading-tight">自在造字 (Zizao Type Studio) 致力于探索汉字在可变字体 (Variable Font) 技术下的无限可能。我们认为设计应摆脱重叠参数的束缚，“可变，才自在”。</p>
 
                     <div class="callout callout-info">
-                        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <svg class="w-6 h-6 flex-shrink-0 mt-0.5 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         <div class="text-sm leading-relaxed">
-                            <strong>视觉算法：</strong> 在 ZizaoType，字体被视为精密的视觉算法。每一个锚点的坐标、每一条贝塞尔曲线的张力，都经过数学逻辑的推演。我们构建的是一套可生长的系统，而不仅仅是静态的字形。
+                            <strong class="text-black dark:text-white">算法驱动的字形设计：</strong> 我们将字体视为精密的几何算法。在自在造字，每一个锚点的移动、每一条曲线的弹性，都通过严格的网格逻辑进行推演。我们构建的不止是静态的字形，而是一套可实时生长的视觉系统。
                         </div>
                     </div>
 
-                    <h2>设计哲学</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-                        <div class="p-6 rounded-xl border border-gray-100 dark:border-neutral-800 bg-gray-50 dark:bg-neutral-900">
-                             <div class="mb-4 text-gray-400 dark:text-neutral-600">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                             </div>
-                            <h4 class="font-bold text-gray-900 dark:text-white mb-2 mt-0 text-base">Geometric 几何构建</h4>
-                            <p class="text-sm text-gray-500 dark:text-neutral-400 mb-0 leading-relaxed">建立严格的网格系统，摒弃随意的感性线条，为字形确立强健的骨架。</p>
+                    <h3>设计哲学</h3>
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 my-10">
+                        <div class="p-10 rounded-[2.5rem] border border-gray-100 dark:border-neutral-900 bg-gray-50/50 dark:bg-neutral-900/30">
+                            <h4 class="font-black text-xl mb-4 italic">Geometric 几何构建</h4>
+                            <p class="text-sm text-gray-500 dark:text-neutral-400 mb-0">通过数学化的网格体系确立字形骨架，确保在任何极值下字形比例的稳定性。</p>
                         </div>
-                        <div class="p-6 rounded-xl border border-gray-100 dark:border-neutral-800 bg-gray-50 dark:bg-neutral-900">
-                             <div class="mb-4 text-gray-400 dark:text-neutral-600">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                             </div>
-                            <h4 class="font-bold text-gray-900 dark:text-white mb-2 mt-0 text-base">Interpolation 动态插值</h4>
-                            <p class="text-sm text-gray-500 dark:text-neutral-400 mb-0 leading-relaxed">设定极值母版，通过算法生成平滑的字重过渡，适应任何屏幕尺寸。</p>
+                        <div class="p-10 rounded-[2.5rem] border border-gray-100 dark:border-neutral-900 bg-gray-50/50 dark:bg-neutral-900/30">
+                            <h4 class="font-black text-xl mb-4 italic">Interpolation 动态插值</h4>
+                            <p class="text-sm text-gray-500 dark:text-neutral-400 mb-0">利用最前沿的插值技术，实现多轴向（字重、字宽、倾斜）的无缝切换。</p>
                         </div>
                     </div>
 
-                    <h2>核心业务</h2>
-                    <ul class="list-none pl-0 space-y-8 mt-6">
-                        <li class="relative pl-0">
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mt-0 mb-2">1. Retail Fonts 商业字库</h3>
-                            <p class="text-gray-600 dark:text-neutral-400">提供高质量的零售字体产品。支持 Desktop、Web、App 等多场景授权。我们的字体均经过屏幕显示优化 (Hinting)，确保在数字媒介上的完美呈现。</p>
-                        </li>
-                        <li class="relative pl-0">
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mt-0 mb-2">2. Bespoke 品牌定制</h3>
-                            <p class="text-gray-600 dark:text-neutral-400">为企业量身打造品牌专用字体。从 Logotype 标识微调到整套中西文字库开发，我们帮助品牌构建独一无二的声音。</p>
-                        </li>
-                        <li class="relative pl-0">
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mt-0 mb-2">3. Matchmaking 全球匹配</h3>
-                            <p class="text-gray-600 dark:text-neutral-400">多语言字符集匹配服务。确保您的品牌在中、日、韩及西文环境下保持一致的视觉风格与灰度。</p>
-                        </li>
-                    </ul>
+                    <h3>核心业务</h3>
+                    <div class="space-y-12 mt-8">
+                        <div>
+                            <h4 class="font-black text-lg mb-3">01. Retail Fonts 商业字库</h4>
+                            <p>提供高质量的零售字体产品。支持 Desktop、Web、App 等多场景授权。我们的字体均经过屏幕显示优化 (Hinting)，确保在数字媒介上的完美呈现。</p>
+                        </div>
+                        <div>
+                            <h4 class="font-black text-lg mb-3">02. Bespoke 品牌定制</h4>
+                            <p>为前瞻性企业量身打造品牌专用字库。从独家字符集开发到品牌 Logo 字体化微调，通过字体传递品牌独特的视觉基因。</p>
+                        </div>
+                    </div>
                 </article>
 
-                <article id="copyright" class="docs-section doc-content transition-opacity duration-300">
-                    <div class="mb-8 flex items-center gap-3 text-xs font-mono text-gray-400 uppercase tracking-widest">
-                        <span>Last Updated: Dec 16, 2025</span>
-                        <span class="w-1 h-1 rounded-full bg-gray-300 dark:bg-neutral-700"></span>
-                        <span>1 min read</span>
-                    </div>
-                    
-                    <h1 class="text-3xl lg:text-4xl font-black text-gray-900 dark:text-white mb-8">版权归属</h1>
-                    
-                    <p class="lead text-xl text-gray-600 dark:text-neutral-400 mb-10">自在造字（ZizaoType Studio）所发布的所有字体软件及其相关设计，版权均归自在造字所有。这些字体受中国及国际版权法保护。</p>
+                <!-- 版权归属 -->
+                <article id="copyright" class="docs-section doc-content hidden animate-fade-in">
+                    <h2 class="tracking-tighter">版权归属</h2>
+                    <p class="text-xl mb-12">自在造字 (Zizao Type Studio) 是其所发布所有字体软件及相关创意设计的唯一合法版权所有者。</p>
                     
                     <div class="callout callout-warning">
-                        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <svg class="w-6 h-6 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                         <div class="text-sm leading-relaxed">
-                            <strong>严禁反编译：</strong> 未经明确书面许可，任何个人或机构不得对字体软件进行反编译、修改、重命名、再发布或用于开发衍生产品（如生成式AI训练）。
+                            <strong class="text-black dark:text-white">法律声明：</strong> 未经明确书面许可，严禁对本工作室字体软件进行反编译、修改、重命名、拆分或用于生成式人工智能 (GenAI) 模型训练。
                         </div>
                     </div>
 
-                    <h2>原创性声明</h2>
-                    <p>我们保证所有发布的字体均为原创设计，不存在抄袭或侵权行为。所有字体在发布前均经过严格的合规性审查。</p>
-                    <ul class="list-disc">
-                        <li><strong>独立设计：</strong> 不基于开源字体修改，每一个锚点都由设计师亲自绘制。</li>
-                        <li><strong>权利保留：</strong> 未在授权协议中明确授予的权利，均由自在造字保留。</li>
-                    </ul>
+                    <h3>原创性与合规</h3>
+                    <p>我们郑重声明：自在造字所有作品均为 100% 独立原创。每一个笔画、每一个字符集均由本工作室设计师亲自手绘，不基于任何开源或其他版权字体进行修改。</p>
                 </article>
 
-                <article id="licensing" class="docs-section doc-content hidden transition-opacity duration-300">
-                    <div class="mb-8 flex items-center gap-3 text-xs font-mono text-gray-400 uppercase tracking-widest">
-                        <span>Last Updated: Dec 16, 2025</span>
-                        <span class="w-1 h-1 rounded-full bg-gray-300 dark:bg-neutral-700"></span>
-                        <span>3 min read</span>
+                <!-- 授权指南 -->
+                <article id="licensing" class="docs-section doc-content hidden animate-fade-in">
+                    <h2 class="tracking-tighter">授权指南</h2>
+                    <p class="text-xl mb-12">我们提供极简、透明且极具竞争力的授权模式。一次性购买，永久使用。</p>
+
+                    <div class="callout callout-info text-sm">
+                        <strong class="text-black dark:text-white">学生特权：</strong> 在校学生用于个人作品集展示、非商业性质的作业练习，可直接使用“个人非商用”授权，无需购买。
                     </div>
 
-                    <h1 class="text-3xl lg:text-4xl font-black text-gray-900 dark:text-white mb-8">授权指南</h1>
-                    <p class="lead text-xl text-gray-600 dark:text-neutral-400 mb-10">简单、透明的授权模式。我们致力于降低正版字体的使用门槛。</p>
+                    <h3>1. 个人非商用 (Personal)</h3>
+                    <p>仅供个人学习、研究或欣赏使用。不得用于任何商业盈利项目、商业广告或作为产品的一部分分发。</p>
 
-                    <div class="callout callout-info">
-                        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <div class="text-sm leading-relaxed">
-                            <strong>学生特权：</strong> 在校学生用于个人作业、作品集展示（非商业接单），可直接使用“个人非商用”授权，无需购买。
-                        </div>
-                    </div>
-
-                    <h2>1. 个人非商用 (Personal)</h2>
-                    <p>仅供个人学习、研究或欣赏使用。不得用于任何商业盈利项目（如淘宝店设计、公司Logo）、商业广告或作为产品的一部分分发。</p>
-
-                    <h2>2. 标准商业授权 (Standard Desktop)</h2>
-                    <p>适用于大多数中小型企业和个人设计师。一次性购买，永久使用。这是最受欢迎的授权类型。</p>
-                    <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-neutral-800 my-6">
-                        <table class="w-full text-left text-sm text-gray-500 dark:text-neutral-400">
-                            <thead class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-neutral-900 dark:text-neutral-300">
+                    <h3>2. 标准商业授权 (Standard Desktop)</h3>
+                    <div class="overflow-hidden rounded-3xl border border-gray-100 dark:border-neutral-900 my-10">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-gray-50 dark:bg-neutral-900 text-[11px] uppercase font-black text-gray-400 tracking-widest">
                                 <tr>
-                                    <th scope="col" class="px-6 py-4 font-bold">允许场景</th>
-                                    <th scope="col" class="px-6 py-4 font-bold">禁止场景</th>
+                                    <th class="px-8 py-6">被许可行为</th>
+                                    <th class="px-8 py-6">禁止行为</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200 dark:divide-neutral-800 bg-white dark:bg-neutral-950">
+                            <tbody class="divide-y divide-gray-100 dark:divide-neutral-900">
                                 <tr>
-                                    <td class="px-6 py-4">品牌标识 (Logo)</td>
-                                    <td class="px-6 py-4">App / 游戏嵌入 (需企业版)</td>
+                                    <td class="px-8 py-6 text-[15px] font-medium italic">品牌 Logo 设计、VI 手册绘制</td>
+                                    <td class="px-8 py-6 text-[15px] text-gray-400 italic">作为 App/游戏 核心内嵌字体</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4">平面印刷品 (名片/画册)</td>
-                                    <td class="px-6 py-4">电视/电影/综艺 (需企业版)</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4">新媒体/电商/网站图片</td>
-                                    <td class="px-6 py-4">转售字体文件</td>
+                                    <td class="px-8 py-6 text-[15px] font-medium italic">自媒体广告、电商海报、产品包装</td>
+                                    <td class="px-8 py-6 text-[15px] text-gray-400 italic">在网页中动态部署 Webfont</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-
-                    <h2>3. 企业全媒体授权 (Enterprise)</h2>
-                    <p>适用于大型企业或需要全方位用字保障的客户。包含影视广播版权、户外广告大屏投放及 App/Web 嵌入权限。不限使用地域，不限曝光量。</p>
                 </article>
 
-                <article id="terms" class="docs-section doc-content hidden transition-opacity duration-300">
-                    <div class="mb-8 flex items-center gap-3 text-xs font-mono text-gray-400 uppercase tracking-widest">
-                        <span>Last Updated: Dec 16, 2025</span>
-                    </div>
+                <!-- 使用条款 -->
+                <article id="terms" class="docs-section doc-content hidden animate-fade-in">
+                    <h2 class="tracking-tighter">使用条款 (EULA)</h2>
+                    <p class="text-xl mb-12">在安装自在造字字体前，请完整阅读本最终用户许可协议摘要。</p>
 
-                    <h1 class="text-3xl lg:text-4xl font-black text-gray-900 dark:text-white mb-8">使用条款 (EULA)</h1>
-                    <p class="lead text-xl text-gray-600 dark:text-neutral-400 mb-10">在下载或购买字体前，请仔细阅读以下协议摘要。</p>
+                    <h3>数据安全义务</h3>
+                    <p>授权用户有义务妥善保管字体软件（.ttf / .otf / .woff2）。若因保管不善导致源文件泄露并造成侵权，用户需承担相应的连带赔偿责任。</p>
 
-                    <h2>字体文件的安全性</h2>
-                    <p>您应采取合理的措施保护字体文件，防止其被未经授权的第三方获取。例如，您不得将字体源文件上传至 GitHub 公开仓库或其他云端公共存储空间。</p>
-
-                    <h2>禁止转售</h2>
-                    <p>您不得将字体文件作为独立产品进行销售、出租或分发。您也不能将字体文件修改名称后重新发布。</p>
-
-                    <h2>修改限制</h2>
-                    <p>您可以将字体转曲（Outline）后进行图形化编辑以用于 Logo 设计，但不得修改字体源文件（如 .otf/.ttf）本身的数据结构。</p>
+                    <h3>修改限制</h3>
+                    <p>允许将字体转换为轮廓路径（Outline）后进行二创或 Logo 设计。但不得修改字体源文件本身的数据结构。</p>
                 </article>
 
-                <article id="faq" class="docs-section doc-content hidden transition-opacity duration-300">
-                    <div class="mb-8 flex items-center gap-3 text-xs font-mono text-gray-400 uppercase tracking-widest">
-                        <span>Updated Daily</span>
-                    </div>
-
-                    <h1 class="text-3xl lg:text-4xl font-black text-gray-900 dark:text-white mb-8">常见问题 (FAQ)</h1>
-                    <p class="lead text-xl text-gray-600 dark:text-neutral-400 mb-10">这里整理了用户最关心的几个问题。</p>
-
-                    <div class="space-y-12">
-                        <div>
-                            <h3 class="text-lg font-bold text-black dark:text-white mb-2 mt-0">Q: 购买的字体可以用于注册商标吗？</h3>
-                            <p class="text-gray-600 dark:text-neutral-400 leading-relaxed mb-0">A: 可以。购买标准商业授权及以上版本后，您可以使用该字体设计Logo并进行商标注册。但请注意，您注册的是Logo图形，而非字体本身。</p>
+                <!-- 常见问题 -->
+                <article id="faq" class="docs-section doc-content hidden animate-fade-in">
+                    <h2 class="tracking-tighter">常见问题 (FAQ)</h2>
+                    <div class="space-y-12 mt-10">
+                        <div class="group">
+                            <h4 class="font-black text-xl mb-3">Q: 购买授权后可以为多个客户做设计吗？</h4>
+                            <p class="text-gray-500 dark:text-neutral-400 text-lg leading-relaxed">A: 授权属于设计师本人/公司。您可以为无限量的客户提供设计作品，但如果客户需要直接使用字体文件进行再创作，则客户需要单独购买授权。</p>
                         </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-black dark:text-white mb-2 mt-0">Q: 字体可以在多台电脑上安装吗？</h3>
-                            <p class="text-gray-600 dark:text-neutral-400 leading-relaxed mb-0">A: 标准授权通常允许在同一家公司内部的最多 5 台设备上安装。如果需要在更多设备上使用，请联系我们购买扩展授权。</p>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-black dark:text-white mb-2 mt-0">Q: 如果我是帮客户做设计，谁需要购买字体？</h3>
-                            <p class="text-gray-600 dark:text-neutral-400 leading-relaxed mb-0">A: 原则上，授权归属于“最终发布者”。如果是客户发布使用该字体的物料，建议由客户购买授权。如果是您作为设计师交付源文件，您和客户双方都需要持有合法的字体文件授权。</p>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-black dark:text-white mb-2 mt-0">Q: 提供发票吗？</h3>
-                            <p class="text-gray-600 dark:text-neutral-400 leading-relaxed mb-0">A: 是的。通过官方淘宝店或对公转账购买的授权，我们均可提供正规增值税电子发票。</p>
+                        <div class="group">
+                            <h4 class="font-black text-xl mb-3">Q: 可以在多台电脑上同时安装吗？</h4>
+                            <p class="text-gray-500 dark:text-neutral-400 text-lg leading-relaxed">A: 标准商业授权允许在同一家公司内部的最多 5 台物理设备上安装。</p>
                         </div>
                     </div>
                 </article>
 
-                <article id="contact" class="docs-section doc-content hidden transition-opacity duration-300">
-                    <div class="mb-8 flex items-center gap-3 text-xs font-mono text-gray-400 uppercase tracking-widest">
-                        <span>Get in touch</span>
-                    </div>
-                    
-                    <h1 class="text-3xl lg:text-4xl font-black text-gray-900 dark:text-white mb-8">联系我们</h1>
-                    <p class="lead text-xl text-gray-600 dark:text-neutral-400 mb-10">无论是技术支持、商务合作，还是仅仅想聊聊字体设计，我们都期待您的来信。</p>
+                <!-- 联系我们 -->
+                <article id="contact" class="docs-section doc-content hidden animate-fade-in">
+                    <h2 class="tracking-tighter">联系我们</h2>
+                    <p class="text-xl mb-12">无论是商务洽谈、全案定制咨询还是技术报错，我们将为您提供快速响应。</p>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-                        <div class="group p-8 rounded-2xl bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 transition-colors hover:border-black dark:hover:border-white">
-                            <h3 class="text-lg font-bold mb-2 mt-0">技术支持</h3>
-                            <p class="text-sm text-gray-500 dark:text-neutral-400 mb-6 leading-relaxed">字体安装、软件兼容性、Webfont 部署、授权范围咨询。</p>
-                            <a href="mailto:support@zizao.top" class="inline-block text-xl font-bold border-b-2 border-black dark:border-white hover:opacity-60 transition-opacity">support@zizao.top</a>
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                        <div class="group p-12 rounded-[3rem] bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 transition-all hover:border-black dark:hover:border-white">
+                            <h4 class="font-black text-xl mb-2">商务与定制咨询</h4>
+                            <p class="text-[11px] text-gray-400 mb-8 uppercase tracking-widest font-bold">Business & Customization</p>
+                            <a href="mailto:business@zizaotop.com" class="text-2xl font-black border-b-2 border-black dark:border-white tracking-tight">business@zizaotop.com</a>
                         </div>
-                        <div class="group p-8 rounded-2xl bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 transition-colors hover:border-black dark:hover:border-white">
-                            <h3 class="text-lg font-bold mb-2 mt-0">商务合作</h3>
-                            <p class="text-sm text-gray-500 dark:text-neutral-400 mb-6 leading-relaxed">企业全案定制、品牌联名、大宗商业授权采购。</p>
-                            <a href="mailto:business@zizaotop.com" class="inline-block text-xl font-bold border-b-2 border-black dark:border-white hover:opacity-60 transition-opacity">business@zizaotop.com</a>
+                        <div class="group p-12 rounded-[3rem] bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 transition-all hover:border-black dark:hover:border-white">
+                            <h4 class="font-black text-xl mb-2">技术支持</h4>
+                            <p class="text-[11px] text-gray-400 mb-8 uppercase tracking-widest font-bold">Tech Support & Engineering</p>
+                            <a href="mailto:support@zizao.top" class="text-2xl font-black border-b-2 border-black dark:border-white tracking-tight">support@zizao.top</a>
                         </div>
                     </div>
 
-                    <h2 class="text-2xl font-bold mb-8 mt-0">社交媒体 & 客服</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="flex flex-col items-center justify-center p-8 rounded-2xl border border-gray-200 dark:border-neutral-800 hover:shadow-xl transition-all duration-300 bg-white dark:bg-neutral-950 group">
-                            <div class="w-32 h-32 mb-6 p-2 bg-white rounded-xl border border-gray-100 dark:border-neutral-800 shadow-sm group-hover:scale-105 transition-transform">
+                    <div class="mt-20 grid grid-cols-1 sm:grid-cols-2 gap-10">
+                        <div class="flex items-center gap-8 p-8 rounded-3xl border border-gray-100 dark:border-neutral-900 bg-white dark:bg-neutral-950">
+                            <div class="w-24 h-24 p-2 bg-white rounded-xl border border-gray-100 shadow-sm">
                                 <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/4dAf/251X251/iwg.webp/webp" class="w-full h-full object-cover rounded-lg">
                             </div>
-                            <h4 class="font-bold text-lg mb-1 mt-0">微信公众号</h4>
-                            <p class="text-xs text-gray-400 uppercase tracking-widest mb-0">自在造字</p>
+                            <div>
+                                <h4 class="font-black text-lg">官方微信</h4>
+                                <p class="text-xs text-gray-400 uppercase tracking-widest font-bold">Zizao Type</p>
+                            </div>
                         </div>
-
-                        <div class="flex flex-col items-center justify-center p-8 rounded-2xl border border-gray-200 dark:border-neutral-800 hover:shadow-xl transition-all duration-300 bg-white dark:bg-neutral-950 group">
-                            <div class="w-32 h-32 mb-6 p-2 bg-white rounded-xl border border-gray-100 dark:border-neutral-800 shadow-sm group-hover:scale-105 transition-transform">
+                        <div class="flex items-center gap-8 p-8 rounded-3xl border border-gray-100 dark:border-neutral-900 bg-white dark:bg-neutral-950">
+                            <div class="w-24 h-24 p-2 bg-white rounded-xl border border-gray-100 shadow-sm">
                                 <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/HGRq/251X251/iwx.webp/webp" class="w-full h-full object-cover rounded-lg">
                             </div>
-                            <h4 class="font-bold text-lg mb-1 mt-0">添加微信</h4>
-                            <p class="text-xs text-gray-400 uppercase tracking-widest mb-0">在线咨询客服</p>
+                            <div>
+                                <h4 class="font-black text-lg">添加客服</h4>
+                                <p class="text-xs text-gray-400 uppercase tracking-widest font-bold">Personal CS</p>
+                            </div>
                         </div>
                     </div>
                 </article>
-
-                <div class="mt-20 pt-10 border-t border-gray-100 dark:border-neutral-800 flex items-center justify-between select-none">
-                    <span class="text-sm font-medium text-gray-500 dark:text-neutral-500">这篇文档对您有帮助吗？</span>
-                    <div class="flex gap-3">
-                        <button class="feedback-btn group flex items-center justify-center p-2.5 rounded-full border border-gray-200 dark:border-neutral-800 text-gray-400 hover:bg-gray-50 hover:text-black dark:hover:bg-neutral-900 dark:hover:text-white transition-all duration-200 active:scale-95" aria-label="Helpful">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path></svg>
-                        </button>
-                        <button class="feedback-btn group flex items-center justify-center p-2.5 rounded-full border border-gray-200 dark:border-neutral-800 text-gray-400 hover:bg-gray-50 hover:text-black dark:hover:bg-neutral-900 dark:hover:text-white transition-all duration-200 active:scale-95" aria-label="Not Helpful">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.095c.5 0 .905-.405.905-.905 0-.714.211-1.412.608-2.006L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5"></path></svg>
-                        </button>
-                    </div>
-                </div>
 
             </div>
         </div>
@@ -404,107 +314,51 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            
-            // ======================================================
-            // 核心配置：[URL参数 key] 对应 [浏览器标签页标题]
-            // 您可以在这里统一修改 “Section ID” 和 “Title”
-            // ======================================================
             const SECTIONS_CONFIG = {
                 'about':     { title: '关于我们 - 自在造字' },
                 'copyright': { title: '版权归属 - 自在造字' },
                 'licensing': { title: '授权指南 - 自在造字' },
-                'terms':     { title: '使用条款 (EULA) - 自在造字' },
-                'faq':       { title: '常见问题 (FAQ) - 自在造字' },
+                'terms':     { title: '使用条款 - 自在造字' },
+                'faq':       { title: '常见问题 - 自在造字' },
                 'contact':   { title: '联系我们 - 自在造字' }
             };
 
-            // 1. 文档切换逻辑
             const sections = document.querySelectorAll('.docs-section');
             const navButtons = document.querySelectorAll('.docs-nav-btn');
             
             const switchSection = (targetId, updateHistory = true) => {
-                // 如果 config 里没有这个 ID，默认跳到 copyright
-                // 也可以改为 'about' 如果希望默认展示关于页面
                 if (!SECTIONS_CONFIG[targetId]) targetId = 'about'; 
 
-                // 隐藏所有 Section
-                sections.forEach(sec => {
-                    sec.classList.add('hidden');
-                    sec.classList.remove('animate-fade-in');
-                });
-                
-                // 移除导航高亮
+                sections.forEach(sec => sec.classList.add('hidden'));
                 navButtons.forEach(btn => btn.classList.remove('nav-btn-active'));
 
-                // 显示目标 Section
                 const targetSec = document.getElementById(targetId);
-                if(targetSec) {
-                    targetSec.classList.remove('hidden');
-                    targetSec.classList.add('animate-fade-in'); 
-                }
+                if(targetSec) targetSec.classList.remove('hidden');
 
-                // 高亮侧边栏按钮
                 const activeBtn = document.querySelector(`.docs-nav-btn[data-target="${targetId}"]`);
                 if(activeBtn) activeBtn.classList.add('nav-btn-active');
 
-                // 核心：设置浏览器标题
-                if (SECTIONS_CONFIG[targetId]) {
-                    document.title = SECTIONS_CONFIG[targetId].title;
-                }
+                if (SECTIONS_CONFIG[targetId]) document.title = SECTIONS_CONFIG[targetId].title;
 
-                // 更新 URL (如果不是通过后退按钮触发的)
                 if (updateHistory) {
                     const newUrl = new URL(window.location);
                     newUrl.searchParams.set('section', targetId);
                     window.history.pushState({ section: targetId }, '', newUrl);
                 }
-
-                // 滚动回顶部
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                
-                // 切换文档时重置反馈按钮状态
-                document.querySelectorAll('.feedback-btn').forEach(btn => btn.classList.remove('feedback-active'));
+                // 使用 instant 瞬间跳转，防止滚动动画带来的抖动
+                window.scrollTo({ top: 0, behavior: 'instant' });
             };
 
-            // 2. 绑定侧边栏点击事件
             navButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const target = btn.dataset.target;
-                    switchSection(target, true);
-                });
+                btn.addEventListener('click', () => switchSection(btn.dataset.target, true));
             });
 
-            // 3. 处理初始化加载 (检查 URL 参数)
             const params = new URLSearchParams(window.location.search);
-            // 默认页面: about (如果希望是版权，改为 'copyright')
             const initSection = params.get('section') || 'about'; 
-            
-            // 初始化时替换当前 history 状态，防止后退时死循环
             window.history.replaceState({ section: initSection }, '', window.location);
-            switchSection(initSection, false); // false = 初始化时不重复 pushState
+            switchSection(initSection, false);
 
-            // 4. 监听浏览器前进/后退按钮 (Popstate)
-            window.addEventListener('popstate', (event) => {
-                if (event.state && event.state.section) {
-                    switchSection(event.state.section, false);
-                } else {
-                    switchSection('about', false);
-                }
-            });
-
-            // 5. 反馈按钮点击逻辑 (仅样式)
-            const feedbackBtns = document.querySelectorAll('.feedback-btn');
-            feedbackBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const siblings = this.parentElement.querySelectorAll('.feedback-btn');
-                    siblings.forEach(sib => sib.classList.remove('feedback-active'));
-                    this.classList.add('feedback-active');
-                    this.classList.add('animate-bounce-sm');
-                    setTimeout(() => {
-                        this.classList.remove('animate-bounce-sm');
-                    }, 150);
-                });
-            });
+            window.addEventListener('popstate', (e) => switchSection((e.state && e.state.section) ? e.state.section : 'about', false));
         });
     </script>
 </body>
