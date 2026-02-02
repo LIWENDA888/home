@@ -26,9 +26,8 @@
       }
     </script>
     <style>
-        /* --- 文档基础排版加强版 --- */
+        /* --- 文档基础排版 --- */
         
-        /* 标题层级 */
         .doc-content h2 { 
             font-size: 2.5rem; 
             letter-spacing: -0.05em; 
@@ -52,7 +51,6 @@
         }
         .dark .doc-content h3 { color: #fff; }
 
-        /* 增加 h4 样式支持 */
         .doc-content h4 {
             font-size: 1.125rem;
             font-weight: 700;
@@ -62,7 +60,6 @@
         }
         .dark .doc-content h4 { color: #e5e5e5; }
         
-        /* 正文与列表 */
         .doc-content p, .doc-content li { 
             max-width: 70ch; 
             line-height: 1.8; 
@@ -72,13 +69,12 @@
         }
         .dark .doc-content p, .dark .doc-content li { color: #a3a3a3; }
         
-        /* 列表样式优化 */
         .doc-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; marker: #9ca3af; }
         .doc-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1.5rem; }
         .doc-content li { margin-bottom: 0.5rem; }
 
-        /* 链接样式 */
-        .doc-content a:not(.btn) {
+        /* 全局超链接样式（排除掉无下划线类） */
+        .doc-content a:not(.btn):not(.no-underline) {
             color: #000;
             text-decoration: underline;
             text-decoration-thickness: 1px;
@@ -86,150 +82,49 @@
             text-decoration-color: #d1d5db;
             transition: all 0.2s;
         }
-        .dark .doc-content a:not(.btn) { color: #fff; text-decoration-color: #525252; }
-        .doc-content a:not(.btn):hover { text-decoration-color: #000; background: #f3f4f6; }
-        .dark .doc-content a:not(.btn):hover { text-decoration-color: #fff; background: #262626; }
+        .dark .doc-content a:not(.btn):not(.no-underline) { color: #fff; text-decoration-color: #525252; }
+        .doc-content a:not(.btn):not(.no-underline):hover { text-decoration-color: #000; background: #f3f4f6; }
+        .dark .doc-content a:not(.btn):not(.no-underline):hover { text-decoration-color: #fff; background: #262626; }
 
-        /* 分割线 */
-        .doc-content hr {
-            border: 0;
-            height: 1px;
-            background: #e5e7eb;
-            margin: 4rem 0;
-        }
+        .doc-content hr { border: 0; height: 1px; background: #e5e7eb; margin: 4rem 0; }
         .dark .doc-content hr { background: #262626; }
 
-        /* 引用块 (Blockquote) */
         .doc-content blockquote {
-            border-left: 4px solid #000;
-            padding-left: 1.5rem;
-            margin: 2.5rem 0;
-            font-style: italic;
-            color: #111;
-            font-size: 1.15rem;
-            background: linear-gradient(to right, #f9fafb, transparent);
+            border-left: 4px solid #000; padding-left: 1.5rem; margin: 2.5rem 0; font-style: italic;
+            color: #111; font-size: 1.15rem; background: linear-gradient(to right, #f9fafb, transparent);
         }
-        .dark .doc-content blockquote {
-            border-left-color: #fff;
-            color: #e5e5e5;
-            background: linear-gradient(to right, #111, transparent);
-        }
+        .dark .doc-content blockquote { border-left-color: #fff; color: #e5e5e5; background: linear-gradient(to right, #111, transparent); }
 
-        /* 代码片段 (Inline Code) */
-        .doc-content code {
-            background-color: #f3f4f6;
-            padding: 0.2em 0.4em;
-            border-radius: 0.375rem;
-            font-size: 0.875em;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-            color: #db2777;
-        }
+        .doc-content code { background-color: #f3f4f6; padding: 0.2em 0.4em; border-radius: 0.375rem; font-size: 0.875em; font-family: ui-monospace, monospace; color: #db2777; }
         .dark .doc-content code { background-color: #1f1f1f; color: #f472b6; }
 
-        /* 键盘按键样式 (KBD) */
-        kbd {
-            background-color: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-bottom-width: 2px;
-            border-radius: 0.375rem;
-            padding: 0.15rem 0.4rem;
-            font-family: inherit;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #374151;
-            margin: 0 0.2em;
-        }
-        .dark kbd { background-color: #171717; border-color: #404040; color: #d4d4d4; }
-
-        /* 图片容器 (Figure) */
-        .doc-content figure {
-            margin: 3rem 0;
-        }
-        .doc-content figcaption {
-            font-size: 0.875rem;
-            color: #9ca3af;
-            text-align: center;
-            margin-top: 0.75rem;
-        }
-
-        /* 步骤条 (Steps) */
-        .steps-list {
-            counter-reset: step;
-            list-style: none !important;
-            padding-left: 0 !important;
-            border-left: 1px solid #e5e7eb;
-            margin-left: 1rem;
-        }
-        .dark .steps-list { border-left-color: #262626; }
-        .steps-list li {
-            position: relative;
-            padding-left: 2.5rem;
-            margin-bottom: 2.5rem;
-        }
-        .steps-list li::before {
-            counter-increment: step;
-            content: counter(step);
-            position: absolute;
-            left: -1rem; /* Center on line */
-            top: 0;
-            width: 2rem;
-            height: 2rem;
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 2rem;
-            font-size: 0.875rem;
-            font-weight: 700;
-            color: #000;
-        }
-        .dark .steps-list li::before { background: #000; border-color: #404040; color: #fff; }
-
         /* 左侧导航项：选中态样式 */
-        .docs-nav-btn {
-            position: relative;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .nav-btn-active { 
-            background-color: #f3f4f6; 
-            color: #000 !important; 
-            font-weight: 700;
-        }
-        .dark .nav-btn-active { 
-            background-color: #1a1a1a; 
-            color: #fff !important; 
-        }
+        .docs-nav-btn { position: relative; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .nav-btn-active { background-color: #f3f4f6; color: #000 !important; font-weight: 700; }
+        .dark .nav-btn-active { background-color: #1a1a1a; color: #fff !important; }
         .nav-btn-active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            height: 16px;
-            width: 3px;
-            background-color: #000;
-            border-radius: 0 4px 4px 0;
+            content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+            height: 16px; width: 3px; background-color: #000; border-radius: 0 4px 4px 0;
         }
         .dark .nav-btn-active::before { background-color: #fff; }
 
-        .docs-nav-btn:hover:not(.nav-btn-active) {
-            background-color: #f9fafb;
-            color: #000;
-        }
-        .dark .docs-nav-btn:hover:not(.nav-btn-active) { 
-            background-color: #0a0a0a;
-            color: #fff; 
-        }
-
-        /* Callout 组件 */
         .callout { width: 100%; padding: 1.5rem; border-radius: 1rem; margin: 2rem 0; display: flex; gap: 1rem; align-items: flex-start; border: 1px solid transparent; }
         .callout-info { background: #f9fafb; border-color: #e5e7eb; color: #1F2937; }
         .dark .callout-info { background: #0f0f0f; border-color: #262626; color: #d4d4d4; }
-        .callout-warning { background: #fffbeb; border-color: #fcd34d; color: #92400e; }
-        .dark .callout-warning { background: #291e05; border-color: #45320a; color: #fcd34d; }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* 步骤条 */
+        .steps-list { counter-reset: step; list-style: none !important; padding-left: 0 !important; border-left: 1px solid #e5e7eb; margin-left: 1rem; }
+        .dark .steps-list { border-left-color: #262626; }
+        .steps-list li { position: relative; padding-left: 2.5rem; margin-bottom: 2.5rem; }
+        .steps-list li::before {
+            counter-increment: step; content: counter(step); position: absolute; left: -1rem; top: 0;
+            width: 2rem; height: 2rem; background: #fff; border: 1px solid #e5e7eb; border-radius: 50%;
+            text-align: center; line-height: 2rem; font-size: 0.875rem; font-weight: 700; color: #000;
+        }
+        .dark .steps-list li::before { background: #000; border-color: #404040; color: #fff; }
     </style>
 </head>
 <body class="bg-white text-gray-900 dark:bg-neutral-950 dark:text-gray-100 flex flex-col min-h-screen antialiased selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
@@ -241,10 +136,9 @@
         
         <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-12 lg:gap-32 items-start">
             
-            <!-- 左侧导航：优化后的分隔线设计 -->
-            <aside class="hidden lg:block sticky top-32 rounded-[2rem] h-[calc(100vh-160px)] overflow-y-auto no-scrollbar">
+            <!-- 左侧导航：h-fit 紧贴内容高度 -->
+            <aside class="hidden lg:block sticky top-32 rounded-[2rem] h-fit border border-gray-200 dark:border-neutral-800 p-6">
                 <nav class="flex flex-col">
-                    <!-- Group 1 -->
                     <div class="pb-8 mb-8 border-b border-gray-100 dark:border-neutral-900">
                         <h4 class="mb-4 px-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-neutral-600">Studio</h4>
                         <div class="space-y-1">
@@ -252,7 +146,6 @@
                         </div>
                     </div>
 
-                    <!-- Group 2 -->
                     <div class="pb-8 mb-8 border-b border-gray-100 dark:border-neutral-900">
                         <h4 class="mb-4 px-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-neutral-600">Legal</h4>
                         <div class="space-y-1">
@@ -262,8 +155,7 @@
                         </div>
                     </div>
 
-                    <!-- Group 3 -->
-                    <div class="pb-8">
+                    <div class="pb-2">
                         <h4 class="mb-4 px-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-neutral-600">Support</h4>
                         <div class="space-y-1">
                             <button class="docs-nav-btn flex w-full items-center rounded-lg px-4 py-2 text-[14px] font-medium text-gray-500 dark:text-neutral-400" data-target="faq">常见问题 (FAQ)</button>
@@ -433,46 +325,74 @@
                 <!-- 联系我们 -->
                 <article id="contact" class="docs-section doc-content hidden animate-fade-in">
                     <h2 class="tracking-tighter">联系我们</h2>
-                    <p class="text-xl mb-12">无论是商务洽谈、全案定制咨询还是技术报错，我们将为您提供快速响应。</p>
+                    <p class="text-xl mb-12">无论是商务洽谈、全案定制咨询还是加入社群，我们都随时欢迎您的联络。</p>
 
-                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                        <a href="mailto:business@zizaotop.com" class="group p-10 rounded-[2rem] bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 transition-all hover:border-black dark:hover:border-white hover:shadow-lg no-underline !text-inherit">
-                            <div class="flex items-center justify-between mb-2">
-                                <h4 class="!m-0 font-black text-xl">商务与定制</h4>
-                                <svg class="w-5 h-5 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    <!-- 1. 邮箱联系 (Single Wide Card) -->
+                    <div class="mb-12">
+                        <a href="mailto:type@zizao.top" class="no-underline group w-full p-8 md:p-10 rounded-[2rem] bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all">
+                            <div class="flex items-center gap-6">
+                                <div class="w-14 h-14 rounded-full bg-white dark:bg-neutral-800 flex items-center justify-center shrink-0">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 class="!m-0 font-black text-xl md:text-2xl">General Inquiry</h4>
+                                    <p class="text-xs text-gray-400 uppercase tracking-widest font-bold !m-0 mt-1">Business & Support</p>
+                                </div>
                             </div>
-                            <p class="text-xs text-gray-400 uppercase tracking-widest font-bold !mb-6">Business & Customization</p>
-                            <span class="text-2xl font-black border-b-2 border-black/10 group-hover:border-black dark:border-white/10 dark:group-hover:border-white transition-colors">business@zizaotop.com</span>
-                        </a>
-
-                        <a href="mailto:support@zizao.top" class="group p-10 rounded-[2rem] bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 transition-all hover:border-black dark:hover:border-white hover:shadow-lg no-underline !text-inherit">
-                            <div class="flex items-center justify-between mb-2">
-                                <h4 class="!m-0 font-black text-xl">技术支持</h4>
-                                <svg class="w-5 h-5 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                            </div>
-                            <p class="text-xs text-gray-400 uppercase tracking-widest font-bold !mb-6">Tech Support & Engineering</p>
-                            <span class="text-2xl font-black border-b-2 border-black/10 group-hover:border-black dark:border-white/10 dark:group-hover:border-white transition-colors">support@zizao.top</span>
+                            <!-- 悬浮时仅文字出现下划线 -->
+                            <span class="text-xl md:text-3xl font-bold font-mono underline decoration-2 decoration-transparent underline-offset-8 group-hover:decoration-black dark:group-hover:decoration-white transition-all duration-300">type@zizao.top</span>
                         </a>
                     </div>
 
-                    <div class="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div class="flex items-center gap-6 p-6 rounded-2xl border border-gray-100 dark:border-neutral-900 bg-white dark:bg-neutral-950">
-                            <div class="w-20 h-20 p-1.5 bg-white rounded-lg border border-gray-100 shadow-sm shrink-0">
-                                <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/4dAf/251X251/iwg.webp/webp" class="w-full h-full object-cover rounded-md">
+                    <hr class="!my-12 opacity-50">
+
+                    <!-- 2. 即时通讯 (Static Cards, No Hover Effects) -->
+                    <h3 class="!mt-0 mb-8">即时通讯</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        
+                        <!-- 微信公众号 -->
+                        <div class="flex flex-col items-center p-6 rounded-2xl border border-gray-100 dark:border-neutral-800 bg-white dark:bg-neutral-950 text-center">
+                            <div class="w-32 h-32 p-2 bg-gray-50 dark:bg-neutral-900 rounded-xl mb-4 border border-gray-100 dark:border-neutral-800">
+                                <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/4dAf/251X251/iwg.webp/webp" class="w-full h-full object-cover rounded-lg" alt="公众号">
                             </div>
-                            <div>
-                                <h4 class="font-black text-lg !m-0">官方微信</h4>
-                                <p class="text-xs text-gray-400 uppercase tracking-widest font-bold !m-0">Zizao Type</p>
-                            </div>
+                            <h4 class="!m-0 text-base font-bold">微信公众号</h4>
+                            <span class="mt-3 px-3 py-1 bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400 text-[10px] font-bold rounded-full">ZizaoType</span>
                         </div>
-                        <div class="flex items-center gap-6 p-6 rounded-2xl border border-gray-100 dark:border-neutral-900 bg-white dark:bg-neutral-950">
-                            <div class="w-20 h-20 p-1.5 bg-white rounded-lg border border-gray-100 shadow-sm shrink-0">
-                                <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/HGRq/251X251/iwx.webp/webp" class="w-full h-full object-cover rounded-md">
+
+                        <!-- 微信客服 -->
+                        <div class="flex flex-col items-center p-6 rounded-2xl border border-gray-100 dark:border-neutral-800 bg-white dark:bg-neutral-950 text-center">
+                            <div class="w-32 h-32 p-2 bg-gray-50 dark:bg-neutral-900 rounded-xl mb-4 border border-gray-100 dark:border-neutral-800">
+                                <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/HGRq/251X251/iwx.webp/webp" class="w-full h-full object-cover rounded-lg" alt="客服微信">
                             </div>
-                            <div>
-                                <h4 class="font-black text-lg !m-0">添加客服</h4>
-                                <p class="text-xs text-gray-400 uppercase tracking-widest font-bold !m-0">Personal CS</p>
+                            <h4 class="!m-0 text-base font-bold">客服微信</h4>
+                            <span class="mt-3 px-3 py-1 bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 text-[10px] font-bold rounded-full">ID: ZizaoCS</span>
+                        </div>
+
+                        <!-- QQ 咨询 (QR Image) -->
+                        <div class="flex flex-col items-center p-6 rounded-2xl border border-gray-100 dark:border-neutral-800 bg-white dark:bg-neutral-950 text-center">
+                            <div class="w-32 h-32 p-2 bg-gray-50 dark:bg-neutral-900 rounded-xl mb-4 border border-gray-100 dark:border-neutral-800 flex items-center justify-center">
+                                <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/HGRq/251X251/iwx.webp/webp" class="w-full h-full object-cover rounded-lg opacity-40 grayscale" alt="QQ QR">
                             </div>
+                            <h4 class="!m-0 text-base font-bold">QQ 咨询</h4>
+                            <span class="mt-3 px-3 py-1 bg-gray-100 text-gray-600 dark:bg-neutral-800 dark:text-gray-400 text-[10px] font-bold rounded-full">Group: 888888</span>
+                        </div>
+                    </div>
+
+                    <!-- 3. 社交媒体 (No icons, upward shift hover) -->
+                    <div class="mt-12">
+                        <h3 class="!mt-0 mb-6">社交媒体</h3>
+                        <div class="flex flex-wrap gap-4">
+                            <a href="#" target="_blank" class="no-underline px-6 py-3 rounded-full bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 font-bold text-sm text-gray-600 dark:text-gray-300 hover:border-black hover:text-black dark:hover:border-white dark:hover:text-white hover:-translate-y-1 transition-all duration-300">
+                                小红书 RedNote
+                            </a>
+                            
+                            <a href="#" target="_blank" class="no-underline px-6 py-3 rounded-full bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 font-bold text-sm text-gray-600 dark:text-gray-300 hover:border-black hover:text-black dark:hover:border-white dark:hover:text-white hover:-translate-y-1 transition-all duration-300">
+                                Bilibili
+                            </a>
+
+                            <a href="#" target="_blank" class="no-underline px-6 py-3 rounded-full bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 font-bold text-sm text-gray-600 dark:text-gray-300 hover:border-black hover:text-black dark:hover:border-white dark:hover:text-white hover:-translate-y-1 transition-all duration-300">
+                                站酷 Zcool
+                            </a>
                         </div>
                     </div>
                 </article>
