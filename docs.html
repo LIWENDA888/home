@@ -387,11 +387,16 @@
 
                 <!-- 联系我们 -->
                 <article id="contact" class="docs-section doc-content hidden animate-fade-in">
-                    <h2 class="tracking-tighter">联系我们</h2>
-                    <p class="text-xl mb-12">无论是商务洽谈、全案定制咨询还是加入社群，我们都随时欢迎您的联络。</p>
+                    <!-- 标题区域 -->
+                    <h2 class="!mb-4 tracking-tighter">联系我们</h2>
+                    <p class="text-lg text-gray-500 dark:text-gray-400 mb-8">无论是商务洽谈、全案定制咨询还是加入社群，我们都随时欢迎您的联络。</p>
 
-                    <!-- 1. 邮箱联系 -->
+                    <!-- 分隔线 1 -->
+                    <hr class="border-0 h-px bg-gray-100 dark:bg-neutral-800 my-10" />
+
+                    <!-- Block 1. 邮箱联系 -->
                     <div class="mb-12">
+                        <h3 class="!mt-0 mb-6 text-base font-bold text-gray-900 dark:text-white">邮箱联系</h3>
                         <a href="mailto:type@zizao.top" class="no-underline group w-full p-8 md:p-10 rounded-[2rem] bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
                             <div class="flex items-center gap-6">
                                 <div class="w-14 h-14 rounded-full bg-white dark:bg-neutral-800 flex items-center justify-center shrink-0 border border-gray-100 dark:border-neutral-800 transition-colors group-hover:bg-black group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-black">
@@ -402,58 +407,84 @@
                                     <p class="text-xs text-gray-400 uppercase tracking-widest font-bold !m-0 mt-1">Business & Support</p>
                                 </div>
                             </div>
-                            <span class="text-xl md:text-3xl font-bold font-mono underline decoration-2 decoration-transparent underline-offset-8 group-hover:decoration-black dark:group-hover:decoration-white transition-all duration-300 break-all">type@zizao.top</span>
+                            <!-- 邮箱地址带下划线交互 -->
+                            <span class="text-xl md:text-3xl font-bold font-mono underline decoration-2 underline-offset-8 decoration-transparent group-hover:decoration-black dark:group-hover:decoration-white transition-all duration-300 break-all">type@zizao.top</span>
                         </a>
                     </div>
 
-                    <hr class="!my-12 opacity-50">
+                    <!-- 分隔线 2 -->
+                    <hr class="border-0 h-px bg-gray-100 dark:bg-neutral-800 my-10" />
 
-                    <!-- 2. 即时通讯 -->
-                    <h3 class="!mt-0 mb-8">即时通讯</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                        
-                        <!-- 微信公众号 -->
-                        <div class="flex flex-col items-center p-6 rounded-2xl border border-gray-100 dark:border-neutral-800 bg-white dark:bg-neutral-950 text-center">
-                            <div class="w-32 h-32 p-2 bg-gray-50 dark:bg-neutral-900 rounded-xl mb-4 border border-gray-100 dark:border-neutral-800">
-                                <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/4dAf/251X251/iwg.webp/webp" class="w-full h-full object-cover rounded-lg" alt="公众号">
+                    <!-- Block 2. 即时通讯 -->
+                    <div class="mb-12">
+                        <h3 class="!mt-0 mb-6 text-base font-bold text-gray-900 dark:text-white">即时通讯</h3>
+                        <div class="flex flex-col gap-4">
+                            
+                            <!-- 微信公众号 -->
+                            <div class="flex flex-col sm:flex-row items-center sm:justify-between p-6 rounded-2xl border border-gray-100 dark:border-neutral-800 bg-gray-50 dark:bg-neutral-900">
+                                <div class="flex flex-col sm:flex-row items-center text-center sm:text-left gap-5">
+                                    <div class="w-16 h-16 shrink-0 p-1 bg-white dark:bg-neutral-800 rounded-xl border border-gray-100 dark:border-neutral-800">
+                                        <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/4dAf/251X251/iwg.webp/webp" class="w-full h-full object-cover rounded-lg" alt="公众号">
+                                    </div>
+                                    <div>
+                                        <h4 class="!m-0 text-base font-bold">微信公众号</h4>
+                                        <p class="text-xs text-gray-400 !m-0 mt-1">最新发布与口令获取</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4 sm:mt-0">
+                                    <span class="px-3 py-1.5 bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400 text-[11px] font-bold rounded-full">ZizaoType</span>
+                                </div>
                             </div>
-                            <h4 class="!m-0 text-base font-bold">微信公众号</h4>
-                            <p class="text-xs text-gray-400 !m-0 mt-2">最新发布与口令获取</p>
-                            <span class="mt-3 px-3 py-1 bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400 text-[10px] font-bold rounded-full">ZizaoType</span>
-                        </div>
 
-                        <!-- 微信客服 -->
-                        <div class="flex flex-col items-center p-6 rounded-2xl border border-gray-100 dark:border-neutral-800 bg-white dark:bg-neutral-950 text-center">
-                            <div class="w-32 h-32 p-2 bg-gray-50 dark:bg-neutral-900 rounded-xl mb-4 border border-gray-100 dark:border-neutral-800">
-                                <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/HGRq/251X251/iwx.webp/webp" class="w-full h-full object-cover rounded-lg" alt="客服微信">
+                            <!-- 微信客服 -->
+                            <div class="flex flex-col sm:flex-row items-center sm:justify-between p-6 rounded-2xl border border-gray-100 dark:border-neutral-800 bg-gray-50 dark:bg-neutral-900">
+                                <div class="flex flex-col sm:flex-row items-center text-center sm:text-left gap-5">
+                                    <div class="w-16 h-16 shrink-0 p-1 bg-white dark:bg-neutral-800 rounded-xl border border-gray-100 dark:border-neutral-800">
+                                        <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/HGRq/251X251/iwx.webp/webp" class="w-full h-full object-cover rounded-lg" alt="客服微信">
+                                    </div>
+                                    <div>
+                                        <h4 class="!m-0 text-base font-bold">客服微信</h4>
+                                        <p class="text-xs text-gray-400 !m-0 mt-1">授权咨询与售后服务</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4 sm:mt-0">
+                                    <span class="px-3 py-1.5 bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 text-[11px] font-bold rounded-full">ID: ZizaoCS</span>
+                                </div>
                             </div>
-                            <h4 class="!m-0 text-base font-bold">客服微信</h4>
-                            <p class="text-xs text-gray-400 !m-0 mt-2">授权咨询与售后</p>
-                            <span class="mt-3 px-3 py-1 bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 text-[10px] font-bold rounded-full">ID: ZizaoCS</span>
-                        </div>
 
-                        <!-- QQ 咨询 -->
-                        <div class="flex flex-col items-center p-6 rounded-2xl border border-gray-100 dark:border-neutral-800 bg-white dark:bg-neutral-950 text-center sm:col-span-2 md:col-span-1">
-                            <div class="w-32 h-32 p-2 bg-gray-50 dark:bg-neutral-900 rounded-xl mb-4 border border-gray-100 dark:border-neutral-800 flex items-center justify-center">
-                                <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/HGRq/251X251/iwx.webp/webp" class="w-full h-full object-cover rounded-lg opacity-40 grayscale" alt="QQ QR">
+                            <!-- QQ 咨询 -->
+                            <div class="flex flex-col sm:flex-row items-center sm:justify-between p-6 rounded-2xl border border-gray-100 dark:border-neutral-800 bg-gray-50 dark:bg-neutral-900">
+                                <div class="flex flex-col sm:flex-row items-center text-center sm:text-left gap-5">
+                                    <div class="w-16 h-16 shrink-0 p-1 bg-white dark:bg-neutral-800 rounded-xl border border-gray-100 dark:border-neutral-800 flex items-center justify-center">
+                                        <img src="https://pic3.fukit.cn/autoupload/NWINCyTOTWqNUcPQazQq69iO_OyvX7mIgxFBfDMDErs/20251123/HGRq/251X251/iwx.webp/webp" class="w-full h-full object-cover rounded-lg opacity-40 grayscale" alt="QQ QR">
+                                    </div>
+                                    <div>
+                                        <h4 class="!m-0 text-base font-bold">QQ 咨询</h4>
+                                        <p class="text-xs text-gray-400 !m-0 mt-1">用户交流与社群</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4 sm:mt-0">
+                                    <span class="px-3 py-1.5 bg-gray-100 text-gray-600 dark:bg-neutral-800 dark:text-gray-400 text-[11px] font-bold rounded-full">Group: 888888</span>
+                                </div>
                             </div>
-                            <h4 class="!m-0 text-base font-bold">QQ 咨询</h4>
-                            <p class="text-xs text-gray-400 !m-0 mt-2">用户交流与社群</p>
-                            <span class="mt-3 px-3 py-1 bg-gray-100 text-gray-600 dark:bg-neutral-800 dark:text-gray-400 text-[10px] font-bold rounded-full">Group: 888888</span>
+
                         </div>
                     </div>
 
-                    <!-- 3. 社交媒体 -->
+                    <!-- 分隔线 3 -->
+                    <hr class="border-0 h-px bg-gray-100 dark:bg-neutral-800 my-10" />
+
+                    <!-- Block 3. 社交媒体 -->
                     <div class="mt-12">
-                        <h3 class="!mt-0 mb-6">社交媒体</h3>
+                        <h3 class="!mt-0 mb-6 text-base font-bold text-gray-900 dark:text-white">社交媒体</h3>
                         <div class="flex flex-wrap gap-4">
-                            <a href="#" target="_blank" class="no-underline px-6 py-3 rounded-full bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 font-bold text-sm text-gray-500 hover:border-black hover:text-black dark:hover:border-white dark:hover:text-white hover:-translate-y-1 transition-all duration-300">
+                            <a href="#" target="_blank" class="no-underline px-6 py-3 rounded-full bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 font-bold text-sm text-gray-500 hover:text-black dark:hover:text-white hover:-translate-y-1 transition-all duration-300">
                                 小红书 RedNote
                             </a>
-                            <a href="#" target="_blank" class="no-underline px-6 py-3 rounded-full bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 font-bold text-sm text-gray-500 hover:border-black hover:text-black dark:hover:border-white dark:hover:text-white hover:-translate-y-1 transition-all duration-300">
+                            <a href="#" target="_blank" class="no-underline px-6 py-3 rounded-full bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 font-bold text-sm text-gray-500 hover:text-black dark:hover:text-white hover:-translate-y-1 transition-all duration-300">
                                 Bilibili
                             </a>
-                            <a href="#" target="_blank" class="no-underline px-6 py-3 rounded-full bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 font-bold text-sm text-gray-500 hover:border-black hover:text-black dark:hover:border-white dark:hover:text-white hover:-translate-y-1 transition-all duration-300">
+                            <a href="#" target="_blank" class="no-underline px-6 py-3 rounded-full bg-gray-50 dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 font-bold text-sm text-gray-500 hover:text-black dark:hover:text-white hover:-translate-y-1 transition-all duration-300">
                                 站酷 Zcool
                             </a>
                         </div>
